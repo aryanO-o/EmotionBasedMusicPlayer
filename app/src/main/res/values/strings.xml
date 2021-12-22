@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">EmotionBasedMusic</string>
+    <string name="your_phone">Your Phone!</string>
+    <string name="phone_number">Phone Number</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="continue_">Continue</string>
+    <string name="a_6_digit_otp_will_be_sent_via_sms_to_verify_your_mobile_number">A 6 digit OTP will be sent via SMS to verify your mobile number.</string>
+    <string name="enter_phone_number">Enter phone number</string>
+    <string name="or">Or</string>
 </resources>

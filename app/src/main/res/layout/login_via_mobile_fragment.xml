@@ -85,17 +85,17 @@
             app:layout_constraintTop_toTopOf="parent"
             android:textSize="24dp"
             android:textStyle="bold"
-            android:text="Your Phone!"/>
+            android:text="@string/your_phone"/>
 
         <TextView
-            android:layout_width="250dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
             android:id="@+id/phone_number_text"
             app:layout_constraintTop_toBottomOf="@id/your_phone_text"
             app:layout_constraintBottom_toBottomOf="@id/edit_phone_text"
-            android:textSize="18dp"
-            android:text="Phone Number"/>
+            android:textSize="14sp"
+            android:text="@string/phone_number"/>
 
         <com.hbb20.CountryCodePicker
             android:id="@+id/country_code_drop_down"
@@ -115,7 +115,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:focusedByDefault="false"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:hint="Enter phone number">
+            android:hint="@string/enter_phone_number">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
@@ -131,7 +131,7 @@
             android:id="@+id/otp_text"
             app:layout_constraintTop_toBottomOf="@id/edit_phone_text"
             android:layout_marginTop="16dp"
-            android:text="A 6 digit OTP will be sent via SMS to verify your mobile number."/>
+            android:text="@string/a_6_digit_otp_will_be_sent_via_sms_to_verify_your_mobile_number"/>
 
 
 
@@ -154,10 +154,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/continue_with_mobile_number_button"
-            android:background="#FF74A4"
-            android:text="Continue"
+            android:background="@color/theme"
+            android:text="@string/continue_"
             android:textColor="@color/white"
-            android:textSize="20dp"
+            android:textSize="15sp"
             android:gravity="center_horizontal"
             android:padding="16dp"/>
 
