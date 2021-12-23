@@ -8,4 +8,15 @@
     <string name="a_6_digit_otp_will_be_sent_via_sms_to_verify_your_mobile_number">A 6 digit OTP will be sent via SMS to verify your mobile number.</string>
     <string name="enter_phone_number">Enter phone number</string>
     <string name="or">Or</string>
+    <string name="emotion_media_player">Emotion Media Player</string>
+    <string name="app">App</string>
+    <string name="continue_text">Continue</string>
+    <string name="app_icon">app_icon</string>
+    <string name="hello">Hello!</string>
+    <string name="we_are_emp">We are EMP.</string>
+    <string name="creating_account_text">Create an account or login to begin adventure.</string>
+    <string name="google_logo">google logo</string>
+    <string name="continue_with_google">Continue With Google</string>
+    <string name="mobile_phone_logo">mobile phone logo</string>
+    <string name="use_mobile_number">Use Mobile Number</string>
 </resources>

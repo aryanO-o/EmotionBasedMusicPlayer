@@ -27,13 +27,14 @@
 
             <ImageView
                 android:id="@+id/splash_icon"
-                android:layout_width="160dp"
-                android:layout_height="160dp"
+                android:layout_width="@dimen/splash_image_size"
+                android:layout_height="@dimen/splash_image_size"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:src="@drawable/splash_icon"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:contentDescription="@string/app_icon"/>
 
         </com.google.android.material.card.MaterialCardView>
 
@@ -45,11 +46,11 @@
             android:id="@+id/hello_text"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toTopOf="@id/we_are_text"
-            android:textSize="24sp"
+            android:textSize="@dimen/header_text_size"
             android:textStyle="bold"
             android:textColor="@color/signup_fragment_text"
-            android:layout_marginLeft="16dp"
-            android:text="Hello!"/>
+            android:layout_marginStart="@dimen/common_margin_size"
+            android:text="@string/hello"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -57,12 +58,12 @@
             android:id="@+id/we_are_text"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginLeft="16dp"
+            android:layout_marginStart="@dimen/common_margin_size"
             android:layout_marginBottom="8dp"
             android:textColor="@color/signup_fragment_text"
-            android:textSize="24sp"
+            android:textSize="@dimen/header_text_size"
             android:textStyle="bold|italic"
-            android:text="We are EMP."/>
+            android:text="@string/we_are_emp"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -78,11 +79,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/create_or_login_text"
-            android:layout_marginLeft="16dp"
+            android:layout_marginStart="@dimen/common_margin_size"
             app:layout_constraintTop_toTopOf="parent"
             android:textColor="@color/signup_fragment_text"
             app:layout_constraintStart_toStartOf="parent"
-            android:text="Create an account or login to begin adventure."/>
+            android:text="@string/creating_account_text"/>
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="320dp"
@@ -105,13 +106,14 @@
                     android:layout_width="22dp"
                     android:layout_height="22dp"
                     android:layout_marginStart="10dp"
-                    android:src="@drawable/google_logo" />
+                    android:src="@drawable/google_logo"
+                    android:contentDescription="@string/google_logo"/>
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:text="Continue With Google"
+                    android:text="@string/continue_with_google"
                     android:textColor="#38A7EB"
                     android:textSize="14sp" />
             </LinearLayout>
@@ -153,13 +155,14 @@
                     android:layout_width="22dp"
                     android:layout_height="22dp"
                     android:layout_marginStart="10dp"
-                    android:src="@drawable/mobile_login_logo" />
+                    android:src="@drawable/mobile_login_logo"
+                    android:contentDescription="@string/mobile_phone_logo"/>
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:text="Use Mobile Number"
+                    android:text="@string/use_mobile_number"
                     android:textColor="#38A7EB"
                     android:textSize="14sp" />
             </LinearLayout>

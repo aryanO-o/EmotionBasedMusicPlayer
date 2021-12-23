@@ -10,4 +10,9 @@
         android:name="com.example.emotionbasedmusic.fragments.SignUpFragment"
         android:label="sign_up_fragment"
         tools:layout="@layout/sign_up_fragment" />
+    <fragment
+        android:id="@+id/phoneFragment"
+        android:name="com.example.emotionbasedmusic.fragments.PhoneFragment"
+        android:label="fragment_phone"
+        tools:layout="@layout/fragment_phone" />
 </navigation>
