@@ -7,12 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import com.example.emotionbasedmusic.R
-import com.example.emotionbasedmusic.databinding.LoginViaMobileFragmentBinding
+import com.example.emotionbasedmusic.databinding.FragmentPhoneBinding
 import com.example.emotionbasedmusic.viewModel.MusicViewModel
 
 
 class PhoneFragment : Fragment() {
-  private lateinit var binding: LoginViaMobileFragmentBinding
+  private lateinit var binding: FragmentPhoneBinding
   private val model: MusicViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -20,7 +20,7 @@ class PhoneFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = LoginViaMobileFragmentBinding.inflate(inflater)
+        binding = FragmentPhoneBinding.inflate(inflater)
         return binding.root
     }
 
