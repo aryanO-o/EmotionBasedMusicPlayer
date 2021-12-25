@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".fragments.FaceProceedOrRetakeFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/blue_frame_with_clip">
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="200dp"
+            android:layout_height="250dp"
+            android:background="#00ffffff"
+            android:padding="16dp"
+            android:paddingBottom="25dp"
+            app:cardCornerRadius="20dp"
+            android:id="@+id/face_image"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitXY"
+                android:src="@drawable/album_cover" />
+
+        </com.google.android.material.card.MaterialCardView>
+
+
+        <ImageButton
+            android:id="@+id/proceed"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="#00ffffff"
+            android:src="@drawable/proceed_icon"
+            android:layout_marginTop="20dp"
+            app:layout_constraintTop_toBottomOf="@id/face_image"
+            app:layout_constraintEnd_toStartOf="@id/retake"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <ImageButton
+            android:id="@+id/retake"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="#00ffffff"
+            android:src="@drawable/retake_icon"
+            android:layout_marginTop="20dp"
+            app:layout_constraintTop_toBottomOf="@id/face_image"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/proceed" />
+
+        <TextView
+            android:id="@+id/proceed_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Proceed"
+            android:textSize="14sp"
+            android:textColor="@color/black"
+            app:layout_constraintTop_toBottomOf="@id/proceed"
+            app:layout_constraintEnd_toEndOf="@id/proceed"
+            app:layout_constraintStart_toStartOf="@id/proceed" />
+
+        <TextView
+            android:id="@+id/retake_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Retake"
+            android:textSize="14sp"
+            android:textColor="@color/black"
+            app:layout_constraintTop_toBottomOf="@id/retake"
+            app:layout_constraintEnd_toEndOf="@id/retake"
+            app:layout_constraintStart_toStartOf="@id/retake" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</FrameLayout>
