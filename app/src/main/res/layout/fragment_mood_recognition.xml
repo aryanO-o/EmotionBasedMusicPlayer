@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -13,6 +12,7 @@
         android:background="@color/white"
         android:scaleType="fitXY"
         android:src="@drawable/select_image_icon"
+        android:contentDescription="@string/select_image_image"
         app:layout_constraintBottom_toTopOf="@+id/orTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,7 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:text="Select Image"
+        android:text="@string/select_image"
         app:layout_constraintEnd_toEndOf="@+id/imageButton"
         app:layout_constraintStart_toStartOf="@+id/imageButton"
         app:layout_constraintTop_toBottomOf="@+id/imageButton" />
@@ -31,7 +31,7 @@
         android:id="@+id/orTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="OR"
+        android:text="@string/or"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -42,7 +42,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/choose_from_emoji_text"
-        android:text="Chose From Emojis"
+        android:text="@string/chose_from_emojis"
         android:layout_marginBottom="8dp"
         android:layout_marginStart="16dp"
         app:layout_constraintStart_toStartOf="@id/emoji_recycler_view"
