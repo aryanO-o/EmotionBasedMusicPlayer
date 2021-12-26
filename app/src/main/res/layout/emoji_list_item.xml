@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools ="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_margin="16dp"
+    android:background="@color/white"
+    android:layout_height="wrap_content">
+
+    <ImageButton
+        android:id="@+id/emoji_image"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:background="@color/white"
+        android:scaleType="fitXY"
+        android:src="@drawable/cool_emoji"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/emoji_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/emoji_image"
+        app:layout_constraintEnd_toEndOf="@id/emoji_image"
+        app:layout_constraintTop_toBottomOf="@id/emoji_image"
+        android:text="sad"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
