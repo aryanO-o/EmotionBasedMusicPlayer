@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/signUpFragment">
+
+    <fragment
+        android:id="@+id/signUpFragment"
+        android:name="com.example.emotionbasedmusic.fragments.SignUpFragment"
+        android:label="sign_up_fragment"
+        tools:layout="@layout/sign_up_fragment" >
+        <action
+            android:id="@+id/action_signUpFragment_to_phoneFragment"
+            app:destination="@id/phoneFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/phoneFragment"
+        android:name="com.example.emotionbasedmusic.fragments.PhoneFragment"
+        android:label="fragment_phone"
+        tools:layout="@layout/fragment_phone" >
+        <action
+            android:id="@+id/action_phoneFragment_to_otpFragment"
+            app:destination="@id/otpFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/otpFragment"
+        android:name="com.example.emotionbasedmusic.fragments.OtpFragment"
+        android:label="fragment_otp"
+        tools:layout="@layout/fragment_otp" >
+        <argument
+            android:name="phone"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_otpFragment_to_faceScanFragment"
+            app:destination="@id/faceScanFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/faceScanFragment"
+        android:name="com.example.emotionbasedmusic.fragments.FaceScanFragment"
+        android:label="fragment_face_scan"
+        tools:layout="@layout/fragment_face_scan" />
+    <fragment
+        android:id="@+id/checkFragment"
+        android:name="com.example.emotionbasedmusic.fragments.CheckFragment"
+        android:label="CheckFragment" >
+        <action
+            android:id="@+id/action_checkFragment_to_signUpFragment"
+            app:destination="@id/signUpFragment" />
+        <action
+            android:id="@+id/action_checkFragment_to_faceScanFragment"
+            app:destination="@id/faceScanFragment" />
+    </fragment>
+</navigation>

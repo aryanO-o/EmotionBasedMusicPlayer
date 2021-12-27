@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "866756795982",
+    "project_id": "emotionbasedmusic",
+    "storage_bucket": "emotionbasedmusic.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:866756795982:android:2a762c3c8882601aac6d1f",
+        "android_client_info": {
+          "package_name": "com.example.emotionbasedmusic"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "866756795982-40s37u7o3p9puvg9l8nr2vfb4tgbsv25.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.emotionbasedmusic",
+            "certificate_hash": "19dbb679ac908a82dcc9c7c5b61ae68c14c81159"
+          }
+        },
+        {
+          "client_id": "866756795982-havtme3a12r0cr30hgrk1paqffkc3490.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBV5afpMGL2qrMG9lEIlMuyf-kNb0WgEnw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "866756795982-havtme3a12r0cr30hgrk1paqffkc3490.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
