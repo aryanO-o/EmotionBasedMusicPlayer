@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".fragments.OtpFragment">
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Verify Your\n Phone Number"
+        android:fontFamily="@font/spartaneb"
+        android:textStyle="bold"
+        android:id="@+id/tvVerify"
+        app:layout_constraintTop_toTopOf="parent"
+        android:gravity="center"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+        android:textSize="20sp"
+        android:layout_marginTop="125dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Enter your OTP code here"
+        app:layout_constraintTop_toBottomOf="@id/tvVerify"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:layout_marginTop="10dp"
+        android:textStyle="bold" />
+
+
+    <LinearLayout
+        android:id="@+id/ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/tvVerify"
+        android:layout_marginTop="50dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/ed1"
+            android:layout_width="45dp"
+            android:layout_height="65dp"
+            android:background="@drawable/edit_back"
+            android:fontFamily="@font/spartanreg"
+            android:gravity="center"
+            android:inputType="numberDecimal"
+            android:maxLength="1"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/ed2"
+            android:layout_width="45dp"
+            android:layout_height="65dp"
+            android:layout_marginStart="4dp"
+            android:background="@drawable/edit_back"
+            android:fontFamily="@font/spartanreg"
+            android:gravity="center"
+            android:inputType="numberDecimal"
+            android:maxLength="1"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/ed3"
+            android:layout_width="45dp"
+            android:layout_height="65dp"
+            android:layout_marginStart="4dp"
+            android:background="@drawable/edit_back"
+            android:fontFamily="@font/spartanreg"
+            android:gravity="center"
+            android:inputType="numberDecimal"
+            android:maxLength="1"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/ed4"
+            android:layout_width="45dp"
+            android:layout_height="65dp"
+            android:layout_marginStart="4dp"
+            android:background="@drawable/edit_back"
+            android:fontFamily="@font/spartanreg"
+            android:gravity="center"
+            android:inputType="numberDecimal"
+            android:maxLength="1"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/ed5"
+            android:layout_width="45dp"
+            android:layout_height="65dp"
+            android:layout_marginStart="4dp"
+            android:background="@drawable/edit_back"
+            android:fontFamily="@font/spartanreg"
+            android:gravity="center"
+            android:inputType="numberDecimal"
+            android:maxLength="1"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/ed6"
+            android:layout_width="45dp"
+            android:layout_height="65dp"
+            android:layout_marginStart="4dp"
+            android:background="@drawable/edit_back"
+            android:fontFamily="@font/spartanreg"
+            android:gravity="center"
+            android:inputType="numberDecimal"
+            android:maxLength="1"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/tvQuestion"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ll"
+        app:layout_constraintTop_toBottomOf="@id/ll"
+        android:layout_marginTop="20dp"
+        android:text="@string/didn_t_you_receive_any_code"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvResend"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/tvQuestion"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/spartaneemibold600"
+        android:text="@string/resend_new_code"
+        android:gravity="center"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+        android:textSize="12sp"
+        android:textStyle="bold" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnVerify"
+        android:layout_width="250dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="100dp"
+        android:fontFamily="@font/spartanreg"
+        android:padding="13dp"
+        android:text="@string/verify"
+        android:textAllCaps="false"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/ll"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:backgroundTint="#FF4DA0"
+        app:cornerRadius="27dp" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

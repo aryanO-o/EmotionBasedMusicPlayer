@@ -1,22 +1,21 @@
 package com.example.emotionbasedmusic.fragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.emotionbasedmusic.R
-import com.example.emotionbasedmusic.databinding.FragmentFaceScanBinding
+import androidx.fragment.app.Fragment
+import com.example.emotionbasedmusic.databinding.FragmentCheckBinding
 
+class CheckFragment: Fragment() {
+    private lateinit var binding: FragmentCheckBinding
 
-class FaceScanFragment : Fragment() {
-private lateinit var binding: FragmentFaceScanBinding
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentFaceScanBinding.inflate(inflater)
+    ): View {
+        binding = FragmentCheckBinding.inflate(inflater)
         return binding.root
     }
 

@@ -20,7 +20,7 @@ class FaceProceedOrRetakeFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentFaceProceedOrRetakeBinding.inflate(inflater)
         return binding.root
     }

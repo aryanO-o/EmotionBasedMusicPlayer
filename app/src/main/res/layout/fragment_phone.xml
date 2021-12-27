@@ -97,12 +97,12 @@
                     app:layout_constraintStart_toStartOf="parent"
                     android:id="@+id/phone_number_text"
                     app:layout_constraintTop_toBottomOf="@id/your_phone_text"
-                    app:layout_constraintBottom_toBottomOf="@id/edit_phone_text"
+                    app:layout_constraintBottom_toBottomOf="@id/etlPhone"
                     android:textSize="@dimen/medium_text_size"
                     android:text="@string/phone_number"/>
 
                 <com.hbb20.CountryCodePicker
-                    android:id="@+id/country_code_drop_down"
+                    android:id="@+id/cpPhone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:layout_constraintStart_toStartOf="parent"
@@ -112,8 +112,8 @@
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:id="@+id/edit_phone_text"
-                    app:layout_constraintStart_toEndOf="@id/country_code_drop_down"
+                    android:id="@+id/etlPhone"
+                    app:layout_constraintStart_toEndOf="@id/cpPhone"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -122,6 +122,7 @@
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
+                        android:id="@+id/etPhone"
                         android:layout_height="wrap_content"
                         android:inputType="numberDecimal"/>
 
@@ -132,7 +133,7 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintStart_toStartOf="parent"
                     android:id="@+id/otp_text"
-                    app:layout_constraintTop_toBottomOf="@id/edit_phone_text"
+                    app:layout_constraintTop_toBottomOf="@id/etlPhone"
                     android:layout_marginTop="@dimen/common_margin_size"
                     android:text="@string/a_6_digit_otp_will_be_sent_via_sms_to_verify_your_mobile_number"/>
 
@@ -156,7 +157,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/continue_with_mobile_number_button"
+                android:id="@+id/btnContinue"
                 android:background="@color/theme"
                 android:text="@string/continue_"
                 android:textColor="@color/white"
