@@ -15,7 +15,7 @@
             android:layout_width="200dp"
             android:layout_height="250dp"
             android:background="#00ffffff"
-            android:padding="16dp"
+            android:padding="@dimen/common_padding_size"
             android:paddingBottom="25dp"
             app:cardCornerRadius="20dp"
             android:id="@+id/face_image"
@@ -29,6 +29,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="fitXY"
+                android:contentDescription="@string/face_to_recognise_mood"
                 android:src="@drawable/album_cover" />
 
         </com.google.android.material.card.MaterialCardView>
@@ -41,6 +42,7 @@
             android:background="#00ffffff"
             android:src="@drawable/proceed_icon"
             android:layout_marginTop="20dp"
+            android:contentDescription="@string/proceed_button"
             app:layout_constraintTop_toBottomOf="@id/face_image"
             app:layout_constraintEnd_toStartOf="@id/retake"
             app:layout_constraintStart_toStartOf="parent" />
@@ -52,6 +54,7 @@
             android:background="#00ffffff"
             android:src="@drawable/retake_icon"
             android:layout_marginTop="20dp"
+            android:contentDescription="@string/retake_button"
             app:layout_constraintTop_toBottomOf="@id/face_image"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/proceed" />
@@ -60,7 +63,7 @@
             android:id="@+id/proceed_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Proceed"
+            android:text="@string/proceed"
             android:textSize="14sp"
             android:textColor="@color/black"
             app:layout_constraintTop_toBottomOf="@id/proceed"
@@ -71,7 +74,7 @@
             android:id="@+id/retake_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Retake"
+            android:text="@string/retake"
             android:textSize="14sp"
             android:textColor="@color/black"
             app:layout_constraintTop_toBottomOf="@id/retake"
