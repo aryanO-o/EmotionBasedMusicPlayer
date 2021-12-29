@@ -16,8 +16,14 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
+
+import androidx.recyclerview.widget.RecyclerView
+
 import androidx.navigation.fragment.findNavController
+
 import com.example.emotionbasedmusic.R
+import com.example.emotionbasedmusic.adapter.emojiAdapter
+import com.example.emotionbasedmusic.dataSource.emojiData
 import com.example.emotionbasedmusic.databinding.FragmentFaceProceedOrRetakeBinding
 import com.example.emotionbasedmusic.databinding.FragmentMoodRecognitionBinding
 import com.example.emotionbasedmusic.helper.Constants
@@ -47,10 +53,18 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentMoodRecognitionBinding.inflate(inflater)
+
+
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
+        val emojiDataSet = emojiData().loadEmoji();
+        val emojiRecyclerView = view?.findViewById<RecyclerView>(R.id.emoji_recycler_view)
+        emojiRecyclerView?.adapter = emojiAdapter(this.requireContext(), emojiDataSet);
+
         initToolbar()
         initData()
         binding.apply {
@@ -91,6 +105,7 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
 
     private fun toCheckFragment() {
         findNavController().navigate(R.id.action_moodRecognitionFragment_to_checkFragment)
+
     }
 
     override fun onClick(p0: View?) {
