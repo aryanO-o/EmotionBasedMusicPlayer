@@ -6,7 +6,7 @@ import com.example.emotionbasedmusic.model.emojiDataModel
 class emojiData {
 
     fun loadEmoji(): List<emojiDataModel>{
-        return listOf<emojiDataModel>(
+        return listOf(
             emojiDataModel(R.drawable.cool_emoji, "happy"),
             emojiDataModel(R.drawable.cool_emoji, "sad"),
             emojiDataModel(R.drawable.cool_emoji, "gratitude"),
@@ -16,7 +16,6 @@ class emojiData {
             emojiDataModel(R.drawable.cool_emoji, "happy"),
             emojiDataModel(R.drawable.cool_emoji, "sad"),
             emojiDataModel(R.drawable.cool_emoji, "gratitude")
-
         )
     }
 }

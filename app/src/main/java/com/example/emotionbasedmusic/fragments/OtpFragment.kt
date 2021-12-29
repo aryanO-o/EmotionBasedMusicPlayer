@@ -91,7 +91,7 @@ class OtpFragment : Fragment(), View.OnClickListener {
     }
 
     private fun toFaceScanFragment() {
-        findNavController().navigate(R.id.action_otpFragment_to_faceScanFragment)
+        findNavController().navigate(R.id.action_otpFragment_to_moodRecognitionFragment)
     }
 
     private fun callDialog() {

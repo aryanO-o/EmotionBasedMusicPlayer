@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/signUpFragment">
+    app:startDestination="@id/checkFragment">
 
     <fragment
         android:id="@+id/signUpFragment"
@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_signUpFragment_to_phoneFragment"
             app:destination="@id/phoneFragment" />
+        <action
+            android:id="@+id/action_signUpFragment_to_moodRecognitionFragment"
+            app:destination="@id/moodRecognitionFragment" />
     </fragment>
     <fragment
         android:id="@+id/phoneFragment"
@@ -32,14 +35,9 @@
             android:name="phone"
             app:argType="string" />
         <action
-            android:id="@+id/action_otpFragment_to_faceScanFragment"
-            app:destination="@id/faceScanFragment" />
+            android:id="@+id/action_otpFragment_to_moodRecognitionFragment"
+            app:destination="@id/moodRecognitionFragment" />
     </fragment>
-    <fragment
-        android:id="@+id/faceScanFragment"
-        android:name="com.example.emotionbasedmusic.fragments.FaceScanFragment"
-        android:label="fragment_face_scan"
-        tools:layout="@layout/fragment_face_scan" />
     <fragment
         android:id="@+id/checkFragment"
         android:name="com.example.emotionbasedmusic.fragments.CheckFragment"
@@ -48,7 +46,36 @@
             android:id="@+id/action_checkFragment_to_signUpFragment"
             app:destination="@id/signUpFragment" />
         <action
-            android:id="@+id/action_checkFragment_to_faceScanFragment"
-            app:destination="@id/faceScanFragment" />
+            android:id="@+id/action_checkFragment_to_moodRecognitionFragment"
+            app:destination="@id/moodRecognitionFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/moodRecognitionFragment"
+        android:name="com.example.emotionbasedmusic.fragments.MoodRecognitionFragment"
+        android:label="fragment_mood_recognition"
+        tools:layout="@layout/fragment_mood_recognition" >
+        <action
+            android:id="@+id/action_moodRecognitionFragment_to_checkFragment"
+            app:destination="@id/checkFragment" />
+        <action
+            android:id="@+id/action_moodRecognitionFragment_to_faceProceedOrRetakeFragment"
+            app:destination="@id/faceProceedOrRetakeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/faceProceedOrRetakeFragment"
+        android:name="com.example.emotionbasedmusic.fragments.FaceProceedOrRetakeFragment"
+        android:label="fragment_face_proceed_or_retake"
+        tools:layout="@layout/fragment_face_proceed_or_retake" >
+        <argument
+            android:name="uri"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="isFromGallery"
+            app:argType="boolean" />
+        <argument
+            android:name="bitmap"
+            app:argType="android.graphics.Bitmap"
+            app:nullable="true" />
     </fragment>
 </navigation>
