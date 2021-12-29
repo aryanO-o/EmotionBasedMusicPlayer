@@ -3,20 +3,33 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/EmotionBasedMusicPlayer_final/app/src/main/res/drawable/edit_back.xml" value="0.225" />
-        <entry key="..\:/EmotionBasedMusicPlayer_final/app/src/main/res/layout-v26/login_via_mobile_fragment.xml" value="0.25" />
-        <entry key="..\:/EmotionBasedMusicPlayer_final/app/src/main/res/layout/activity_main.xml" value="0.25" />
-        <entry key="..\:/EmotionBasedMusicPlayer_final/app/src/main/res/layout/fragment_check.xml" value="0.25" />
-        <entry key="..\:/EmotionBasedMusicPlayer_final/app/src/main/res/layout/fragment_face_scan.xml" value="0.25" />
-        <entry key="..\:/EmotionBasedMusicPlayer_final/app/src/main/res/layout/fragment_otp.xml" value="0.25" />
-        <entry key="..\:/EmotionBasedMusicPlayer_final/app/src/main/res/layout/fragment_phone.xml" value="0.25" />
-        <entry key="..\:/EmotionBasedMusicPlayer_final/app/src/main/res/layout/fragment_sign_up.xml" value="0.25" />
-        <entry key="..\:/EmotionBasedMusicPlayer_final/app/src/main/res/layout/login_via_mobile_fragment.xml" value="0.18703703703703703" />
-        <entry key="..\:/EmotionBasedMusicPlayer_final/app/src/main/res/layout/sign_up_fragment.xml" value="0.25" />
+        <entry key="..\:/EmotionBasedMusicPlayer/app/src/main/res/drawable/background_button.xml" value="0.26615384615384613" />
+        <entry key="..\:/EmotionBasedMusicPlayer/app/src/main/res/drawable/gradient_for_media_player.xml" value="0.14270833333333333" />
+        <entry key="..\:/EmotionBasedMusicPlayer/app/src/main/res/drawable/gradient_for_music_grid.xml" value="0.20038610038610039" />
+        <entry key="..\:/EmotionBasedMusicPlayer/app/src/main/res/drawable/play_arrow_black.xml" value="0.20038610038610039" />
+        <entry key="..\:/EmotionBasedMusicPlayer/app/src/main/res/drawable/proceed_icon.xml" value="0.26615384615384613" />
+        <entry key="..\:/EmotionBasedMusicPlayer/app/src/main/res/drawable/retake_icon.xml" value="0.26615384615384613" />
+        <entry key="..\:/EmotionBasedMusicPlayer/app/src/main/res/drawable/select_image_icon.xml" value="0.20038610038610039" />
+        <entry key="..\:/EmotionBasedMusicPlayer/app/src/main/res/layout-sw600dp/music_list_item_grid.xml" value="0.23828125" />
+        <entry key="..\:/EmotionBasedMusicPlayer/app/src/main/res/layout/emoji_list_item.xml" value="0.190625" />
+        <entry key="..\:/EmotionBasedMusicPlayer/app/src/main/res/layout/fragment_check.xml" value="0.190625" />
+        <entry key="..\:/EmotionBasedMusicPlayer/app/src/main/res/layout/fragment_face_proceed_or_retake.xml" value="0.2" />
+        <entry key="..\:/EmotionBasedMusicPlayer/app/src/main/res/layout/fragment_face_recognition.xml" value="0.190625" />
+        <entry key="..\:/EmotionBasedMusicPlayer/app/src/main/res/layout/fragment_face_scan.xml" value="0.25416666666666665" />
+        <entry key="..\:/EmotionBasedMusicPlayer/app/src/main/res/layout/fragment_mood_recognition.xml" value="0.1" />
+        <entry key="..\:/EmotionBasedMusicPlayer/app/src/main/res/layout/fragment_music.xml" value="0.176" />
+        <entry key="..\:/EmotionBasedMusicPlayer/app/src/main/res/layout/fragment_otp.xml" value="0.190625" />
+        <entry key="..\:/EmotionBasedMusicPlayer/app/src/main/res/layout/fragment_phone.xml" value="0.25416666666666665" />
+        <entry key="..\:/EmotionBasedMusicPlayer/app/src/main/res/layout/login_via_mobile_fragment.xml" value="0.264" />
+        <entry key="..\:/EmotionBasedMusicPlayer/app/src/main/res/layout/music_list_item_grid.xml" value="0.2" />
+        <entry key="..\:/EmotionBasedMusicPlayer/app/src/main/res/layout/sign_up_fragment.xml" value="0.25416666666666665" />
+        <entry key="..\:/EmotionBasedMusicPlayer/app/src/main/res/layout/sign_up_options.xml" value="0.25416666666666665" />
+        <entry key="..\:/EmotionBasedMusicPlayer/app/src/main/res/layout/songs_list.xml" value="0.190625" />
+        <entry key="..\:/EmotionBasedMusicPlayer/app/src/main/res/layout/try_phone_numbers.xml" value="0.25416666666666665" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

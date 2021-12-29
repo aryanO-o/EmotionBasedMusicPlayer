@@ -6,7 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import androidx.recyclerview.widget.RecyclerView
 import com.example.emotionbasedmusic.R
+import com.example.emotionbasedmusic.adapter.emojiAdapter
+import com.example.emotionbasedmusic.dataSource.emojiData
 import com.example.emotionbasedmusic.databinding.FragmentFaceProceedOrRetakeBinding
 import com.example.emotionbasedmusic.databinding.FragmentMoodRecognitionBinding
 import com.example.emotionbasedmusic.viewModel.MusicViewModel
@@ -22,10 +25,15 @@ class MoodRecognitionFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentMoodRecognitionBinding.inflate(inflater)
+
+
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
+        val emojiDataSet = emojiData().loadEmoji();
+        val emojiRecyclerView = view?.findViewById<RecyclerView>(R.id.emoji_recycler_view)
+        emojiRecyclerView?.adapter = emojiAdapter(this.requireContext(), emojiDataSet);
     }
 }
