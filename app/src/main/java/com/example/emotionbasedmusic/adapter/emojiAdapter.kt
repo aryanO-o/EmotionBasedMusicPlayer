@@ -16,7 +16,7 @@ class emojiAdapter (
 ) : RecyclerView.Adapter<emojiAdapter.emojiViewHolder>() {
 
 
-    class emojiViewHolder(private val view: View): RecyclerView.ViewHolder(view)
+    class emojiViewHolder(view: View): RecyclerView.ViewHolder(view)
     {
         val emojiImageView: ImageView = view.findViewById(R.id.emoji_image)
         val emojiTextView: TextView = view.findViewById(R.id.emoji_text)

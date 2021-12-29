@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#E3E3E3"
-        android:padding="@dimen/common_padding_size"
+        android:padding="15dp"
         xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
@@ -123,6 +123,7 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
                         android:id="@+id/etPhone"
+                        android:maxLength="10"
                         android:layout_height="wrap_content"
                         android:inputType="numberDecimal"/>
 
@@ -147,6 +148,7 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="200dp"
             android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/theme_color"
             app:cardCornerRadius="28dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -158,9 +160,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/btnContinue"
-                android:background="@color/theme"
-                android:text="@string/continue_"
+                android:fontFamily="@font/spartanreg"
                 android:textColor="@color/white"
+                android:text="@string/continue_"
                 android:textSize="@dimen/medium_text_size"
                 android:gravity="center_horizontal"
                 android:padding="16dp"/>

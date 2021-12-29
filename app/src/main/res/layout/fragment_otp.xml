@@ -156,7 +156,7 @@
         app:layout_constraintTop_toBottomOf="@id/ll"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:backgroundTint="#FF4DA0"
+        app:backgroundTint="@color/theme_color"
         app:cornerRadius="27dp" />
 
 
