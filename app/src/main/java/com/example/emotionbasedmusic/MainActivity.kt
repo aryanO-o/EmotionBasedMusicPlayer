@@ -22,11 +22,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if(navController.currentDestination!!.label == Constants.FRAGMENT_FACE_SCAN) {
-            finish()
-        }
-        else {
-            super.onBackPressed()
+        when (navController.currentDestination!!.label) {
+            Constants.FRAGMENT_MOOD_RECOGNITION -> {
+                finish()
+            }
+            Constants.SIGN_UP_FRAGMENT -> {
+                finish()
+            }
+            else -> {
+                super.onBackPressed()
+            }
         }
     }
 }

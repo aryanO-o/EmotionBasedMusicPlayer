@@ -4,7 +4,7 @@
     <string name="phone_number">Phone Number</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="web_client_id"> </string>
+    <string name="web_client_id">866756795982-havtme3a12r0cr30hgrk1paqffkc3490.apps.googleusercontent.com</string>
     <string name="continue_">Continue</string>
     <string name="a_6_digit_otp_will_be_sent_via_sms_to_verify_your_mobile_number">A 6 digit OTP will be sent via SMS to verify your mobile number.</string>
     <string name="enter_phone_number">Enter phone number</string>
@@ -25,8 +25,6 @@
     <string name="resend_new_code">RESEND NEW CODE</string>
     <string name="verify">Verify</string>
     <string name="welcome">Welcome</string>
-    <string name="song_name">Song Name</string>
-    <string name="unknown">unknown</string>
     <string name="sample_playing_time">2:00 / 3:59</string>
     <string name="album_cover">Album Cover</string>
     <string name="previous_song_button">Previous Song Button</string>
@@ -37,12 +35,21 @@
     <string name="emoji_image">Emoji Image</string>
     <string name="emoji_mood_text">Emoji Mood Text</string>
     <string name="select_image_image">Select Image Image</string>
-    <string name="select_image">Select Image</string>
     <string name="chose_from_emojis">Chose From Emojis</string>
     <string name="face_to_recognise_mood">Face to recognise mood</string>
     <string name="proceed_button">Proceed Button</string>
     <string name="retake_button">Retake Button</string>
+    <string name="select_image">Select Image</string>
+    <string name="choose_from_emojis">Choose from emojis</string>
     <string name="proceed">Proceed</string>
     <string name="retake">Retake</string>
+    <string name="song_name">Song Name</string>
+    <string name="unknown">Unknown</string>
+    <string name="playing_time">playing time</string>
     <string name="artist_name">Artist Name</string>
+    <string name="sign_out">Sign out</string>
+    <string name="select_image_source">Select image source</string>
+    <string name="camera">Camera</string>
+    <string name="gallery">Gallery</string>
+    
 </resources>
