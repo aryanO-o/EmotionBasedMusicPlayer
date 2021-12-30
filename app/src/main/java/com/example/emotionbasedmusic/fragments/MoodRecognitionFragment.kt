@@ -17,6 +17,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.emotionbasedmusic.R
 import com.example.emotionbasedmusic.adapter.emojiAdapter
@@ -68,6 +69,7 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
         val emojiDataSet = emojiData().loadEmoji();
         val emojiRecyclerView = view?.findViewById<RecyclerView>(R.id.emoji_recycler_view)
         emojiRecyclerView?.adapter = emojiAdapter(this.requireContext(), emojiDataSet);
+        emojiRecyclerView?.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
     }
 
     private fun initData() {
