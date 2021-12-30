@@ -57,6 +57,7 @@
         <entry key="..\:/EmotionBasedMusicPlayer_final/app/src/main/res/layout/toolbar.xml" value="0.25" />
         <entry key="..\:/EmotionBasedMusicPlayer_final/app/src/main/res/menu/options_menu.xml" value="0.2101851851851852" />
         <entry key="..\:/android dev/NewEmotionalMusicPlayer2/app/src/main/res/drawable/ic_baseline_photo_camera_24.xml" value="0.2703125" />
+        <entry key="..\:/android dev/NewEmotionalMusicPlayer2/app/src/main/res/drawable/ic_baseline_photo_camera_24_1.xml" value="0.2703125" />
         <entry key="..\:/android dev/NewEmotionalMusicPlayer2/app/src/main/res/drawable/proceed_icon_2.xml" value="0.2703125" />
         <entry key="..\:/android dev/NewEmotionalMusicPlayer2/app/src/main/res/drawable/retake_icon.xml" value="0.2703125" />
         <entry key="..\:/android dev/NewEmotionalMusicPlayer2/app/src/main/res/drawable/select_image_icon.xml" value="0.1" />
@@ -73,6 +74,9 @@
         <entry key="..\:/android dev/NewEmotionalMusicPlayer2/app/src/main/res/layout/music_list_item_grid.xml" value="0.25416666666666665" />
         <entry key="..\:/android dev/NewEmotionalMusicPlayer2/app/src/main/res/layout/sign_up_fragment.xml" value="0.18333333333333332" />
         <entry key="..\:/android dev/NewEmotionalMusicPlayer2/app/src/main/res/layout/songs_list.xml" value="0.18333333333333332" />
+        <entry key="..\:/android dev/NewEmotionalMusicPlayer2/app/src/main/res/layout/toolbar.xml" value="0.25416666666666665" />
+        <entry key="..\:/android dev/NewEmotionalMusicPlayer2/app/src/main/res/menu-v26/options_menu.xml" value="0.25416666666666665" />
+        <entry key="..\:/android dev/NewEmotionalMusicPlayer2/app/src/main/res/menu/options_menu.xml" value="0.25416666666666665" />
       </map>
     </option>
   </component>

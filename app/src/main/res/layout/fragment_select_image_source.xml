@@ -50,7 +50,7 @@
             android:id="@+id/imageView8"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/ic_baseline_photo_camera_24"
+            android:src="@drawable/ic_baseline_photo_camera_24_1"
             app:layout_constraintVertical_chainStyle="packed"
             app:layout_constraintBottom_toTopOf="@+id/materialTextView4"
             app:layout_constraintEnd_toEndOf="parent"
