@@ -55,7 +55,7 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        //attaching adapter to horizonal emoji recycler view
+        //attaching adapter to horizonal emoji recycler view in mood recognition fragment
         val emojiDataSet = emojiData().loadEmoji();
         val emojiRecyclerView = view?.findViewById<RecyclerView>(R.id.emoji_recycler_view)
         emojiRecyclerView?.adapter = emojiAdapter(this.requireContext(), emojiDataSet);
