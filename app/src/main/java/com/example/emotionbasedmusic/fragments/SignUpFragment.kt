@@ -105,7 +105,7 @@ class SignUpFragment : Fragment(), View.OnClickListener {
             firebaseAuthWithGoogle(account)
         }
         catch (e: ApiException) {
-            Toast.makeText(requireContext(), "Failed", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), e.message, Toast.LENGTH_SHORT).show()
         }
     }
 

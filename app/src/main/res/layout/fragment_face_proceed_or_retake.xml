@@ -8,28 +8,28 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/blue_frame_with_clip">
+        android:layout_height="match_parent">
 
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/face_image"
             android:layout_width="200dp"
             android:layout_height="250dp"
             android:background="#00ffffff"
             android:padding="4dp"
             android:paddingBottom="25dp"
             app:cardCornerRadius="20dp"
-            android:id="@+id/face_image"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.37">
 
 
             <ImageView
+                android:id="@+id/ivFaceScan"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="fitXY"
-                android:id="@+id/ivFaceScan"
                 android:src="@drawable/album_cover" />
 
         </com.google.android.material.card.MaterialCardView>
@@ -40,7 +40,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:background="#00ffffff"
-            android:src="@drawable/proceed_icon"
+            android:src="@drawable/proceed_icon_2"
             android:layout_marginTop="20dp"
             app:layout_constraintTop_toBottomOf="@id/face_image"
             app:layout_constraintEnd_toStartOf="@id/btnRetake"
