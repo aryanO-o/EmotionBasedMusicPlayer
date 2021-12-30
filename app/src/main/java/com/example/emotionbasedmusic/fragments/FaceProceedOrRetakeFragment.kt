@@ -36,7 +36,6 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
         super.onCreate(savedInstanceState)
         imageUri = navArgs.uri
         boolean = navArgs.isFromGallery
-        bitmap = navArgs.bitmap
     }
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -57,7 +56,7 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
                 ivFaceScan.setImageURI(imageUri?.toUri())
             }
             else {
-                ivFaceScan.setImageBitmap(bitmap)
+                ivFaceScan.setImageBitmap(model.getBitmap())
             }
 
             btnProceed.setOnClickListener(this@FaceProceedOrRetakeFragment)
