@@ -73,9 +73,5 @@
         <argument
             android:name="isFromGallery"
             app:argType="boolean" />
-        <argument
-            android:name="bitmap"
-            app:argType="android.graphics.Bitmap"
-            app:nullable="true" />
     </fragment>
 </navigation>

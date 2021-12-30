@@ -17,6 +17,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.emotionbasedmusic.R
 import com.example.emotionbasedmusic.adapter.emojiAdapter
@@ -55,16 +56,20 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        //attaching adapter to horizonal emoji recycler view in mood recognition fragment
-        val emojiDataSet = emojiData().loadEmoji();
-        val emojiRecyclerView = view?.findViewById<RecyclerView>(R.id.emoji_recycler_view)
-        emojiRecyclerView?.adapter = emojiAdapter(this.requireContext(), emojiDataSet);
+        initRecyclerView()
 
         initToolbar()
         initData()
         binding.apply {
             btnAddImage.setOnClickListener(this@MoodRecognitionFragment)
         }
+    }
+
+    private fun initRecyclerView() {
+        val emojiDataSet = emojiData().loadEmoji();
+        val emojiRecyclerView = view?.findViewById<RecyclerView>(R.id.emoji_recycler_view)
+        emojiRecyclerView?.adapter = emojiAdapter(this.requireContext(), emojiDataSet);
+        emojiRecyclerView?.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
     }
 
     private fun initData() {
@@ -83,8 +88,10 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
             tbSignUp.tbCommon.makeVisible()
             tbSignUp.tbCommon.setOnMenuItemClickListener(object : Toolbar.OnMenuItemClickListener {
                 override fun onMenuItemClick(item: MenuItem?): Boolean {
-                    when(item?.itemId) {
-                        R.id.sign_out -> {signOut()}
+                    when (item?.itemId) {
+                        R.id.sign_out -> {
+                            signOut()
+                        }
                     }
                     return true
                 }
@@ -103,8 +110,10 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
     }
 
     override fun onClick(p0: View?) {
-        when(p0?.id) {
-            R.id.btnAddImage -> {showDialog()}
+        when (p0?.id) {
+            R.id.btnAddImage -> {
+                showDialog()
+            }
         }
     }
 
@@ -119,11 +128,18 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
     }
 
     private fun openCamera() {
-        if(ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                android.Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
             startCamera()
-        }
-        else {
-            ActivityCompat.requestPermissions(requireActivity(),arrayOf(android.Manifest.permission.CAMERA), Constants.CAMERA_PERMISSION_CODE)
+        } else {
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(android.Manifest.permission.CAMERA),
+                Constants.CAMERA_PERMISSION_CODE
+            )
         }
     }
 
@@ -132,16 +148,17 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
         galleryCall()
     }
 
-    private val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val data: Intent?  = result.data
-            if(data!=null) {
-                isFromGallery = true
-                toFaceProceedFragment(bitmap!!, data.data!!.toString(), isFromGallery)
-            }
+    private val launcher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data: Intent? = result.data
+                if (data != null) {
+                    isFromGallery = true
+                    toFaceProceedFragment(data.data!!.toString(), isFromGallery)
+                }
 
+            }
         }
-    }
 
     private fun startCamera() {
         val intent = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE)
@@ -152,8 +169,12 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
         dialog.dismissDialog()
     }
 
-    private fun toFaceProceedFragment(bitmap: Bitmap, uri: String?, boolean: Boolean) {
-        val action = MoodRecognitionFragmentDirections.actionMoodRecognitionFragmentToFaceProceedOrRetakeFragment(uri, boolean, bitmap)
+    private fun toFaceProceedFragment(uri: String?, boolean: Boolean) {
+        val action =
+            MoodRecognitionFragmentDirections.actionMoodRecognitionFragmentToFaceProceedOrRetakeFragment(
+                uri,
+                boolean,
+            )
         findNavController().navigate(action)
     }
 
@@ -165,10 +186,11 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if(requestCode == Constants.CAMERA_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+        if (requestCode == Constants.CAMERA_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             bitmap = data?.extras?.get("data") as Bitmap
+            model.setBitmap(bitmap!!)
             isFromGallery = false
-            toFaceProceedFragment(bitmap!!, null, isFromGallery)
+            toFaceProceedFragment(null, isFromGallery)
         }
     }
 
@@ -177,13 +199,14 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
-        if(requestCode==Constants.CAMERA_PERMISSION_CODE) {
-            if(grantResults[0]==PackageManager.PERMISSION_GRANTED && grantResults.size==1) {
-                Toast.makeText(requireContext(), "Camera permission granted", Toast.LENGTH_SHORT).show()
+        if (requestCode == Constants.CAMERA_PERMISSION_CODE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults.size == 1) {
+                Toast.makeText(requireContext(), "Camera permission granted", Toast.LENGTH_SHORT)
+                    .show()
                 startCamera()
-            }
-            else {
-                Toast.makeText(requireContext(), "Camera permission denied", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(requireContext(), "Camera permission denied", Toast.LENGTH_SHORT)
+                    .show()
             }
         }
     }
