@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/google_black_primary"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragments.FaceProceedOrRetakeFragment">
 
@@ -70,7 +71,7 @@
             android:layout_height="wrap_content"
             android:text="@string/proceed"
             android:textSize="14sp"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             app:layout_constraintTop_toBottomOf="@id/btnProceed"
             app:layout_constraintEnd_toEndOf="@id/btnProceed"
             app:layout_constraintStart_toStartOf="@id/btnProceed" />
@@ -81,7 +82,7 @@
             android:layout_height="wrap_content"
             android:text="@string/retake"
             android:textSize="14sp"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             app:layout_constraintTop_toBottomOf="@id/btnRetake"
             app:layout_constraintEnd_toEndOf="@id/btnRetake"
             app:layout_constraintStart_toStartOf="@id/btnRetake" />
