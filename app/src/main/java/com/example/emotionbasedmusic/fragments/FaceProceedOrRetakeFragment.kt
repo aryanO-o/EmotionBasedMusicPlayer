@@ -21,7 +21,20 @@ import com.example.emotionbasedmusic.databinding.FragmentFaceProceedOrRetakeBind
 import com.example.emotionbasedmusic.databinding.FragmentMusicBinding
 import com.example.emotionbasedmusic.helper.Constants
 import com.example.emotionbasedmusic.helper.Dialog
+import com.example.emotionbasedmusic.mlFace.FaceContourGraphic
+import com.example.emotionbasedmusic.mlFace.GraphicOverlay
 import com.example.emotionbasedmusic.viewModel.MusicViewModel
+import com.google.android.gms.tasks.OnFailureListener
+import com.google.android.gms.tasks.OnSuccessListener
+import com.google.firebase.ml.vision.FirebaseVision
+import com.google.firebase.ml.vision.common.FirebaseVisionImage
+import com.google.firebase.ml.vision.face.FirebaseVisionFace
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.face.Face
+import com.google.mlkit.vision.face.FaceDetection
+import com.google.mlkit.vision.face.FaceDetector
+import com.google.mlkit.vision.face.FaceDetectorOptions
+import java.io.IOException
 
 
 class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.IListener {
@@ -31,7 +44,10 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
     private var imageUri: String? = null
     private var boolean: Boolean = false
     private var bitmap: Bitmap? = null
+    private lateinit var mGraphicOverlay: GraphicOverlay
     private lateinit var dialog: Dialog
+    private lateinit var image: InputImage
+    private lateinit var img: FirebaseVisionImage
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         imageUri = navArgs.uri
@@ -62,6 +78,7 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
             btnProceed.setOnClickListener(this@FaceProceedOrRetakeFragment)
             btnRetake.setOnClickListener(this@FaceProceedOrRetakeFragment)
         }
+        mGraphicOverlay = binding.graphicOverlay
     }
 
     private val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -83,12 +100,47 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
     override fun onClick(p0: View?) {
         when(p0?.id) {
             R.id.btnRetake -> {showDialog()}
-            R.id.btnProceed -> {showToast()}
+            R.id.btnProceed -> {createFirebaseVisionImage()}
         }
     }
 
-    private fun showToast() {
-        Toast.makeText(requireContext(), "Will Proceed", Toast.LENGTH_SHORT).show()
+    private fun createFirebaseVisionImage() {
+        when(boolean) {
+            true -> {
+                try {
+                    img = FirebaseVisionImage.fromFilePath(requireContext(), imageUri!!.toUri())
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+            }
+            false -> {
+                img = FirebaseVisionImage.fromBitmap(model.getBitmap()!!)
+            }
+        }
+        val detector = FirebaseVision.getInstance().visionFaceDetector
+
+        detector.detectInImage(img)
+            .addOnSuccessListener { faces -> showResults(faces)}
+            .addOnFailureListener { e->
+                showToast(e.message.toString())
+            }
+    }
+
+    private fun showResults(faces: List<FirebaseVisionFace>) {
+        for(face in faces) {
+            if(faces.isEmpty()) {
+                val msg = "No Face Detected"
+                showToast(msg)
+            }
+            else {
+                val msg = "Smiling Probability: ${face.smilingProbability}"
+                showToast(msg)
+            }
+        }
+    }
+
+    private fun showToast(msg: String) {
+        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
     }
 
     override fun btnCamera() {
@@ -147,6 +199,45 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
             }
         }
     }
+
+    private fun runFaceContourDetection() {
+        image = when(boolean) {
+            true -> {
+                InputImage.fromFilePath(requireContext(), imageUri?.toUri()!!)
+            }
+            false -> {
+                InputImage.fromBitmap(model.getBitmap()!!, 0)
+            }
+        }
+        val options = FaceDetectorOptions.Builder()
+            .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
+            .setContourMode(FaceDetectorOptions.CONTOUR_MODE_ALL)
+            .build()
+        val detector: FaceDetector = FaceDetection.getClient(options)
+        detector.process(image)
+            .addOnSuccessListener { faces ->
+                processFaceContourDetectionResult(faces as List<Face>)
+            }
+            .addOnFailureListener { e -> // Task failed with an exception
+                e.printStackTrace()
+            }
+    }
+
+    private fun processFaceContourDetectionResult(faces: List<Face>) {
+        // Task completed successfully
+        if (faces.size == 0) {
+//            showToast("No face found")
+            return
+        }
+        mGraphicOverlay.clear()
+        for (i in faces.indices) {
+            val face: Face = faces[i]
+            val faceGraphic = FaceContourGraphic(mGraphicOverlay)
+            mGraphicOverlay.add(faceGraphic)
+            faceGraphic.updateFace(face)
+        }
+    }
+
 
 
 }
