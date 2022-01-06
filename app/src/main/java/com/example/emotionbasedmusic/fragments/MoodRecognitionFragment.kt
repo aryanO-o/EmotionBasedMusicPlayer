@@ -55,9 +55,7 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
         initRecyclerView()
-
         initToolbar()
         initData()
         binding.apply {

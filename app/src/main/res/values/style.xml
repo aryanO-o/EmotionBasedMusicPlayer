@@ -4,4 +4,8 @@
         parent="Widget.AppCompat.SeekBar">
         <item name="colorAccent">#0099FF</item>
     </style>
+    <style name="toolbar_emotion" parent="Widget.MaterialComponents.Toolbar">
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorOnSecondary">@color/white</item>
+    </style>
 </resources>
