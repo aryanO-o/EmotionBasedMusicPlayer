@@ -55,4 +55,8 @@
     <string name="artist_name">Artist Name</string>
     <string name="emoji_mood_text">Emoji Mood Text</string>
     <string name="choose_from_emojis">Choose From Emojis</string>
+    <string name="detecting_emotion">Detecting emotion...</string>
+    <string name="emotion_detected">Emotion Detected</string>
+    <string name="angry">Angry</string>
+    <string name="search_song_based_on_detected_emotion">Search songs based on detected emotion</string>
 </resources>

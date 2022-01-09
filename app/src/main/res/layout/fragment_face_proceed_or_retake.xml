@@ -9,7 +9,9 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:id="@+id/cl1">
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/face_image"
@@ -90,5 +92,40 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/cl2"
+        >
+        <include layout="@layout/progress_frame"
+            android:id="@+id/pfDetect"
+            />
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:id="@+id/detectingEmotion"
+            android:text="@string/detecting_emotion"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:fontFamily="@font/spartanreg"
+            android:layout_marginBottom="200dp"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:id="@+id/cl3"
+        >
+        <include layout="@layout/fragment_face_results"
+            android:id="@+id/faceResultFragment"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

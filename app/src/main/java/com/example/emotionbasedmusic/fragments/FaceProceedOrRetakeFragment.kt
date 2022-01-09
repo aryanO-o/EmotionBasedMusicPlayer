@@ -1,5 +1,6 @@
 package com.example.emotionbasedmusic.fragments
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -21,6 +22,8 @@ import com.example.emotionbasedmusic.databinding.FragmentFaceProceedOrRetakeBind
 import com.example.emotionbasedmusic.databinding.FragmentMusicBinding
 import com.example.emotionbasedmusic.helper.Constants
 import com.example.emotionbasedmusic.helper.Dialog
+import com.example.emotionbasedmusic.helper.makeGone
+import com.example.emotionbasedmusic.helper.makeVisible
 import com.example.emotionbasedmusic.mlFace.FaceContourGraphic
 import com.example.emotionbasedmusic.mlFace.GraphicOverlay
 import com.example.emotionbasedmusic.viewModel.MusicViewModel
@@ -48,6 +51,7 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
     private lateinit var dialog: Dialog
     private lateinit var image: InputImage
     private lateinit var img: FirebaseVisionImage
+    private lateinit var testImage: InputImage
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         imageUri = navArgs.uri
@@ -77,6 +81,10 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
 
             btnProceed.setOnClickListener(this@FaceProceedOrRetakeFragment)
             btnRetake.setOnClickListener(this@FaceProceedOrRetakeFragment)
+            faceResultFragment.btnSearchSongs.setOnClickListener(this@FaceProceedOrRetakeFragment)
+            cl2.makeGone()
+            cl3.makeGone()
+            cl1.makeVisible()
         }
         mGraphicOverlay = binding.graphicOverlay
     }
@@ -100,8 +108,90 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
     override fun onClick(p0: View?) {
         when(p0?.id) {
             R.id.btnRetake -> {showDialog()}
-            R.id.btnProceed -> {createFirebaseVisionImage()}
+            R.id.btnProceed -> {detectFace()}
+            R.id.btnSearchSongs -> {showToast("Will proceed")}
         }
+    }
+
+    private fun detectFace() {
+        val highAccuracyOpts = FaceDetectorOptions.Builder()
+            .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE)
+            .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
+            .setContourMode(FaceDetectorOptions.CONTOUR_MODE_ALL)
+            .build()
+
+        when(boolean) {
+            true -> {
+                try {
+                    testImage = InputImage.fromFilePath(requireContext(), imageUri!!.toUri())
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+            }
+            false -> {
+                 testImage = InputImage.fromBitmap(model.getBitmap()!!, 0)
+            }
+        }
+
+        detect(testImage, highAccuracyOpts)
+
+    }
+
+    private fun detect(testImage: InputImage, highAccuracyOpts: FaceDetectorOptions) {
+        binding.apply {
+            cl1.makeGone()
+            cl2.makeVisible()
+            pfDetect.pFrame.makeVisible()
+            pfDetect.progressBarLayout.progressBar.makeVisible()
+        }
+        val detector = FaceDetection.getClient(highAccuracyOpts)
+
+        val result = detector.process(testImage)
+            .addOnSuccessListener { faces ->
+                facesInfo(faces)
+            }
+            .addOnFailureListener { e ->
+                binding.apply {
+                    cl1.makeVisible()
+                    cl2.makeGone()
+                    pfDetect.pFrame.makeGone()
+                    pfDetect.progressBarLayout.progressBar.makeGone()
+                }
+                showToast(e.message.toString())
+            }
+    }
+
+    private fun facesInfo(faces: List<Face>) {
+        binding.apply {
+            cl2.makeGone()
+            pfDetect.pFrame.makeGone()
+            pfDetect.progressBarLayout.progressBar.makeGone()
+            cl3.makeVisible()
+        }
+        analyzeFace(faces[0])
+
+    }
+
+    private fun analyzeFace(face: Face) {
+        val sProb = face.smilingProbability
+        if(sProb != null) {
+            if(sProb < 0.3.toFloat()) {
+                setEmotion(R.drawable.angry_face, "Angry")
+            }
+            else if(sProb in 0.3..0.8) {
+                setEmotion(R.drawable.neutral_face, "Neutral")
+            }
+            else if(sProb > 0.8 && sProb <=1) {
+                setEmotion(R.drawable.happy_face, "Happy")
+            }
+        }
+
+    }
+
+    @SuppressLint("UseCompatLoadingForDrawables")
+    private fun setEmotion(i: Int, mood: String) {
+        binding.faceResultFragment.detectedEmotion.setImageDrawable(resources.getDrawable(i))
+        binding.faceResultFragment.tvEmotion.text = mood
     }
 
     private fun createFirebaseVisionImage() {

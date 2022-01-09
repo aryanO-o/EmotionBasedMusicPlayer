@@ -41,6 +41,7 @@
         <entry key="..\:/EmotionBasedMusicPlayer_final/app/src/main/res/layout/fragment_check.xml" value="0.25" />
         <entry key="..\:/EmotionBasedMusicPlayer_final/app/src/main/res/layout/fragment_face_proceed_or_retake.xml" value="0.25" />
         <entry key="..\:/EmotionBasedMusicPlayer_final/app/src/main/res/layout/fragment_face_processing.xml" value="0.25" />
+        <entry key="..\:/EmotionBasedMusicPlayer_final/app/src/main/res/layout/fragment_face_results.xml" value="0.25" />
         <entry key="..\:/EmotionBasedMusicPlayer_final/app/src/main/res/layout/fragment_face_scan.xml" value="0.25" />
         <entry key="..\:/EmotionBasedMusicPlayer_final/app/src/main/res/layout/fragment_mood_recognition.xml" value="0.25" />
         <entry key="..\:/EmotionBasedMusicPlayer_final/app/src/main/res/layout/fragment_music.xml" value="0.25" />
@@ -82,7 +83,7 @@
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_15_PREVIEW" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_15" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">
