@@ -58,6 +58,8 @@
         android:backgroundTint="@color/black_90"
         android:textSize="15sp"
         android:textAllCaps="false"
+        app:strokeColor="@color/white"
+        app:strokeWidth="1dp"
         android:padding="12dp"
         android:fontFamily="@font/spartanreg"
         app:layout_constraintTop_toBottomOf="@id/tvEmotion"
