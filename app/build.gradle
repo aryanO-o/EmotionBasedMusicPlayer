@@ -63,4 +63,7 @@ dependencies {
     // don't require this additional model):
     implementation 'com.google.firebase:firebase-ml-vision-face-model:20.0.1'
     implementation 'com.spotify.android:auth:1.2.6'
+
+    //for transitions
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.2.0'
 }
