@@ -59,4 +59,6 @@
     <string name="emotion_detected">Emotion Detected</string>
     <string name="angry">Angry</string>
     <string name="search_song_based_on_detected_emotion">Search songs based on detected emotion</string>
+    <string name="no_face_detected">No Face Detected</string>
+    <string name="home">Home</string>
 </resources>

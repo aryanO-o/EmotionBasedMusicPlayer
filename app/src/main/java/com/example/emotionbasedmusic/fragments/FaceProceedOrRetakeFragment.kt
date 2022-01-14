@@ -16,6 +16,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.emotionbasedmusic.R
 import com.example.emotionbasedmusic.databinding.FragmentFaceProceedOrRetakeBinding
@@ -82,6 +83,7 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
             btnProceed.setOnClickListener(this@FaceProceedOrRetakeFragment)
             btnRetake.setOnClickListener(this@FaceProceedOrRetakeFragment)
             faceResultFragment.btnSearchSongs.setOnClickListener(this@FaceProceedOrRetakeFragment)
+            noFaceDetectedFragment.btnHome.setOnClickListener(this@FaceProceedOrRetakeFragment)
             cl2.makeGone()
             cl3.makeGone()
             cl1.makeVisible()
@@ -110,6 +112,9 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
             R.id.btnRetake -> {showDialog()}
             R.id.btnProceed -> {detectFace()}
             R.id.btnSearchSongs -> {showToast("Will proceed")}
+            R.id.btnHome -> {
+                findNavController().navigate(R.id.action_faceProceedOrRetakeFragment_to_moodRecognitionFragment)
+            }
         }
     }
 
@@ -162,13 +167,24 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
     }
 
     private fun facesInfo(faces: List<Face>) {
-        binding.apply {
-            cl2.makeGone()
-            pfDetect.pFrame.makeGone()
-            pfDetect.progressBarLayout.progressBar.makeGone()
-            cl3.makeVisible()
+        if(faces.isEmpty()) {
+            binding.apply {
+                cl2.makeGone()
+                pfDetect.pFrame.makeGone()
+                pfDetect.progressBarLayout.progressBar.makeGone()
+                cl4.makeVisible()
+            }
         }
-        analyzeFace(faces[0])
+        else {
+            binding.apply {
+                cl2.makeGone()
+                pfDetect.pFrame.makeGone()
+                pfDetect.progressBarLayout.progressBar.makeGone()
+                cl3.makeVisible()
+            }
+            analyzeFace(faces[0])
+        }
+
 
     }
 
@@ -176,16 +192,15 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
         val sProb = face.smilingProbability
         if(sProb != null) {
             if(sProb < 0.3.toFloat()) {
-                setEmotion(R.drawable.angry_face, "Angry")
+                setEmotion(R.drawable.sad_face, "Sad")
             }
-            else if(sProb in 0.3..0.8) {
+            else if(sProb in 0.3..0.7) {
                 setEmotion(R.drawable.neutral_face, "Neutral")
             }
-            else if(sProb > 0.8 && sProb <=1) {
+            else if(sProb > 0.7 && sProb <=1) {
                 setEmotion(R.drawable.happy_face, "Happy")
             }
         }
-
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")

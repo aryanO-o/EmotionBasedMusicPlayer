@@ -12,11 +12,12 @@
         android:id="@+id/tbSignUp"
         />
 
+
     <ImageView
         android:id="@+id/btnAddImage"
         android:layout_width="96dp"
         android:layout_height="96dp"
-        android:background="@color/black_90"
+        android:background="@drawable/img_view"
         android:scaleType="center"
         android:src="@drawable/ic_baseline_photo_camera_24"
         app:layout_constraintBottom_toBottomOf="@id/orTextView"

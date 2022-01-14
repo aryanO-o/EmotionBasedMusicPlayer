@@ -73,5 +73,10 @@
         <argument
             android:name="isFromGallery"
             app:argType="boolean" />
+        <action
+            android:id="@+id/action_faceProceedOrRetakeFragment_to_moodRecognitionFragment"
+            app:destination="@id/moodRecognitionFragment"
+            app:popUpTo="@id/moodRecognitionFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 </navigation>

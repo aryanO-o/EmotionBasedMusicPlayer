@@ -10,7 +10,6 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
         android:id="@+id/cl1">
 
         <com.google.android.material.card.MaterialCardView
@@ -98,6 +97,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/cl2"
+        android:visibility="gone"
         >
         <include layout="@layout/progress_frame"
             android:id="@+id/pfDetect"
@@ -127,5 +127,18 @@
             android:id="@+id/faceResultFragment"
             />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:id="@+id/cl4"
+        >
+        <include layout="@layout/no_face_detected"
+            android:id="@+id/noFaceDetectedFragment"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 </FrameLayout>

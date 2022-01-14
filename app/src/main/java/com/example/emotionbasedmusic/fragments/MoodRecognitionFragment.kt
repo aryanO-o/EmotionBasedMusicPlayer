@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -160,6 +161,11 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
 
     private fun startCamera() {
         val intent = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            intent.putExtra("android.intent.extras.LENS_FACING_FRONT", 1);
+        } else {
+            intent.putExtra("android.intent.extras.CAMERA_FACING", 1);
+        }
         startActivityForResult(intent, Constants.CAMERA_REQUEST_CODE)
     }
 
