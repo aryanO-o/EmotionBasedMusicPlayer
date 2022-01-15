@@ -36,7 +36,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 
 
-class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListener {
+class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListener, emojiAdapter.Ilistener {
     private lateinit var binding: FragmentMoodRecognitionBinding
     private val model: MusicViewModel by activityViewModels()
     private lateinit var database: FirebaseDatabase
@@ -67,7 +67,7 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
     private fun initRecyclerView() {
         val emojiDataSet = emojiData().loadEmoji();
         val emojiRecyclerView = view?.findViewById<RecyclerView>(R.id.emoji_recycler_view)
-        emojiRecyclerView?.adapter = emojiAdapter(this.requireContext(), emojiDataSet);
+        emojiRecyclerView?.adapter = emojiAdapter(this, emojiDataSet);
         emojiRecyclerView?.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
     }
 
@@ -213,6 +213,15 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
                     .show()
             }
         }
+    }
+
+    override fun onItemClick(mood: String) {
+        model.getSongs(mood)
+        toResultSongFragment()
+    }
+
+    private fun toResultSongFragment() {
+        findNavController().navigate(R.id.action_moodRecognitionFragment_to_resultSongsFragment)
     }
 
 }

@@ -8,5 +8,9 @@ class Constants {
         const val SIGN_UP_FRAGMENT = "sign_up_fragment"
         const val CAMERA_PERMISSION_CODE = 275
         const val CAMERA_REQUEST_CODE = 200
+        const val BASE_URL = "https://limitless-everglades-59097.herokuapp.com/"
+        const val HAPPY_MOOD = "Happy"
+        const val SAD_MOOD = "Sad"
+        const val NEUTRAL_MOOD = "Neutral"
     }
 }

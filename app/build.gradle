@@ -63,7 +63,9 @@ dependencies {
     // don't require this additional model):
     implementation 'com.google.firebase:firebase-ml-vision-face-model:20.0.1'
     implementation 'com.spotify.android:auth:1.2.6'
-
+    implementation 'com.squareup.moshi:moshi-kotlin:1.9.3'
+    implementation 'com.squareup.retrofit2:converter-moshi:2.9.0'
+    implementation 'com.squareup.picasso:picasso:2.71828'
     //for transitions
     implementation 'androidx.navigation:navigation-fragment-ktx:2.2.0'
 }

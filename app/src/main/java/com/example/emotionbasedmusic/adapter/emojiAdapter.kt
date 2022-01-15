@@ -8,14 +8,16 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.emotionbasedmusic.R
-import com.example.emotionbasedmusic.model.emojiDataModel
+import com.example.emotionbasedmusic.data.emojiDataModel
 
 class emojiAdapter (
-    private val context: Context,
+    private val listener: Ilistener,
     private val dataset: List<emojiDataModel>
 ) : RecyclerView.Adapter<emojiAdapter.emojiViewHolder>() {
 
-
+    interface Ilistener {
+        fun onItemClick(mood: String)
+    }
     class emojiViewHolder(view: View): RecyclerView.ViewHolder(view)
     {
         val emojiImageView: ImageView = view.findViewById(R.id.emoji_image)
@@ -32,6 +34,9 @@ class emojiAdapter (
         val item = dataset[position]
         holder.emojiImageView.setImageResource(item.emojiResourceId)
         holder.emojiTextView.text = item.emojiText
+        holder.itemView.setOnClickListener {
+            listener.onItemClick(item.emojiText)
+        }
     }
 
     override fun getItemCount(): Int {

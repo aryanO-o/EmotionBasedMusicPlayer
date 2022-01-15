@@ -52,7 +52,6 @@
     <string name="retake_button">Retake Button</string>
     <string name="proceed">Proceed</string>
     <string name="retake">Retake</string>
-    <string name="artist_name">Artist Name</string>
     <string name="emoji_mood_text">Emoji Mood Text</string>
     <string name="choose_from_emojis">Choose From Emojis</string>
     <string name="detecting_emotion">Detecting emotion...</string>
@@ -61,4 +60,8 @@
     <string name="search_song_based_on_detected_emotion">Search songs based on detected emotion</string>
     <string name="no_face_detected">No Face Detected</string>
     <string name="home">Home</string>
+    <string name="songs_based_on_detected_emotion">Songs based on detected emotion</string>
+    <string name="searching_songs">Searching songs..</string>
+    <string name="artist_name">Artist Name</string>
+    <string name="lorem">lorem dsd sdjjs hdshjdj  hjdhjd h djsh djshdjshdjshdjshdjshdjshdjshdjshdjshdjshdjshdjshdjshjdh</string>
 </resources>

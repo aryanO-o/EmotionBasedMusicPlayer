@@ -1,4 +1,4 @@
-package com.example.emotionbasedmusic.model
+package com.example.emotionbasedmusic.data
 
 import androidx.annotation.DrawableRes
 

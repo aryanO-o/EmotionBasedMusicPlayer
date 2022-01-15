@@ -52,6 +52,7 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
     private lateinit var dialog: Dialog
     private lateinit var image: InputImage
     private lateinit var img: FirebaseVisionImage
+    private var mood = ""
     private lateinit var testImage: InputImage
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -111,11 +112,18 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
         when(p0?.id) {
             R.id.btnRetake -> {showDialog()}
             R.id.btnProceed -> {detectFace()}
-            R.id.btnSearchSongs -> {showToast("Will proceed")}
+            R.id.btnSearchSongs -> {
+                model.getSongs(mood)
+                toResultSongFragment()
+            }
             R.id.btnHome -> {
                 findNavController().navigate(R.id.action_faceProceedOrRetakeFragment_to_moodRecognitionFragment)
             }
         }
+    }
+
+    private fun toResultSongFragment() {
+        findNavController().navigate(R.id.action_faceProceedOrRetakeFragment_to_resultSongsFragment)
     }
 
     private fun detectFace() {
@@ -193,12 +201,15 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
         if(sProb != null) {
             if(sProb < 0.3.toFloat()) {
                 setEmotion(R.drawable.sad_face, "Sad")
+                this.mood = Constants.SAD_MOOD
             }
             else if(sProb in 0.3..0.7) {
                 setEmotion(R.drawable.neutral_face, "Neutral")
+                this.mood = Constants.NEUTRAL_MOOD
             }
             else if(sProb > 0.7 && sProb <=1) {
                 setEmotion(R.drawable.happy_face, "Happy")
+                this.mood = Constants.HAPPY_MOOD
             }
         }
     }
