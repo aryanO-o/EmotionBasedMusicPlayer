@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="@dimen/common_padding_size"
+    android:background="@color/background_black"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="@dimen/common_padding_size"
+        android:id="@+id/profile_picture_layout"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/user_profile_photo"
+            android:layout_width="175dp"
+            android:layout_height="175dp"
+            android:layout_centerInParent="true"
+            android:scaleType="fitXY"
+            android:src="@drawable/person_icon"
+            app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
+            app:strokeColor="@color/white"
+            app:strokeWidth="1dp" />
+
+        <ImageButton
+            android:id="@+id/change_photo_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:layout_alignRight="@id/user_profile_photo"
+            android:layout_alignBottom="@id/user_profile_photo"
+            android:background="@drawable/profile_camera_background"
+            android:src="@drawable/profile_camera"
+            />
+
+    </RelativeLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/user_info_layout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/profile_picture_layout"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/common_padding_size"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:id="@+id/user_name_card">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/transparent"
+                android:id="@+id/name_icon"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:src="@drawable/person_icon"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#8a8a8a"
+                android:text="Name"
+                android:id="@+id/name_text"
+                app:layout_constraintStart_toEndOf="@id/name_icon"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginStart="@dimen/common_margin_size"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:text="User's Name"
+                android:textSize="16sp"
+                android:id="@+id/user_name_text"
+                app:layout_constraintStart_toEndOf="@id/name_icon"
+                android:layout_marginStart="@dimen/common_margin_size"
+                android:layout_marginTop="@dimen/smaller_common_margin"
+                app:layout_constraintTop_toBottomOf="@id/name_text"/>
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btn_name_edit"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:src="@drawable/edit_icon"
+                android:background="@color/transparent"
+                android:layout_margin="@dimen/common_margin_size"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/common_padding_size"
+            app:layout_constraintTop_toBottomOf="@id/user_name_card"
+            app:layout_constraintStart_toStartOf="parent"
+            android:id="@+id/user_email_card">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/transparent"
+                android:id="@+id/email_icon"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:src="@drawable/email_icon"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#8a8a8a"
+                android:text="Email"
+                android:id="@+id/email_text"
+                app:layout_constraintStart_toEndOf="@id/email_icon"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginStart="@dimen/common_margin_size"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:text="User's Email"
+                android:textSize="16sp"
+                android:id="@+id/user_email_text"
+                app:layout_constraintStart_toEndOf="@id/email_icon"
+                android:layout_marginStart="@dimen/common_margin_size"
+                android:layout_marginTop="@dimen/smaller_common_margin"
+                app:layout_constraintTop_toBottomOf="@id/email_text"/>
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btn_email_edit"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:src="@drawable/edit_icon"
+                android:background="@color/transparent"
+                android:layout_margin="@dimen/common_margin_size"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/common_padding_size"
+            app:layout_constraintTop_toBottomOf="@id/user_email_card"
+            app:layout_constraintStart_toStartOf="parent"
+            android:id="@+id/user_phone_card">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/transparent"
+                android:id="@+id/phone_icon"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:src="@drawable/phone_icon"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#8a8a8a"
+                android:text="Phone"
+                android:id="@+id/phone_text"
+                app:layout_constraintStart_toEndOf="@id/phone_icon"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginStart="@dimen/common_margin_size"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:text="User's Phone Number"
+                android:textSize="16sp"
+                android:id="@+id/user_phone_text"
+                app:layout_constraintStart_toEndOf="@id/phone_icon"
+                android:layout_marginStart="@dimen/common_margin_size"
+                android:layout_marginTop="@dimen/smaller_common_margin"
+                app:layout_constraintTop_toBottomOf="@id/phone_text"/>
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btn_phone_edit"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:src="@drawable/edit_icon"
+                android:background="@color/transparent"
+                android:layout_margin="@dimen/common_margin_size"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
