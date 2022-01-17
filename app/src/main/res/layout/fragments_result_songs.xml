@@ -8,6 +8,7 @@
     android:background="@color/google_black_primary"
     android:layout_height="wrap_content">
 
+
        <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -67,6 +68,13 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>
+
+
+    <include layout="@layout/fragment_network_error"
+        android:id="@+id/neResultSongs"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 
