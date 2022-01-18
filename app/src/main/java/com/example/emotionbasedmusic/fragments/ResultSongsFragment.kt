@@ -9,10 +9,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.emotionbasedmusic.R
 import com.example.emotionbasedmusic.adapter.MusicAdapter
+import com.example.emotionbasedmusic.data.Music
 import com.example.emotionbasedmusic.databinding.FragmentsResultSongsBinding
 import com.example.emotionbasedmusic.helper.makeGone
 import com.example.emotionbasedmusic.helper.makeVisible
@@ -20,10 +22,11 @@ import com.example.emotionbasedmusic.viewModel.MusicViewModel
 
 class ResultSongsFragment: Fragment(), MusicAdapter.IPost, MediaPlayer.OnPreparedListener, View.OnClickListener {
 
-
     private lateinit var adapter: MusicAdapter
     private val model: MusicViewModel by activityViewModels()
     private lateinit var mediaPlayer: MediaPlayer
+    private lateinit var song: Music
+    private var index: Int = -1
     companion object {
         lateinit var binding: FragmentsResultSongsBinding
     }
@@ -71,13 +74,12 @@ class ResultSongsFragment: Fragment(), MusicAdapter.IPost, MediaPlayer.OnPrepare
         }
     }
 
-    override fun onPlay(songUri: String) {
-        if(mediaPlayer.isPlaying) {
-            mediaPlayer.pause()
-            mediaPlayer.reset()
-        }
+    override fun onPlay(song: Music, position: Int) {
+        this.index = position
+        this.song = song
+        resetMediaPlayer()
         mediaPlayer.apply {
-            setDataSource(songUri)
+            setDataSource(song.songUrl)
             setOnPreparedListener(this@ResultSongsFragment)
             prepareAsync()
         }
@@ -85,9 +87,22 @@ class ResultSongsFragment: Fragment(), MusicAdapter.IPost, MediaPlayer.OnPrepare
 
     override fun onPauseMusic() {
         mediaPlayer.pause()
-        mediaPlayer.reset()
     }
 
+    private fun resetMediaPlayer() {
+        mediaPlayer.reset()
+    }
+    override fun onItemSongClick(song: Music) {
+        resetView()
+        model.setSong(song)
+        findNavController().navigate(R.id.action_resultSongsFragment_to_musicFragment)
+    }
+
+    private fun resetView() {
+        resetMediaPlayer()
+        this.song.playing = false
+        adapter.notifyItemChanged(index)
+    }
     override fun onPrepared(mediaPlayer: MediaPlayer?) {
         mediaPlayer!!.start()
     }

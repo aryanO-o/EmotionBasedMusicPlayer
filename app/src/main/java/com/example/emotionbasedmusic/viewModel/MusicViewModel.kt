@@ -17,7 +17,14 @@ class MusicViewModel: ViewModel() {
     private var bitmap: Bitmap? = null
     private lateinit var mood: String
     val musicData = MutableLiveData<List<Music>>()
+    private lateinit var song: Music
+    fun setSong(song: Music) {
+        this.song = song
+    }
 
+    fun getSong(): Music {
+        return song
+    }
     fun setBitmap(bitmap: Bitmap) {
         this.bitmap = bitmap
     }
