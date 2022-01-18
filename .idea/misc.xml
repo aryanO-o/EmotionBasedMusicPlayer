@@ -30,17 +30,20 @@
         <entry key="..\:/EmotionBasedMusicPlayer/app/src/main/res/layout/try_phone_numbers.xml" value="0.25416666666666665" />
         <entry key="..\:/EmotionBasedMusicPlayer_final/app/src/main/res/drawable/app_loader.xml" value="0.26205128205128203" />
         <entry key="..\:/EmotionBasedMusicPlayer_final/app/src/main/res/drawable/edit_back.xml" value="0.225" />
+        <entry key="..\:/EmotionBasedMusicPlayer_final/app/src/main/res/drawable/gradient_for_media_player.xml" value="0.26205128205128203" />
         <entry key="..\:/EmotionBasedMusicPlayer_final/app/src/main/res/drawable/ic_baseline_close_24.xml" value="0.26205128205128203" />
         <entry key="..\:/EmotionBasedMusicPlayer_final/app/src/main/res/drawable/ic_baseline_photo_camera_24.xml" value="0.26205128205128203" />
         <entry key="..\:/EmotionBasedMusicPlayer_final/app/src/main/res/drawable/ic_outline_photo.xml" value="0.26205128205128203" />
         <entry key="..\:/EmotionBasedMusicPlayer_final/app/src/main/res/drawable/img_view.xml" value="0.26205128205128203" />
         <entry key="..\:/EmotionBasedMusicPlayer_final/app/src/main/res/drawable/play_arrow_white.xml" value="0.26205128205128203" />
+        <entry key="..\:/EmotionBasedMusicPlayer_final/app/src/main/res/drawable/play_icon.xml" value="0.26205128205128203" />
         <entry key="..\:/EmotionBasedMusicPlayer_final/app/src/main/res/drawable/rect.xml" value="0.26205128205128203" />
         <entry key="..\:/EmotionBasedMusicPlayer_final/app/src/main/res/layout-sw600dp/fragment_mood_recognition.xml" value="0.1875" />
         <entry key="..\:/EmotionBasedMusicPlayer_final/app/src/main/res/layout-v26/login_via_mobile_fragment.xml" value="0.25" />
         <entry key="..\:/EmotionBasedMusicPlayer_final/app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="..\:/EmotionBasedMusicPlayer_final/app/src/main/res/layout/emoji_list_item.xml" value="0.21574074074074073" />
         <entry key="..\:/EmotionBasedMusicPlayer_final/app/src/main/res/layout/fragment_check.xml" value="0.25" />
+        <entry key="..\:/EmotionBasedMusicPlayer_final/app/src/main/res/layout/fragment_detail_music.xml" value="0.25" />
         <entry key="..\:/EmotionBasedMusicPlayer_final/app/src/main/res/layout/fragment_face_proceed_or_retake.xml" value="0.25" />
         <entry key="..\:/EmotionBasedMusicPlayer_final/app/src/main/res/layout/fragment_face_processing.xml" value="0.25" />
         <entry key="..\:/EmotionBasedMusicPlayer_final/app/src/main/res/layout/fragment_face_results.xml" value="0.25" />

@@ -22,8 +22,9 @@ class MusicAdapter(private val iPost: IPost, private val context: Context): List
     private var index : Int = -1
     private var songPlaying: Boolean = false
     interface IPost {
-        fun onPlay(songUri: String)
+        fun onPlay(song: Music, position: Int)
         fun onPauseMusic()
+        fun onItemSongClick(song: Music)
     }
 
     class MusicViewHolder(binding: MusicListItemViewBinding): RecyclerView.ViewHolder(binding.root) {
@@ -88,8 +89,11 @@ class MusicAdapter(private val iPost: IPost, private val context: Context): List
                     song.playing = true
                     notifyItemChanged(position)
                     index = position
-                    iPost.onPlay(song.songUrl)
+                    iPost.onPlay(song, position)
                 }
+            }
+            holder.itemView.setOnClickListener {
+                iPost.onItemSongClick(song)
             }
             Picasso.get().load(song.imgUrl).into(holder.img)
     }
