@@ -25,7 +25,7 @@ class ResultSongsFragment: Fragment(), MusicAdapter.IPost, MediaPlayer.OnPrepare
     private lateinit var adapter: MusicAdapter
     private val model: MusicViewModel by activityViewModels()
     private lateinit var mediaPlayer: MediaPlayer
-    private lateinit var song: Music
+    private  var song: Music? = null
     private var index: Int = -1
     companion object {
         lateinit var binding: FragmentsResultSongsBinding
@@ -100,7 +100,7 @@ class ResultSongsFragment: Fragment(), MusicAdapter.IPost, MediaPlayer.OnPrepare
 
     private fun resetView() {
         resetMediaPlayer()
-        this.song.playing = false
+        this.song?.playing = false
         adapter.notifyItemChanged(index)
     }
     override fun onPrepared(mediaPlayer: MediaPlayer?) {
