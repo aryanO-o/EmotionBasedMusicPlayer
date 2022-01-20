@@ -66,4 +66,8 @@
     <string name="lorem">lorem dsd sdjjs hdshjdj  hjdhjd h djsh djshdjshdjshdjshdjshdjshdjshdjshdjshdjshdjshdjshdjshjdh</string>
     <string name="network_error_check_your_network_connection">Network error \nCheck your internet connection</string>
     <string name="retry">Retry</string>
+    <string name="out_of_songs">No songs available</string>
+    <string name="_1_12">1:12</string>
+    <string name="_3_05">3:05</string>
+    <string name="tools_text">- -</string>
 </resources>

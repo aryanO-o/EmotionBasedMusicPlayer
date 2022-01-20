@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -87,6 +88,7 @@ class ResultSongsFragment: Fragment(), MusicAdapter.IPost, MediaPlayer.OnPrepare
 
     override fun onPauseMusic() {
         mediaPlayer.pause()
+        mediaPlayer.stop()
     }
 
     private fun resetMediaPlayer() {
