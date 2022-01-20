@@ -193,6 +193,7 @@
                 android:layout_width="match_parent"
                 android:progress="50"
                 android:theme="@style/SeekBarColor"
+                android:progressBackgroundTint="@color/white"
                 android:layout_height="wrap_content"/>
 
             <TextView
