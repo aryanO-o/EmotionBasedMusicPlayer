@@ -30,6 +30,7 @@
         <meta-data
             android:name="com.google.firebase.ml.vision.DEPENDENCIES"
             android:value="face" />
+        <service android:name=".services.MusicService"/>
     </application>
 
 </manifest>
