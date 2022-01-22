@@ -33,10 +33,10 @@ class PhoneFragment : Fragment() {
 
     private fun initData() {
         countryCodePicker = binding.cpPhone
-        countryCodePicker.registerCarrierNumberEditText(binding.etPhone)
+        countryCodePicker.registerCarrierNumberEditText(binding.etlPhone)
         binding.apply {
             btnContinue.setOnClickListener {
-                val phoneNumber = binding.etPhone.text.toString()
+                val phoneNumber = binding.etlPhone.text.toString()
                 if(phoneNumber.isEmpty()) {
                     Toast.makeText(requireContext(), R.string.enter_10, Toast.LENGTH_SHORT).show()
                 }

@@ -1,8 +1,10 @@
 package com.example.emotionbasedmusic.fragments
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.media.AudioAttributes
 import android.media.MediaPlayer
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -17,6 +19,7 @@ import androidx.lifecycle.MutableLiveData
 import com.example.emotionbasedmusic.R
 import com.example.emotionbasedmusic.data.Music
 import com.example.emotionbasedmusic.databinding.FragmentMusicBinding
+import com.example.emotionbasedmusic.services.MusicService
 import com.example.emotionbasedmusic.viewModel.MusicViewModel
 import com.squareup.picasso.Picasso
 import java.util.concurrent.TimeUnit
@@ -90,6 +93,7 @@ class MusicFragment : Fragment(), MediaPlayer.OnPreparedListener, View.OnClickLi
             tvArtist.text = song.artistName
             Picasso.get().load(song.imgUrl).into(ivSong)
         }
+        startMusicService()
         setUpMediaPlayer()
     }
 
@@ -107,6 +111,14 @@ class MusicFragment : Fragment(), MediaPlayer.OnPreparedListener, View.OnClickLi
             sBar.progress = startTime!!
         }
         handler.postDelayed(updateTime, 100)
+    }
+
+    private fun startMusicService() {
+        val intent = Intent(requireContext(), MusicService::class.java)
+        intent.putExtra("song", this.song)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            requireActivity().startForegroundService(intent)
+        }
     }
 
     private var updateTime = object : Runnable {

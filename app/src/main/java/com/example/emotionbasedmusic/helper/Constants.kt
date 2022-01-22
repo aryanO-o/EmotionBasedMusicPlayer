@@ -12,5 +12,7 @@ class Constants {
         const val HAPPY_MOOD = "Happy"
         const val SAD_MOOD = "Sad"
         const val NEUTRAL_MOOD = "Neutral"
+        const val NOTIFICATION_CHANNEL_ID = "EMOTION_BASED_MUSIC_ID"
+        const val NOTIFICATION_CHANNEL_NAME = "EMOTION_BASED_MUSIC"
     }
 }

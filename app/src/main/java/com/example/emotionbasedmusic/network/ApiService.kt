@@ -21,7 +21,6 @@ interface ApiService {
     @GET("sad_songs_data")
     suspend fun getSadSongs(): List<Music>
 
-
     @GET("neutral_songs_data")
     suspend fun getNeutralSongs(): List<Music>
 

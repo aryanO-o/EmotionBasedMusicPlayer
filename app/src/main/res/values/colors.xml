@@ -16,7 +16,7 @@
     <color name="background_black">#212121</color>
     <color name="theme_text">#ffffff</color>
     <color name="dark_green">#388E3C</color>
-
+    <color name="dark_grey">#212121</color>
 
     <color name="google_black_primary">#212121</color>
     <color name="google_black_primary_light">#484848</color>

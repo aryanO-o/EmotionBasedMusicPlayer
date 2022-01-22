@@ -39,7 +39,7 @@ class MusicViewModel: ViewModel() {
 
      fun getSongs(mood: String) {
          this.mood = mood
-        musicData.value = mutableListOf()
+         musicData.value = mutableListOf()
          viewModelScope.launch {
              try {
                  when (mood) {
@@ -57,7 +57,6 @@ class MusicViewModel: ViewModel() {
                  ResultSongsFragment.binding.neResultSongs.ne.makeVisible()
              }
          }
-
     }
 }
 

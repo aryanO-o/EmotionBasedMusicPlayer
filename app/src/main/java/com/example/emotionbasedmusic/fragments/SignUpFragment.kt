@@ -105,7 +105,8 @@ class SignUpFragment : Fragment(), View.OnClickListener {
             firebaseAuthWithGoogle(account)
         }
         catch (e: ApiException) {
-            Toast.makeText(requireContext(), e.message, Toast.LENGTH_SHORT).show()
+            progressFrameGone()
+            Toast.makeText(requireContext(),getString(R.string.error_msg), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -113,6 +114,7 @@ class SignUpFragment : Fragment(), View.OnClickListener {
         binding.apply {
             pfSignUp.pFrame.makeVisible()
             pfSignUp.progressBarLayout.progressBar.makeVisible()
+            tvPleaseWait.makeVisible()
         }
     }
 
@@ -120,6 +122,7 @@ class SignUpFragment : Fragment(), View.OnClickListener {
         binding.apply {
             pfSignUp.pFrame.makeGone()
             pfSignUp.progressBarLayout.progressBar.makeGone()
+            tvPleaseWait.makeGone()
         }
     }
 

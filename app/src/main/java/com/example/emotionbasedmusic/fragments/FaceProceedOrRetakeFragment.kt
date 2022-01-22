@@ -96,7 +96,8 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
         if (result.resultCode == Activity.RESULT_OK) {
             val data: Intent?  = result.data
             if(data!=null) {
-                binding.ivFaceScan.setImageURI(imageUri?.toUri())
+                binding.ivFaceScan.setImageURI(data.data)
+                this.imageUri = data.data.toString()
             }
 
         }
@@ -199,11 +200,11 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
     private fun analyzeFace(face: Face) {
         val sProb = face.smilingProbability
         if(sProb != null) {
-            if(sProb < 0.3.toFloat()) {
+            if(sProb < 0.15.toFloat()) {
                 setEmotion(R.drawable.sad_face, "Sad")
                 this.mood = Constants.SAD_MOOD
             }
-            else if(sProb in 0.3..0.7) {
+            else if(sProb in 0.15..0.7) {
                 setEmotion(R.drawable.neutral_face, "Neutral")
                 this.mood = Constants.NEUTRAL_MOOD
             }
@@ -292,6 +293,7 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
             bitmap = data?.extras?.get("data") as Bitmap
             binding.apply {
                 ivFaceScan.setImageBitmap(bitmap)
+                model.setBitmap(bitmap!!)
             }
         }
     }
