@@ -23,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:id="@+id/bottom_bar"
-        app:layout_constraintHeight_percent="0.125"
+        app:layout_constraintHeight_percent="0.124"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
