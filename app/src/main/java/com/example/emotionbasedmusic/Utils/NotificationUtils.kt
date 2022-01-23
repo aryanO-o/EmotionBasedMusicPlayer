@@ -25,7 +25,6 @@ fun createNotification(context: Context, song: Music): Helper {
     notificationLayout.setTextViewText(R.id.notification_artist_name, song.artistName)
     val notification = NotificationCompat.Builder(context, Constants.NOTIFICATION_CHANNEL_ID)
         .setSmallIcon(R.drawable.music_notes)
-        .setStyle(NotificationCompat.DecoratedCustomViewStyle())
         .setContentIntent(getIntent(context))
         .setCustomContentView(notificationLayout)
         .build()
