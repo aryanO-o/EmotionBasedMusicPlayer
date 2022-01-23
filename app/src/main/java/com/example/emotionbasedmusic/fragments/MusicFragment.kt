@@ -1,21 +1,25 @@
 package com.example.emotionbasedmusic.fragments
 
 import android.annotation.SuppressLint
+import android.app.NotificationManager
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import android.media.AudioAttributes
 import android.media.MediaPlayer
-import android.os.Build
-import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
+import android.os.*
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
 import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.MutableLiveData
+import com.example.emotionbasedmusic.MainActivity
 import com.example.emotionbasedmusic.R
 import com.example.emotionbasedmusic.data.Music
 import com.example.emotionbasedmusic.databinding.FragmentMusicBinding
@@ -24,19 +28,30 @@ import com.example.emotionbasedmusic.viewModel.MusicViewModel
 import com.squareup.picasso.Picasso
 import java.util.concurrent.TimeUnit
 
-class MusicFragment : Fragment(), MediaPlayer.OnPreparedListener, View.OnClickListener, SeekBar.OnSeekBarChangeListener {
-    private lateinit var binding: FragmentMusicBinding
+class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeListener, ServiceConnection {
+
     private val model: MusicViewModel by activityViewModels()
-    private lateinit var song: Music
+    private var song: Music? = null
     private lateinit var mediaPlayer: MediaPlayer
     private var startTime: Int? = 0
     private var endTime: Int? = 0
     private var start: String? = ""
     private var end: String? = ""
     private var runnable: Runnable? = null
+    private var intent: Intent? = null
+    private lateinit var connection: ServiceConnection
+    private var notificationManager: NotificationManager? = null
     private val handler = Handler(Looper.myLooper()!!)
     private var songsList: MutableLiveData<List<Music>> = MutableLiveData<List<Music>>()
     private var isLooping = false
+    private var key: Boolean? = true
+    private lateinit var service: MusicService
+    private var isBounded: Boolean? = false
+    companion object {
+        lateinit var binding: FragmentMusicBinding
+    }
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -46,7 +61,11 @@ class MusicFragment : Fragment(), MediaPlayer.OnPreparedListener, View.OnClickLi
         return binding.root
     }
 
+
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        key = model.key
+        notificationManager = requireActivity().getSystemService(NotificationManager::class.java) as NotificationManager
         binding.sBar.setOnSeekBarChangeListener(this)
         songsList.value = mutableListOf()
         model.musicData.observe(viewLifecycleOwner) {
@@ -62,6 +81,17 @@ class MusicFragment : Fragment(), MediaPlayer.OnPreparedListener, View.OnClickLi
         }
     }
 
+    private fun checkForService() {
+        bindToService()
+    }
+
+    private fun bindToService() {
+        Intent(requireContext(), MusicService::class.java).also {
+            requireActivity().bindService(it, this, Context.BIND_AUTO_CREATE)
+        }
+    }
+
+
     private fun initMediaPlayer() {
         mediaPlayer = MediaPlayer().apply {
             setAudioAttributes(
@@ -73,13 +103,7 @@ class MusicFragment : Fragment(), MediaPlayer.OnPreparedListener, View.OnClickLi
         }
     }
 
-    private fun setUpMediaPlayer() {
-        mediaPlayer.apply {
-            setDataSource(song.songUrl)
-            setOnPreparedListener(this@MusicFragment)
-            prepareAsync()
-        }
-    }
+
 
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun initView() {
@@ -89,54 +113,24 @@ class MusicFragment : Fragment(), MediaPlayer.OnPreparedListener, View.OnClickLi
             tvEndTime.text = getText(R.string.tools_text)
             sBar.progress=0
             btnPlay.setImageDrawable(resources.getDrawable(R.drawable.ic_baseline_pause_24_b))
-            tvSongName.text = song.songName
-            tvArtist.text = song.artistName
-            Picasso.get().load(song.imgUrl).into(ivSong)
+            tvSongName.text = song?.songName
+            tvArtist.text = song?.artistName
+            Picasso.get().load(song?.imgUrl).into(ivSong)
         }
         startMusicService()
-        setUpMediaPlayer()
     }
 
-
-    override fun onPrepared(mediaPlayer: MediaPlayer?) {
-        mediaPlayer!!.start()
-        startTime = mediaPlayer.currentPosition
-        endTime = mediaPlayer.duration
-        start = "${TimeUnit.MILLISECONDS.toMinutes(startTime!!.toLong())}:${TimeUnit.MILLISECONDS.toSeconds(startTime!!.toLong())-TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(startTime!!.toLong()))}"
-        end = "${TimeUnit.MILLISECONDS.toMinutes(endTime!!.toLong())}:${TimeUnit.MILLISECONDS.toSeconds(endTime!!.toLong())-TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(endTime!!.toLong()))}"
-        binding.apply {
-            sBar.max = endTime!!
-            tvStartTime.text = start
-            tvEndTime.text = end
-            sBar.progress = startTime!!
-        }
-        handler.postDelayed(updateTime, 100)
-    }
 
     private fun startMusicService() {
         val intent = Intent(requireContext(), MusicService::class.java)
+        this.intent = intent
         intent.putExtra("song", this.song)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            requireActivity().startForegroundService(intent)
-        }
-    }
-
-    private var updateTime = object : Runnable {
-        override fun run() {
-            startTime = mediaPlayer.currentPosition
-            start = "${TimeUnit.MILLISECONDS.toMinutes(startTime!!.toLong())}:${TimeUnit.MILLISECONDS.toSeconds(startTime!!.toLong())-TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(startTime!!.toLong()))}"
-            binding.apply {
-                tvStartTime.text = start
-                sBar.progress = startTime!!
-            }
-            this@MusicFragment.runnable = this
-            handler.postDelayed(this, 100)
-        }
+        ContextCompat.startForegroundService(requireContext(), intent)
+        bindToService()
     }
 
     private fun pauseMediaPlayer() {
-        mediaPlayer.pause()
-        runnable?.let { handler.removeCallbacks(it) }
+        service.pauseMediaPlayer()
     }
 
     override fun onDestroy() {
@@ -145,16 +139,22 @@ class MusicFragment : Fragment(), MediaPlayer.OnPreparedListener, View.OnClickLi
     }
 
     private fun destroyResources() {
-        mediaPlayer.pause()
-        mediaPlayer.reset()
-        runnable?.let { handler.removeCallbacks(it) }
+        service.resetMediaPlayer()
+        requireActivity().unbindService(this)
+        stopForegroundService()
     }
+
+    private fun stopForegroundService() {
+        intent?.let { requireActivity().stopService(it) }
+    }
+
+
 
     @SuppressLint("UseCompatLoadingForDrawables")
     override fun onClick(view: View?) {
         when(view?.id) {
             R.id.btnPlay -> {
-                when(mediaPlayer.isPlaying) {
+                when(MusicService.mediaPlayer.isPlaying) {
                     true -> {
                         pauseMediaPlayer()
                         binding.btnPlay.setImageDrawable(resources.getDrawable(R.drawable.play_icon))
@@ -169,12 +169,12 @@ class MusicFragment : Fragment(), MediaPlayer.OnPreparedListener, View.OnClickLi
                 if(isLooping) {
                     isLooping = false
                     binding.ibLoop.setImageDrawable(resources.getDrawable(R.drawable.repeat_icon))
-                    mediaPlayer.isLooping = isLooping
+                    setLooping(isLooping)
                 }
                 else {
                     isLooping = true
                     binding.ibLoop.setImageDrawable(resources.getDrawable(R.drawable.ic_baseline_repeat_24_b))
-                    mediaPlayer.isLooping = isLooping
+                    setLooping(isLooping)
                 }
             }
             R.id.btnNextSong -> {
@@ -183,6 +183,7 @@ class MusicFragment : Fragment(), MediaPlayer.OnPreparedListener, View.OnClickLi
                     if(indexOfCurrentSong!=songsList.value!!.size-1) {
                         val index = indexOfCurrentSong+1
                         model.setSong(songsList.value!![index])
+                        service.resetMediaPlayer()
                         destroyResources()
                         initView()
                     }
@@ -197,6 +198,7 @@ class MusicFragment : Fragment(), MediaPlayer.OnPreparedListener, View.OnClickLi
                     if(indexOfCurrentSong!=0) {
                         val index = indexOfCurrentSong-1
                         model.setSong(songsList.value!![index])
+                        service.resetMediaPlayer()
                         destroyResources()
                         initView()
                     }
@@ -208,9 +210,12 @@ class MusicFragment : Fragment(), MediaPlayer.OnPreparedListener, View.OnClickLi
         }
     }
 
+    private fun setLooping(looping: Boolean) {
+        service.setLooping(looping)
+    }
+
     private fun resumeMediaPlayer() {
-        mediaPlayer.start()
-        runnable?.let { handler.postDelayed(it, 100) }
+        service.resumeMediaPlayer()
     }
 
     override fun onProgressChanged(sb: SeekBar?, progress: Int, p2: Boolean) {
@@ -218,7 +223,7 @@ class MusicFragment : Fragment(), MediaPlayer.OnPreparedListener, View.OnClickLi
     }
 
     private fun seekTo(seekPosition: Int) {
-        mediaPlayer.seekTo(seekPosition)
+        service.seekTo(seekPosition)
     }
 
     override fun onStartTrackingTouch(sb: SeekBar?) {
@@ -228,6 +233,18 @@ class MusicFragment : Fragment(), MediaPlayer.OnPreparedListener, View.OnClickLi
     override fun onStopTrackingTouch(sb: SeekBar?) {
         val progress = sb?.progress
         seekTo(progress!!)
+    }
+
+    override fun onServiceConnected(p0: ComponentName?, service: IBinder?) {
+        val binder = service as MusicService.LocalBinder
+        this.service = binder.getService()
+        isBounded = true
+        this.service.setUI()
+    }
+
+
+    override fun onServiceDisconnected(p0: ComponentName?) {
+        isBounded = false
     }
 
 

@@ -48,6 +48,9 @@
         <action
             android:id="@+id/action_checkFragment_to_moodRecognitionFragment"
             app:destination="@id/moodRecognitionFragment" />
+        <action
+            android:id="@+id/action_checkFragment_to_musicFragment"
+            app:destination="@id/musicFragment" />
     </fragment>
     <fragment
         android:id="@+id/moodRecognitionFragment"
@@ -63,6 +66,9 @@
         <action
             android:id="@+id/action_moodRecognitionFragment_to_resultSongsFragment"
             app:destination="@id/resultSongsFragment" />
+        <action
+            android:id="@+id/action_moodRecognitionFragment_to_musicFragment"
+            app:destination="@id/musicFragment" />
     </fragment>
     <fragment
         android:id="@+id/faceProceedOrRetakeFragment"

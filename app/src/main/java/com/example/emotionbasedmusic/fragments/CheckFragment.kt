@@ -6,9 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.fragment.findNavController
+import com.example.emotionbasedmusic.MainActivity
 import com.example.emotionbasedmusic.R
 import com.example.emotionbasedmusic.databinding.FragmentCheckBinding
+import com.example.emotionbasedmusic.helper.Constants
+import com.example.emotionbasedmusic.viewModel.MusicViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -21,6 +27,9 @@ class CheckFragment: Fragment() {
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var auth: FirebaseAuth
     private lateinit var database: FirebaseDatabase
+    private var isFromNotification: Boolean? = false
+    private lateinit var navController: NavController
+    private val model: MusicViewModel by activityViewModels()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -30,18 +39,37 @@ class CheckFragment: Fragment() {
         return binding.root
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+            isFromNotification = (requireActivity() as MainActivity).isFromNotification
+            navController = (requireActivity() as MainActivity).navController
             initData()
             checkForUser()
     }
 
     private fun checkForUser() {
         if(auth.currentUser?.uid != null) {
-            toFaceScanFragment()
+            if(isFromNotification!= null) {
+                if(isFromNotification!!) {
+                    requireActivity().finish()
+                }
+                else {
+                    toFaceScanFragment()
+                }
+            }
+            else {
+                toFaceScanFragment()
+            }
         }
         else {
             toSignUpFragment()
         }
+    }
+
+    private fun toMusicFragment() {
+        model.key = false
+        val action = CheckFragmentDirections.actionCheckFragmentToMusicFragment()
+        findNavController().navigate(action)
     }
 
     private fun toSignUpFragment() {

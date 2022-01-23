@@ -191,7 +191,7 @@
 
             <SeekBar
                 android:layout_width="match_parent"
-                android:progress="10"
+                android:progress="0"
                 android:id="@+id/sBar"
                 android:theme="@style/SeekBarColor"
                 android:progressBackgroundTint="@color/white"
