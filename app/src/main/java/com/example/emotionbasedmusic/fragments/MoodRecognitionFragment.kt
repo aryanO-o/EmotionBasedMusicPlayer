@@ -64,6 +64,8 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
         }
     }
 
+
+
     private fun initRecyclerView() {
         val emojiDataSet = emojiData().loadEmoji();
         val emojiRecyclerView = view?.findViewById<RecyclerView>(R.id.emoji_recycler_view)

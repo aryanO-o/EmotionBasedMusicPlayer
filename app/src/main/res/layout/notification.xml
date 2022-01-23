@@ -1,55 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/white"
+    android:layout_height="98dp"
+    android:background="@color/background_black"
     android:padding="8dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <com.google.android.material.imageview.ShapeableImageView
+    <ImageView
         android:id="@+id/notification_album_image"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
-        android:src="@drawable/album_cover"
+        android:layout_width="58dp"
+        android:layout_height="58dp"
+        tools:src="@drawable/album_cover"
+        android:scaleType="fitXY"
+        android:layout_centerVertical="true"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
         app:strokeColor="@color/white"
         app:strokeWidth="1dp" />
 
-    <TextView
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/song_name"
+        android:orientation="vertical"
+        android:layout_centerVertical="true"
+        android:layout_alignEnd="@id/tvNowPlaying"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="55dp"
+        android:layout_toEndOf="@id/notification_album_image"
+        >
+
+        <TextView
+            android:id="@+id/app_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/spartanreg"
+            android:text="@string/app_name"
+            android:textColor="#8a8a8a"
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@id/notification_album_image"
+            app:layout_constraintTop_toTopOf="@id/notification_album_image" />
+
+        <TextView
+            android:id="@+id/notification_song_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="2"
+            android:fontFamily="@font/spartanreg"
+            android:text="@string/song_name"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:layout_marginTop="2dp"
+            app:layout_constraintStart_toEndOf="@id/notification_album_image"
+            app:layout_constraintTop_toTopOf="@id/notification_album_image" />
+
+        <TextView
+            android:id="@+id/notification_artist_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:fontFamily="@font/spartanextralight"
+            android:maxLines="2"
+            android:text="@string/artist_name"
+            android:textColor="@color/white"
+            android:textSize="9sp"
+            app:layout_constraintStart_toEndOf="@id/notification_album_image"
+            app:layout_constraintTop_toBottomOf="@id/notification_song_name"
+            tools:ignore="SmallSp" />
+
+
+
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/tvNowPlaying"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="@dimen/common_margin_size"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="7dp"
+        android:fontFamily="@font/spartanreg"
+        android:text="@string/now_playing"
+        android:textColor="#8a8a8a"
+        android:textSize="6sp"
         app:layout_constraintStart_toEndOf="@id/notification_album_image"
         app:layout_constraintTop_toTopOf="@id/notification_album_image"
-        android:textColor="@color/black"
-        android:textSize="18sp"
-        android:layout_marginStart="@dimen/common_margin_size"
-        android:id="@+id/notification_song_name"/>
+        tools:ignore="SmallSp" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/artist_name"
-        android:textSize="14sp"
-        android:layout_marginStart="@dimen/common_margin_size"
-        app:layout_constraintStart_toEndOf="@id/notification_album_image"
-        app:layout_constraintTop_toBottomOf="@id/notification_song_name"
-        android:id="@+id/notification_artist_name"/>
 
     <ImageButton
+        android:id="@+id/notification_play_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/notification_play_btn"
-        android:layout_margin="@dimen/common_margin_size"
-        android:background="@color/transparent"
-        android:src="@drawable/play_icon"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="@dimen/common_margin_size"
+        android:layout_marginTop="19dp"
+        android:layout_marginEnd="12dp"
+        android:visibility="invisible"
+        android:layout_marginBottom="@dimen/common_margin_size"
+        android:background="@color/background_black"
+        android:src="@drawable/ic_baseline_pause_24_white"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

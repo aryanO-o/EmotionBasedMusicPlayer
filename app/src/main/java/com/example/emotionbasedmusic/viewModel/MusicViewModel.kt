@@ -16,14 +16,19 @@ import kotlinx.coroutines.launch
 class MusicViewModel: ViewModel() {
     private var bitmap: Bitmap? = null
     private lateinit var mood: String
+    var key: Boolean? = true
     val musicData = MutableLiveData<List<Music>>()
-    private lateinit var song: Music
+    private var song: Music? = null
     fun setSong(song: Music) {
         this.song = song
     }
 
-    fun getSong(): Music {
-        return song
+    fun getSong(): Music? {
+        return if(song==null) {
+            null
+        } else {
+            song
+        }
     }
     fun setBitmap(bitmap: Bitmap) {
         this.bitmap = bitmap
