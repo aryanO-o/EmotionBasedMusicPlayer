@@ -37,13 +37,6 @@
         </com.google.android.material.card.MaterialCardView>
 
 
-        <com.example.emotionbasedmusic.mlFace.GraphicOverlay
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/graphic_overlay"
-            android:layout_alignParentStart="true"
-            />
-
         <ImageButton
             android:id="@+id/btnProceed"
             android:layout_width="50dp"

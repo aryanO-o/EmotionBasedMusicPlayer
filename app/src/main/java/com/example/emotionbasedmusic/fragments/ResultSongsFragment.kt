@@ -13,6 +13,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.emotionbasedmusic.MainActivity
 import com.example.emotionbasedmusic.R
 import com.example.emotionbasedmusic.adapter.MusicAdapter
 import com.example.emotionbasedmusic.data.Music
@@ -20,11 +21,14 @@ import com.example.emotionbasedmusic.databinding.FragmentsResultSongsBinding
 import com.example.emotionbasedmusic.helper.makeGone
 import com.example.emotionbasedmusic.helper.makeVisible
 import com.example.emotionbasedmusic.viewModel.MusicViewModel
+import com.example.emotionbasedmusic.viewModel.MusicViewModelFactory
 
 class ResultSongsFragment: Fragment(), MusicAdapter.IPost, MediaPlayer.OnPreparedListener, View.OnClickListener {
 
     private lateinit var adapter: MusicAdapter
-    private val model: MusicViewModel by activityViewModels()
+    private val model: MusicViewModel by activityViewModels {
+        MusicViewModelFactory(requireParentFragment())
+    }
     private lateinit var mediaPlayer: MediaPlayer
     private  var song: Music? = null
     private var index: Int = -1
@@ -43,7 +47,6 @@ class ResultSongsFragment: Fragment(), MusicAdapter.IPost, MediaPlayer.OnPrepare
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setUpRecyclerView()
         initView()
-        setUpMediaPlayer()
         binding.neResultSongs.btnRetry.setOnClickListener(this)
     }
 
@@ -66,7 +69,7 @@ class ResultSongsFragment: Fragment(), MusicAdapter.IPost, MediaPlayer.OnPrepare
 
     @SuppressLint("NotifyDataSetChanged")
     private fun setUpRecyclerView() {
-        adapter = MusicAdapter(this, requireContext())
+        adapter = MusicAdapter(this, requireContext(), true)
         binding.rvSongResult.adapter = adapter
         binding.rvSongResult.layoutManager = GridLayoutManager(requireContext(), 1)
         model.musicData.observe(viewLifecycleOwner) {
@@ -95,7 +98,7 @@ class ResultSongsFragment: Fragment(), MusicAdapter.IPost, MediaPlayer.OnPrepare
         mediaPlayer.reset()
     }
     override fun onItemSongClick(song: Music) {
-        resetView()
+        (requireActivity() as MainActivity).key = true
         model.setSong(song)
         findNavController().navigate(R.id.action_resultSongsFragment_to_musicFragment)
     }

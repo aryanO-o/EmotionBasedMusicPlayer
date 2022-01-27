@@ -17,6 +17,7 @@ import androidx.navigation.fragment.navArgs
 import com.example.emotionbasedmusic.R
 import com.example.emotionbasedmusic.databinding.FragmentOtpBinding
 import com.example.emotionbasedmusic.viewModel.MusicViewModel
+import com.example.emotionbasedmusic.viewModel.MusicViewModelFactory
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseException
@@ -29,7 +30,9 @@ class OtpFragment : Fragment(), View.OnClickListener {
     private lateinit var auth: FirebaseAuth
     private lateinit var userid: String
     private lateinit var userToken: PhoneAuthProvider.ForceResendingToken
-    private val model: MusicViewModel by activityViewModels()
+    private val model: MusicViewModel by activityViewModels {
+        MusicViewModelFactory(requireParentFragment())
+    }
     private val args: OtpFragmentArgs by navArgs()
     private lateinit var phone: String
     private lateinit var dialog: ProgressDialog

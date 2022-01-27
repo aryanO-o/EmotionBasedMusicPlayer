@@ -2,7 +2,9 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:padding="@dimen/common_padding_size"
+    tools:context=".fragments.ProfileFragment"
     android:background="@color/background_black"
     android:layout_height="match_parent">
 
@@ -30,12 +32,11 @@
             android:id="@+id/change_photo_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="8dp"
             android:layout_alignRight="@id/user_profile_photo"
             android:layout_alignBottom="@id/user_profile_photo"
             android:background="@drawable/profile_camera_background"
-            android:src="@drawable/profile_camera"
-            />
+            android:padding="8dp"
+            android:src="@drawable/profile_camera" />
 
     </RelativeLayout>
 
@@ -80,7 +81,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
                 android:text="User's Name"
-                android:textSize="16sp"
+                android:textSize="14sp"
                 android:id="@+id/user_name_text"
                 app:layout_constraintStart_toEndOf="@id/name_icon"
                 android:layout_marginStart="@dimen/common_margin_size"
@@ -134,7 +135,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
                 android:text="User's Email"
-                android:textSize="16sp"
+                android:textSize="14sp"
                 android:id="@+id/user_email_text"
                 app:layout_constraintStart_toEndOf="@id/email_icon"
                 android:layout_marginStart="@dimen/common_margin_size"
@@ -188,7 +189,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
                 android:text="User's Phone Number"
-                android:textSize="16sp"
+                android:textSize="14sp"
                 android:id="@+id/user_phone_text"
                 app:layout_constraintStart_toEndOf="@id/phone_icon"
                 android:layout_marginStart="@dimen/common_margin_size"
@@ -206,6 +207,88 @@
                 android:layout_margin="@dimen/common_margin_size"
                 app:layout_constraintBottom_toBottomOf="parent"/>
 
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/white"
+            app:layout_constraintStart_toStartOf="@id/user_name_card"
+            app:layout_constraintEnd_toEndOf="@id/user_name_card"
+            app:layout_constraintTop_toBottomOf="@id/user_phone_card"
+            android:layout_marginTop="25dp"
+            android:layout_marginHorizontal="16dp"
+            android:id="@+id/divider"
+            />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            app:layout_constraintStart_toStartOf="@id/divider"
+            app:layout_constraintTop_toBottomOf="@id/divider"
+            android:text="@string/permissions"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="25dp"
+            android:id="@+id/tvPermissions"
+            />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/cameraCL"
+            app:layout_constraintStart_toStartOf="@id/tvPermissions"
+            app:layout_constraintTop_toBottomOf="@id/tvPermissions"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="15dp"
+            >
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/ivCamera"
+                android:src="@drawable/ic_baseline_photo_camera_24_profile"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/camera"
+                android:textSize="16sp"
+                android:id="@+id/tvCamera"
+                android:textColor="@color/white"
+                app:layout_constraintStart_toEndOf="@id/ivCamera"
+                android:layout_marginStart="15dp"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvCameraPerm"
+                android:text="@string/denied"
+                android:textColor="@color/red"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@id/btnChange"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toEndOf="@id/tvCamera"
+                />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/btnChange"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:text="@string/change"
+                android:textColor="@color/white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

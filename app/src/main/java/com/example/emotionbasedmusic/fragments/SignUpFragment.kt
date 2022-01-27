@@ -19,6 +19,7 @@ import com.example.emotionbasedmusic.helper.Constants
 import com.example.emotionbasedmusic.helper.makeGone
 import com.example.emotionbasedmusic.helper.makeVisible
 import com.example.emotionbasedmusic.viewModel.MusicViewModel
+import com.example.emotionbasedmusic.viewModel.MusicViewModelFactory
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -32,7 +33,9 @@ import com.google.firebase.database.FirebaseDatabase
 
 class SignUpFragment : Fragment(), View.OnClickListener {
     private lateinit var binding: SignUpFragmentBinding
-    private val model: MusicViewModel by activityViewModels()
+    private val model: MusicViewModel by activityViewModels {
+        MusicViewModelFactory(requireParentFragment())
+    }
     private lateinit var database: FirebaseDatabase
     private lateinit var googleSignInOptions: GoogleSignInOptions
     private lateinit var googleSignInClient: GoogleSignInClient
@@ -71,7 +74,7 @@ class SignUpFragment : Fragment(), View.OnClickListener {
                 loginThroughGoogle()
             }
             binding.btnLoginPhone.id -> {
-                loginWithPhone()
+//                loginWithPhone()
             }
         }
     }
@@ -131,7 +134,10 @@ class SignUpFragment : Fragment(), View.OnClickListener {
         auth.signInWithCredential(credential).addOnCompleteListener(requireActivity()) { task->
                 if(task.isSuccessful) {
                     if(task.result.additionalUserInfo?.isNewUser ==true) {
-                        Toast.makeText(requireContext(), "Sign in Successful", Toast.LENGTH_SHORT).show()
+                        model.progressIndicator = true
+                        val account = task.result.user
+                        model.parcelData(account!!)
+                        Toast.makeText(requireContext(), "Setting up", Toast.LENGTH_SHORT).show()
                         toFaceScanFragment()
                     }
                     else {

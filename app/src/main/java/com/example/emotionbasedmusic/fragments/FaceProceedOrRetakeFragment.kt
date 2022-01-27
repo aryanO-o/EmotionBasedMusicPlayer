@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,43 +14,35 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.emotionbasedmusic.R
 import com.example.emotionbasedmusic.databinding.FragmentFaceProceedOrRetakeBinding
-import com.example.emotionbasedmusic.databinding.FragmentMusicBinding
 import com.example.emotionbasedmusic.helper.Constants
 import com.example.emotionbasedmusic.helper.Dialog
 import com.example.emotionbasedmusic.helper.makeGone
 import com.example.emotionbasedmusic.helper.makeVisible
-import com.example.emotionbasedmusic.mlFace.FaceContourGraphic
-import com.example.emotionbasedmusic.mlFace.GraphicOverlay
 import com.example.emotionbasedmusic.viewModel.MusicViewModel
-import com.google.android.gms.tasks.OnFailureListener
-import com.google.android.gms.tasks.OnSuccessListener
-import com.google.firebase.ml.vision.FirebaseVision
-import com.google.firebase.ml.vision.common.FirebaseVisionImage
-import com.google.firebase.ml.vision.face.FirebaseVisionFace
+import com.example.emotionbasedmusic.viewModel.MusicViewModelFactory
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.Face
 import com.google.mlkit.vision.face.FaceDetection
-import com.google.mlkit.vision.face.FaceDetector
 import com.google.mlkit.vision.face.FaceDetectorOptions
 import java.io.IOException
 
 
 class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.IListener {
     private lateinit var binding: FragmentFaceProceedOrRetakeBinding
-    private val model: MusicViewModel by activityViewModels()
+    private val model: MusicViewModel by activityViewModels {
+        MusicViewModelFactory(requireParentFragment())
+    }
     private val navArgs: FaceProceedOrRetakeFragmentArgs by navArgs()
     private var imageUri: String? = null
     private var boolean: Boolean = false
     private var bitmap: Bitmap? = null
-    private lateinit var mGraphicOverlay: GraphicOverlay
     private lateinit var dialog: Dialog
-    private lateinit var image: InputImage
-    private lateinit var img: FirebaseVisionImage
     private var mood = ""
     private lateinit var testImage: InputImage
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -89,7 +80,6 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
             cl3.makeGone()
             cl1.makeVisible()
         }
-        mGraphicOverlay = binding.graphicOverlay
     }
 
     private val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -98,6 +88,7 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
             if(data!=null) {
                 binding.ivFaceScan.setImageURI(data.data)
                 this.imageUri = data.data.toString()
+                boolean = true
             }
 
         }
@@ -167,33 +158,34 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
             .addOnFailureListener { e ->
                 binding.apply {
                     cl1.makeVisible()
-                    cl2.makeGone()
-                    pfDetect.pFrame.makeGone()
-                    pfDetect.progressBarLayout.progressBar.makeGone()
+                    makeViewsGone()
                 }
                 showToast(e.message.toString())
             }
     }
 
+    private fun makeViewsGone() {
+        binding.apply {
+            cl2.makeGone()
+            pfDetect.pFrame.makeGone()
+            pfDetect.progressBarLayout.progressBar.makeGone()
+        }
+    }
+
     private fun facesInfo(faces: List<Face>) {
         if(faces.isEmpty()) {
             binding.apply {
-                cl2.makeGone()
-                pfDetect.pFrame.makeGone()
-                pfDetect.progressBarLayout.progressBar.makeGone()
+                makeViewsGone()
                 cl4.makeVisible()
             }
         }
         else {
             binding.apply {
-                cl2.makeGone()
-                pfDetect.pFrame.makeGone()
-                pfDetect.progressBarLayout.progressBar.makeGone()
+                makeViewsGone()
                 cl3.makeVisible()
             }
             analyzeFace(faces[0])
         }
-
 
     }
 
@@ -221,40 +213,6 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
         binding.faceResultFragment.tvEmotion.text = mood
     }
 
-    private fun createFirebaseVisionImage() {
-        when(boolean) {
-            true -> {
-                try {
-                    img = FirebaseVisionImage.fromFilePath(requireContext(), imageUri!!.toUri())
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                }
-            }
-            false -> {
-                img = FirebaseVisionImage.fromBitmap(model.getBitmap()!!)
-            }
-        }
-        val detector = FirebaseVision.getInstance().visionFaceDetector
-
-        detector.detectInImage(img)
-            .addOnSuccessListener { faces -> showResults(faces)}
-            .addOnFailureListener { e->
-                showToast(e.message.toString())
-            }
-    }
-
-    private fun showResults(faces: List<FirebaseVisionFace>) {
-        for(face in faces) {
-            if(faces.isEmpty()) {
-                val msg = "No Face Detected"
-                showToast(msg)
-            }
-            else {
-                val msg = "Smiling Probability: ${face.smilingProbability}"
-                showToast(msg)
-            }
-        }
-    }
 
     private fun showToast(msg: String) {
         Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
@@ -294,6 +252,7 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
             binding.apply {
                 ivFaceScan.setImageBitmap(bitmap)
                 model.setBitmap(bitmap!!)
+                boolean = false
             }
         }
     }
@@ -317,45 +276,5 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
             }
         }
     }
-
-    private fun runFaceContourDetection() {
-        image = when(boolean) {
-            true -> {
-                InputImage.fromFilePath(requireContext(), imageUri?.toUri()!!)
-            }
-            false -> {
-                InputImage.fromBitmap(model.getBitmap()!!, 0)
-            }
-        }
-        val options = FaceDetectorOptions.Builder()
-            .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
-            .setContourMode(FaceDetectorOptions.CONTOUR_MODE_ALL)
-            .build()
-        val detector: FaceDetector = FaceDetection.getClient(options)
-        detector.process(image)
-            .addOnSuccessListener { faces ->
-                processFaceContourDetectionResult(faces as List<Face>)
-            }
-            .addOnFailureListener { e -> // Task failed with an exception
-                e.printStackTrace()
-            }
-    }
-
-    private fun processFaceContourDetectionResult(faces: List<Face>) {
-        // Task completed successfully
-        if (faces.size == 0) {
-//            showToast("No face found")
-            return
-        }
-        mGraphicOverlay.clear()
-        for (i in faces.indices) {
-            val face: Face = faces[i]
-            val faceGraphic = FaceContourGraphic(mGraphicOverlay)
-            mGraphicOverlay.add(faceGraphic)
-            faceGraphic.updateFace(face)
-        }
-    }
-
-
 
 }

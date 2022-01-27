@@ -2,6 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 <item android:id="@+id/sign_out"
     android:title="@string/sign_out"
+    android:orderInCategory="2"
     android:iconTint="@color/white"
     />
+    <item android:id="@+id/favorites"
+        android:orderInCategory="1"
+        android:title="@string/favorites"/>
+    <item android:id="@+id/profile"
+        android:title="@string/profile"/>
+
 </menu>

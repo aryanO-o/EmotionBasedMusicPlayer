@@ -17,7 +17,7 @@ import com.example.emotionbasedmusic.helper.makeGone
 import com.example.emotionbasedmusic.helper.makeVisible
 import com.squareup.picasso.Picasso
 
-class MusicAdapter(private val iPost: IPost, private val context: Context): ListAdapter<Music, MusicAdapter.MusicViewHolder>(DiffCallback) {
+class MusicAdapter(private val iPost: IPost, private val context: Context, private val check: Boolean): ListAdapter<Music, MusicAdapter.MusicViewHolder>(DiffCallback) {
 
     private var index : Int = -1
     private var songPlaying: Boolean = false
@@ -55,10 +55,15 @@ class MusicAdapter(private val iPost: IPost, private val context: Context): List
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onBindViewHolder(holder: MusicViewHolder, position: Int) {
-            ResultSongsFragment.binding.pfDetect.pFrame.makeGone()
-            ResultSongsFragment.binding.pfDetect.progressBarLayout.progressBar.makeGone()
-            ResultSongsFragment.binding.cl1.makeGone()
-            ResultSongsFragment.binding.cl2.makeVisible()
+            when(check) {
+                true ->{
+                    ResultSongsFragment.binding.pfDetect.pFrame.makeGone()
+                    ResultSongsFragment.binding.pfDetect.progressBarLayout.progressBar.makeGone()
+                    ResultSongsFragment.binding.cl1.makeGone()
+                    ResultSongsFragment.binding.cl2.makeVisible()
+                }
+                false -> {}
+            }
             val song = getItem(position)
             holder.songName.text = song.songName
             holder.artistName.text = song.artistName

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/google_black_primary"
+    tools:context=".fragments.FavoritesFragment">
+
+   <androidx.constraintlayout.widget.ConstraintLayout
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       app:layout_constraintTop_toTopOf="parent"
+       android:id="@+id/tbFav"
+       android:layout_marginTop="1dp"
+       >
+      <include layout="@layout/toolbar"
+          android:id="@+id/tbFavorite"
+          />
+
+   </androidx.constraintlayout.widget.ConstraintLayout>
+
+   <androidx.recyclerview.widget.RecyclerView
+       android:layout_width="match_parent"
+       android:layout_height="0dp"
+       android:id="@+id/rvFavorites"
+       android:padding="4dp"
+       tools:listitem="@layout/music_list_item_view"
+       app:layout_constraintTop_toBottomOf="@id/tbFav"
+       app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="17dp"
+       />
+
+
+   <androidx.constraintlayout.widget.ConstraintLayout
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:id="@+id/clEmpty"
+       android:visibility="gone"
+      >
+      <com.google.android.material.textview.MaterialTextView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:gravity="center"
+          android:id="@+id/tvEmpty"
+          android:text="@string/you_have_no_liked_songs"
+          app:layout_constraintTop_toTopOf="parent"
+          app:layout_constraintBottom_toBottomOf="parent"
+          android:textColor="@color/white"
+          android:textSize="14sp"
+          android:fontFamily="@font/spartanreg"
+         />
+   </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

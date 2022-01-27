@@ -17,15 +17,16 @@ import com.example.emotionbasedmusic.data.Music
 import com.example.emotionbasedmusic.helper.Constants
 import com.example.emotionbasedmusic.helper.Helper
 
-@RequiresApi(Build.VERSION_CODES.M)
+@RequiresApi(Build.VERSION_CODES.N)
 fun createNotification(context: Context, song: Music): Helper {
     setUpNotificationChannel(context)
     val notificationLayout = RemoteViews(Constants.PACKAGE_NAME, R.layout.notification)
     notificationLayout.setTextViewText(R.id.notification_song_name, song.songName)
     notificationLayout.setTextViewText(R.id.notification_artist_name, song.artistName)
     val notification = NotificationCompat.Builder(context, Constants.NOTIFICATION_CHANNEL_ID)
-        .setSmallIcon(R.drawable.music_notes)
+        .setSmallIcon(R.drawable.figma_launcher_dark)
         .setContentIntent(getIntent(context))
+        .setPriority(NotificationManager.IMPORTANCE_HIGH)
         .setCustomContentView(notificationLayout)
         .build()
 
@@ -35,8 +36,8 @@ fun createNotification(context: Context, song: Music): Helper {
 fun getIntent(context: Context): PendingIntent? {
     val intent = Intent(context, MainActivity::class.java)
     intent.putExtra(Constants.IS_FROM_NOTIFICATION, true)
-    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-    return PendingIntent.getActivity(context, Constants.INTENT_REQUEST_CODE, intent, 0)
+    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                    return PendingIntent.getActivity(context, Constants.INTENT_REQUEST_CODE, intent, 0)
 }
 
 fun setUpNotificationChannel(context: Context) {

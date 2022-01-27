@@ -29,6 +29,7 @@ import com.example.emotionbasedmusic.helper.Constants
 import com.example.emotionbasedmusic.helper.Dialog
 import com.example.emotionbasedmusic.helper.makeVisible
 import com.example.emotionbasedmusic.viewModel.MusicViewModel
+import com.example.emotionbasedmusic.viewModel.MusicViewModelFactory
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -37,8 +38,10 @@ import com.google.firebase.database.FirebaseDatabase
 
 
 class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListener, emojiAdapter.Ilistener {
-    private lateinit var binding: FragmentMoodRecognitionBinding
-    private val model: MusicViewModel by activityViewModels()
+
+    private val model: MusicViewModel by activityViewModels {
+        MusicViewModelFactory(requireParentFragment())
+    }
     private lateinit var database: FirebaseDatabase
     private lateinit var googleSignInOptions: GoogleSignInOptions
     private lateinit var googleSignInClient: GoogleSignInClient
@@ -50,12 +53,18 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentMoodRecognitionBinding.inflate(inflater)
         return binding.root
     }
 
+    companion object {
+        lateinit var binding: FragmentMoodRecognitionBinding
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        checkForPI()
+        model.getData()
         initRecyclerView()
         initToolbar()
         initData()
@@ -64,6 +73,11 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
         }
     }
 
+    private fun checkForPI() {
+        when(model.progressIndicator) {
+            true -> {binding.pIndicator.makeVisible()}
+        }
+    }
 
 
     private fun initRecyclerView() {
@@ -85,6 +99,10 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
 
 
     private fun initToolbar() {
+        binding.tbSignUp.tbCommon.setTitleTextColor(resources.getColor(R.color.white))
+        model.name.observe(viewLifecycleOwner) {
+            binding.tbSignUp.tbCommon.title = "Hi  $it"
+        }
         binding.apply {
             tbSignUp.tbCommon.makeVisible()
             tbSignUp.tbCommon.setOnMenuItemClickListener(object : Toolbar.OnMenuItemClickListener {
@@ -93,11 +111,25 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
                         R.id.sign_out -> {
                             signOut()
                         }
+                        R.id.favorites -> {
+                            toFavorites()
+                        }
+                        R.id.profile -> {
+                            toProfileFragment()
+                        }
                     }
                     return true
                 }
             })
         }
+    }
+
+    private fun toProfileFragment() {
+        findNavController().navigate(R.id.action_moodRecognitionFragment_to_profileFragment)
+    }
+
+    private fun toFavorites() {
+        findNavController().navigate(R.id.action_moodRecognitionFragment_to_favoritesFragment)
     }
 
     private fun signOut() {

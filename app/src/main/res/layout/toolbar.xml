@@ -6,6 +6,6 @@
     android:visibility="visible"
     app:menu="@menu/options_menu"
     style="@style/toolbar_emotion"
-    android:layout_height="50dp">
+    android:layout_height="wrap_content">
 
 </com.google.android.material.appbar.MaterialToolbar>

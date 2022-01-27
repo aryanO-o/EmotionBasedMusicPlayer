@@ -1,6 +1,7 @@
 package com.example.emotionbasedmusic.fragments
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.NotificationManager
 import android.content.ComponentName
 import android.content.Context
@@ -23,34 +24,31 @@ import com.example.emotionbasedmusic.MainActivity
 import com.example.emotionbasedmusic.R
 import com.example.emotionbasedmusic.data.Music
 import com.example.emotionbasedmusic.databinding.FragmentMusicBinding
+import com.example.emotionbasedmusic.helper.Constants
 import com.example.emotionbasedmusic.services.MusicService
 import com.example.emotionbasedmusic.viewModel.MusicViewModel
+import com.example.emotionbasedmusic.viewModel.MusicViewModelFactory
 import com.squareup.picasso.Picasso
+import java.io.Serializable
 import java.util.concurrent.TimeUnit
 
 class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeListener, ServiceConnection {
 
-    private val model: MusicViewModel by activityViewModels()
+    private val model: MusicViewModel by activityViewModels {
+        MusicViewModelFactory(requireParentFragment())
+    }
     private var song: Music? = null
-    private lateinit var mediaPlayer: MediaPlayer
-    private var startTime: Int? = 0
-    private var endTime: Int? = 0
-    private var start: String? = ""
-    private var end: String? = ""
-    private var runnable: Runnable? = null
     private var intent: Intent? = null
-    private lateinit var connection: ServiceConnection
     private var notificationManager: NotificationManager? = null
-    private val handler = Handler(Looper.myLooper()!!)
     private var songsList: MutableLiveData<List<Music>> = MutableLiveData<List<Music>>()
     private var isLooping = false
     private var key: Boolean? = true
     private lateinit var service: MusicService
     private var isBounded: Boolean? = false
+    val _likedSongs = MutableLiveData<MutableList<Music>>()
     companion object {
         lateinit var binding: FragmentMusicBinding
     }
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -64,20 +62,53 @@ class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeL
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        key = model.key
+        intent = Intent(requireContext(), MusicService::class.java)
+        key = (requireActivity() as MainActivity).key
         notificationManager = requireActivity().getSystemService(NotificationManager::class.java) as NotificationManager
         binding.sBar.setOnSeekBarChangeListener(this)
         songsList.value = mutableListOf()
+        _likedSongs.value = mutableListOf()
         model.musicData.observe(viewLifecycleOwner) {
             this.songsList.value = it
         }
-        initMediaPlayer()
-        initView()
+        model._likedSongs.observe(viewLifecycleOwner) {
+            this._likedSongs.value = it
+        }
+        checkForKey()
         binding.apply {
+            btnBack.setOnClickListener(this@MusicFragment)
+            btnLike.setOnClickListener(this@MusicFragment)
             btnNextSong.setOnClickListener(this@MusicFragment)
             btnPlay.setOnClickListener(this@MusicFragment)
             ibLoop.setOnClickListener(this@MusicFragment)
             btnPreviousSong.setOnClickListener(this@MusicFragment)
+        }
+    }
+
+    @SuppressLint("UseCompatLoadingForDrawables")
+    private fun checkForLiked() {
+        if(key!!) {
+
+        }
+        else {
+            this.song = service.getSong()
+        }
+
+        when(_likedSongs.value!!.contains(song)) {
+            true -> {binding.btnLike.setImageDrawable(resources.getDrawable(R.drawable.ic_outline_favorite_24))}
+            false -> {binding.btnLike.setImageDrawable(resources.getDrawable(R.drawable.ic_baseline_favorite_border_24_4))}
+        }
+    }
+
+    private fun checkForKey() {
+        when(key!!) {
+            true -> {
+                stopForegroundService()
+                initView()
+            }
+            false -> {
+                checkForService()
+            }
         }
     }
 
@@ -90,21 +121,6 @@ class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeL
             requireActivity().bindService(it, this, Context.BIND_AUTO_CREATE)
         }
     }
-
-
-    private fun initMediaPlayer() {
-        mediaPlayer = MediaPlayer().apply {
-            setAudioAttributes(
-                AudioAttributes.Builder()
-                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                    .setUsage(AudioAttributes.USAGE_MEDIA)
-                    .build()
-            )
-        }
-    }
-
-
-
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun initView() {
         this.song = model.getSong()
@@ -120,12 +136,11 @@ class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeL
         startMusicService()
     }
 
-
     private fun startMusicService() {
-        val intent = Intent(requireContext(), MusicService::class.java)
-        this.intent = intent
-        intent.putExtra("song", this.song)
-        ContextCompat.startForegroundService(requireContext(), intent)
+        intent!!.putExtra(Constants.SONG, this.song)
+        intent!!.putExtra(Constants.INDEX, songsList.value?.indexOf(song))
+        ContextCompat.startForegroundService(requireContext(), intent!!)
+        (requireActivity() as MainActivity).isServiceRunning = true
         bindToService()
     }
 
@@ -139,17 +154,17 @@ class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeL
     }
 
     private fun destroyResources() {
-        service.resetMediaPlayer()
         requireActivity().unbindService(this)
-        stopForegroundService()
     }
 
     private fun stopForegroundService() {
         intent?.let { requireActivity().stopService(it) }
     }
 
-
-
+    private fun showToast(msg: String) {
+        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+    }
+    @RequiresApi(Build.VERSION_CODES.N)
     @SuppressLint("UseCompatLoadingForDrawables")
     override fun onClick(view: View?) {
         when(view?.id) {
@@ -178,36 +193,59 @@ class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeL
                 }
             }
             R.id.btnNextSong -> {
-                if(songsList.value!!.isNotEmpty()) {
-                    val indexOfCurrentSong = songsList.value!!.indexOf(song)
-                    if(indexOfCurrentSong!=songsList.value!!.size-1) {
-                        val index = indexOfCurrentSong+1
-                        model.setSong(songsList.value!![index])
-                        service.resetMediaPlayer()
-                        destroyResources()
-                        initView()
-                    }
-                    else {
-                        Toast.makeText(requireContext(), getString(R.string.out_of_songs), Toast.LENGTH_SHORT).show()
-                    }
-                }
+                service.nextSong()
+                getSong()
+                checkForLiked()
             }
             R.id.btnPreviousSong -> {
-                if(songsList.value!!.isNotEmpty()) {
-                    val indexOfCurrentSong = songsList.value!!.indexOf(song)
-                    if(indexOfCurrentSong!=0) {
-                        val index = indexOfCurrentSong-1
-                        model.setSong(songsList.value!![index])
-                        service.resetMediaPlayer()
-                        destroyResources()
-                        initView()
-                    }
-                    else {
-                        Toast.makeText(requireContext(), getString(R.string.out_of_songs), Toast.LENGTH_SHORT).show()
-                    }
-                }
+                service.prevSong()
+                getSong()
+                checkForLiked()
+            }
+            R.id.btnLike -> {
+                checkForFavorite()
+            }
+            R.id.btnBack -> {
+                popBackStack()
             }
         }
+    }
+
+    private fun getSong() {
+        this.song = service.getSong()
+    }
+
+    private fun popBackStack() {
+        (requireActivity() as MainActivity).navController.popBackStack()
+    }
+
+    private fun checkForFavorite() {
+        if(key!!) {
+
+        }
+        else {
+            this.song = service.getSong()
+        }
+        if(this._likedSongs.value!!.contains(song)) {
+            removeFromLiked(song!!)
+        }
+        else {
+            addToLiked(song!!)
+        }
+    }
+
+    @SuppressLint("UseCompatLoadingForDrawables")
+    private fun removeFromLiked(song:Music) {
+        binding.btnLike.setImageDrawable(resources.getDrawable(R.drawable.ic_baseline_favorite_border_24_4))
+        model.removedFromLikedSongs(song)
+        showToast(Constants.REMOVED_LIKED_SONGS)
+    }
+
+    @SuppressLint("UseCompatLoadingForDrawables")
+    private fun addToLiked(song:Music) {
+        binding.btnLike.setImageDrawable(resources.getDrawable(R.drawable.ic_outline_favorite_24))
+        model.addToLikedSongs(song)
+        showToast(Constants.ADDED_LIKED_SONGS)
     }
 
     private fun setLooping(looping: Boolean) {
@@ -239,7 +277,17 @@ class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeL
         val binder = service as MusicService.LocalBinder
         this.service = binder.getService()
         isBounded = true
-        this.service.setUI()
+        when(key!!) {
+            false -> {
+                this.songsList.value = this.service.getSongsList()
+                checkForLiked()
+                this.service.setUI()
+            }
+            true -> {
+                checkForLiked()
+                this.service.setSongsList(this.songsList.value!!)
+            }
+        }
     }
 
 
@@ -248,4 +296,6 @@ class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeL
     }
 
 
+
 }
+

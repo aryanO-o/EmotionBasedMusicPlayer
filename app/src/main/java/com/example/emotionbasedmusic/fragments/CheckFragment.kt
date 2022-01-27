@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.add
+import androidx.fragment.app.commit
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.findNavController
@@ -15,6 +17,7 @@ import com.example.emotionbasedmusic.R
 import com.example.emotionbasedmusic.databinding.FragmentCheckBinding
 import com.example.emotionbasedmusic.helper.Constants
 import com.example.emotionbasedmusic.viewModel.MusicViewModel
+import com.example.emotionbasedmusic.viewModel.MusicViewModelFactory
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -29,7 +32,9 @@ class CheckFragment: Fragment() {
     private lateinit var database: FirebaseDatabase
     private var isFromNotification: Boolean? = false
     private lateinit var navController: NavController
-    private val model: MusicViewModel by activityViewModels()
+    private val model: MusicViewModel by activityViewModels {
+        MusicViewModelFactory(requireParentFragment())
+    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -51,7 +56,8 @@ class CheckFragment: Fragment() {
         if(auth.currentUser?.uid != null) {
             if(isFromNotification!= null) {
                 if(isFromNotification!!) {
-                    requireActivity().finish()
+                        toFaceScanFragment()
+                    (requireActivity() as MainActivity).moveToMusic()
                 }
                 else {
                     toFaceScanFragment()

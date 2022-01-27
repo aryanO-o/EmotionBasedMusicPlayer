@@ -7,11 +7,32 @@
     tools:context=".fragments.MoodRecognitionFragment"
     android:layout_height="match_parent">
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="5dp"
+        android:id="@+id/tb"
+        >
+        <include layout="@layout/toolbar"
+            android:id="@+id/tbSignUp"
+            />
 
-    <include layout="@layout/toolbar"
-        android:id="@+id/tbSignUp"
-        />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/pIndicator"
+        app:layout_constraintTop_toBottomOf="@id/tb"
+        android:layout_marginTop="1dp"
+        android:indeterminateBehavior="repeat"
+        android:visibility="gone"
+        app:trackCornerRadius="2dp"
+        app:trackThickness="2dp"
+        app:indicatorColor="@color/white"
+        app:trackColor="@color/google_black_primary"
+        android:indeterminate="true" />
 
     <ImageView
         android:id="@+id/btnAddImage"
@@ -19,6 +40,7 @@
         android:layout_height="96dp"
         android:background="@drawable/img_view"
         android:scaleType="center"
+        android:layout_marginTop="50dp"
         android:src="@drawable/ic_baseline_photo_camera_24"
         app:layout_constraintBottom_toBottomOf="@id/orTextView"
         app:layout_constraintEnd_toEndOf="parent"
