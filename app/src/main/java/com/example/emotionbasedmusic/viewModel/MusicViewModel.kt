@@ -47,6 +47,7 @@ class MusicViewModel(private var fragment: Fragment): ViewModel(), ValueEventLis
     var email = MutableLiveData("")
     var imgUri = MutableLiveData("")
     var check = -1
+    var aKey = -1
     private var child = ""
     init {
         getLikedSongs()
@@ -83,6 +84,9 @@ class MusicViewModel(private var fragment: Fragment): ViewModel(), ValueEventLis
 
     }
 
+    fun setAdapterKey(key: Int) {
+        aKey = key
+    }
 
     fun setSong(song: Music) {
         this.song = song
@@ -166,7 +170,9 @@ class MusicViewModel(private var fragment: Fragment): ViewModel(), ValueEventLis
                 override fun onDataChange(snapshot: DataSnapshot) {
                     for(data: DataSnapshot in snapshot.children) {
                         val song = data.getValue(Music::class.java)
-                        likedSongs.add(song!!)
+                        if(!(likedSongs.contains(song))) {
+                            likedSongs.add(song!!)
+                        }
                     }
                     _likedSongs.value = likedSongs
                 }

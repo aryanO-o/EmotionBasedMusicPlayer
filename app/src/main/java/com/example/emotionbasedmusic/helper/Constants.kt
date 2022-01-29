@@ -1,5 +1,7 @@
 package com.example.emotionbasedmusic.helper
 
+import com.example.emotionbasedmusic.R
+
 
 class Constants {
     companion object {
@@ -33,6 +35,8 @@ class Constants {
         const val EMAIL_DETAIL = "Enter your email"
         const val NAME = "name"
         const val PHONE = "phone"
+        const val EDIT_BOTTOM = R.layout.bottom_sheet
+        const val SIGN_OUT_BOTTOM = R.layout.sign_out_bottom
         const val EMAIL = "email"
     }
 }

@@ -45,6 +45,7 @@ class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeL
     private var key: Boolean? = true
     private lateinit var service: MusicService
     private var isBounded: Boolean? = false
+    private var isFromFavorite: Boolean = false
     val _likedSongs = MutableLiveData<MutableList<Music>>()
     companion object {
         lateinit var binding: FragmentMusicBinding
@@ -64,6 +65,7 @@ class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeL
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         intent = Intent(requireContext(), MusicService::class.java)
         key = (requireActivity() as MainActivity).key
+        isFromFavorite = (requireActivity() as MainActivity).isFromFavorite
         notificationManager = requireActivity().getSystemService(NotificationManager::class.java) as NotificationManager
         binding.sBar.setOnSeekBarChangeListener(this)
         songsList.value = mutableListOf()
@@ -285,7 +287,14 @@ class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeL
             }
             true -> {
                 checkForLiked()
-                this.service.setSongsList(this.songsList.value!!)
+                when(isFromFavorite) {
+                    true -> {
+                        this.service.setSongsList(this._likedSongs.value!!)
+                    }
+                    false -> {
+                        this.service.setSongsList(this.songsList.value!!)
+                    }
+                }
             }
         }
     }

@@ -47,6 +47,9 @@ class ProfileFragment: Fragment(), View.OnClickListener, BottomSheetDialog.IBott
             userNameCard.setOnClickListener(this@ProfileFragment)
             userPhoneCard.setOnClickListener(this@ProfileFragment)
             btnChange.setOnClickListener(this@ProfileFragment)
+            btnNameEdit.setOnClickListener(this@ProfileFragment)
+            btnPhoneEdit.setOnClickListener(this@ProfileFragment)
+            btnEmailEdit.setOnClickListener(this@ProfileFragment)
         }
     }
 
@@ -108,25 +111,45 @@ class ProfileFragment: Fragment(), View.OnClickListener, BottomSheetDialog.IBott
         }
     }
 
+    fun setNameDetails() {
+        this.detail = Constants.NAME_DETAIL
+        this.textD = name
+        model.check = 0
+        initBottomSheet()
+    }
+
+    fun setEmailDetails() {
+        this.detail = Constants.EMAIL_DETAIL
+        this.textD = email
+        model.check = 2
+        initBottomSheet()
+    }
+
+    fun setPhoneDetails() {
+        this.detail = Constants.PHONE_DETAIL
+        this.textD = phone
+        model.check = 1
+        initBottomSheet()
+    }
     override fun onClick(p0: View?) {
         when(p0?.id) {
             R.id.user_name_card -> {
-                this.detail = Constants.NAME_DETAIL
-                this.textD = name
-                model.check = 0
-                initBottomSheet()
+                setNameDetails()
             }
             R.id.user_email_card -> {
-                this.detail = Constants.EMAIL_DETAIL
-                this.textD = email
-                model.check = 2
-                initBottomSheet()
+              setEmailDetails()
             }
             R.id.user_phone_card -> {
-                this.detail = Constants.PHONE_DETAIL
-                this.textD = phone
-                model.check = 1
-                initBottomSheet()
+              setPhoneDetails()
+            }
+            R.id.btn_email_edit -> {
+                setEmailDetails()
+            }
+            R.id.btn_phone_edit -> {
+                setPhoneDetails()
+            }
+            R.id.btn_name_edit -> {
+                setNameDetails()
             }
             R.id.btnChange -> {
                 request()
@@ -136,8 +159,8 @@ class ProfileFragment: Fragment(), View.OnClickListener, BottomSheetDialog.IBott
     }
 
     private fun initBottomSheet() {
-        bottomSheetDialog = BottomSheetDialog(this.detail, requireContext(), this, textD)
-        bottomSheetDialog.initBottomSheet()
+        bottomSheetDialog = BottomSheetDialog(this.detail, requireContext(), this, textD, null)
+        bottomSheetDialog.initBottomSheet(Constants.EDIT_BOTTOM)
     }
 
     override fun onCancelClick() {

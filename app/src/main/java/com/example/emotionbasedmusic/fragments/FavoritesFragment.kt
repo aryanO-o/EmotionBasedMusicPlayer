@@ -6,20 +6,24 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.get
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import com.example.emotionbasedmusic.MainActivity
 import com.example.emotionbasedmusic.R
 import com.example.emotionbasedmusic.adapter.MusicAdapter
 import com.example.emotionbasedmusic.data.Music
 import com.example.emotionbasedmusic.databinding.FragmentFavoritesBinding
+import com.example.emotionbasedmusic.helper.Constants
 import com.example.emotionbasedmusic.helper.makeGone
 import com.example.emotionbasedmusic.helper.makeVisible
 import com.example.emotionbasedmusic.viewModel.MusicViewModel
 import com.example.emotionbasedmusic.viewModel.MusicViewModelFactory
 
 
-class FavoritesFragment : Fragment(), MusicAdapter.IPost {
+class FavoritesFragment : Fragment(), MusicAdapter.IFavorite{
     private lateinit var binding: FragmentFavoritesBinding
     private lateinit var adapter: MusicAdapter
     private val model: MusicViewModel by activityViewModels {
@@ -50,7 +54,7 @@ class FavoritesFragment : Fragment(), MusicAdapter.IPost {
 
     @SuppressLint("NotifyDataSetChanged")
     private fun setUpRecyclerView() {
-        adapter = MusicAdapter(this, requireContext(), false)
+        adapter = MusicAdapter(null, requireContext(), false, 1, this)
         binding.apply {
             rvFavorites.adapter = adapter
             rvFavorites.layoutManager = GridLayoutManager(requireContext(), 1)
@@ -69,15 +73,16 @@ class FavoritesFragment : Fragment(), MusicAdapter.IPost {
         }
     }
 
-    override fun onPlay(song: Music, position: Int) {
-
-    }
-
-    override fun onPauseMusic() {
-
+    override fun onRemoveClick(song: Music) {
+        model.removedFromLikedSongs(song)
+        Toast.makeText(requireContext(), Constants.REMOVED_LIKED_SONGS, Toast.LENGTH_SHORT).show()
     }
 
     override fun onItemSongClick(song: Music) {
-
+        (requireActivity() as MainActivity).key = true
+        (requireActivity() as MainActivity).isFromFavorite = true
+        model.setSong(song)
+        findNavController().navigate(R.id.action_favoritesFragment_to_musicFragment)
     }
+
 }

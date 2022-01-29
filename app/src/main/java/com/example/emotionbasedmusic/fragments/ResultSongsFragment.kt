@@ -69,7 +69,7 @@ class ResultSongsFragment: Fragment(), MusicAdapter.IPost, MediaPlayer.OnPrepare
 
     @SuppressLint("NotifyDataSetChanged")
     private fun setUpRecyclerView() {
-        adapter = MusicAdapter(this, requireContext(), true)
+        adapter = MusicAdapter(this, requireContext(), true, 0, null)
         binding.rvSongResult.adapter = adapter
         binding.rvSongResult.layoutManager = GridLayoutManager(requireContext(), 1)
         model.musicData.observe(viewLifecycleOwner) {
@@ -99,6 +99,7 @@ class ResultSongsFragment: Fragment(), MusicAdapter.IPost, MediaPlayer.OnPrepare
     }
     override fun onItemSongClick(song: Music) {
         (requireActivity() as MainActivity).key = true
+        (requireActivity() as MainActivity).isFromFavorite = false
         model.setSong(song)
         findNavController().navigate(R.id.action_resultSongsFragment_to_musicFragment)
     }

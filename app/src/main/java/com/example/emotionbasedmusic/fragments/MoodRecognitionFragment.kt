@@ -25,6 +25,7 @@ import com.example.emotionbasedmusic.adapter.emojiAdapter
 import com.example.emotionbasedmusic.dataSource.emojiData
 import com.example.emotionbasedmusic.databinding.FragmentFaceProceedOrRetakeBinding
 import com.example.emotionbasedmusic.databinding.FragmentMoodRecognitionBinding
+import com.example.emotionbasedmusic.helper.BottomSheetDialog
 import com.example.emotionbasedmusic.helper.Constants
 import com.example.emotionbasedmusic.helper.Dialog
 import com.example.emotionbasedmusic.helper.makeVisible
@@ -37,7 +38,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 
 
-class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListener, emojiAdapter.Ilistener {
+class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListener, emojiAdapter.Ilistener, BottomSheetDialog.SBottom {
 
     private val model: MusicViewModel by activityViewModels {
         MusicViewModelFactory(requireParentFragment())
@@ -48,6 +49,7 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
     private lateinit var auth: FirebaseAuth
     private lateinit var dialog: Dialog
     private var bitmap: Bitmap? = null
+    private lateinit var bottomSheetDialog: BottomSheetDialog
     private var isFromGallery: Boolean = false
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -109,7 +111,7 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
                 override fun onMenuItemClick(item: MenuItem?): Boolean {
                     when (item?.itemId) {
                         R.id.sign_out -> {
-                            signOut()
+                            signOutBottom()
                         }
                         R.id.favorites -> {
                             toFavorites()
@@ -122,6 +124,15 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
                 }
             })
         }
+    }
+
+    private fun signOutBottom() {
+        initBottomSheet()
+    }
+
+    private fun initBottomSheet() {
+        bottomSheetDialog = BottomSheetDialog(null, requireContext(), null, null, this)
+        bottomSheetDialog.initBottomSheet(Constants.SIGN_OUT_BOTTOM)
     }
 
     private fun toProfileFragment() {
@@ -256,6 +267,15 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
 
     private fun toResultSongFragment() {
         findNavController().navigate(R.id.action_moodRecognitionFragment_to_resultSongsFragment)
+    }
+
+    override fun onNoClick() {
+        bottomSheetDialog.dismiss()
+    }
+
+    override fun onYesClick() {
+        bottomSheetDialog.dismiss()
+       signOut()
     }
 
 }
