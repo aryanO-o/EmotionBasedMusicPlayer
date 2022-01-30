@@ -53,7 +53,8 @@
                 android:text="\u25CF "/>
             <TextView
                 android:layout_column="2"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 android:text="@string/first_line"/>
@@ -67,10 +68,39 @@
                 android:text="\u25CF "/>
             <TextView
                 android:layout_column="2"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:textSize="16sp"
                 android:textColor="@color/white"
                 android:text="@string/second_line"/>
+        </TableRow><TableRow
+            android:layout_marginTop="25dp">
+            <TextView
+                android:layout_column="1"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:text="\u25CF "/>
+            <TextView
+                android:layout_column="2"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:textSize="16sp"
+                android:textColor="@color/white"
+                android:text="@string/third_line"/>
+        </TableRow><TableRow
+            android:layout_marginTop="25dp">
+            <TextView
+                android:layout_column="1"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:text="\u25CF "/>
+            <TextView
+                android:layout_column="2"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:textSize="16sp"
+                android:textColor="@color/white"
+                android:text="@string/forth_line"/>
         </TableRow>
     </TableLayout>
 
