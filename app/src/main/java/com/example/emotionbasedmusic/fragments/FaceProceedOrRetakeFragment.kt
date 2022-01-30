@@ -70,6 +70,7 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
             }
             else {
                 ivFaceScan.setImageBitmap(model.getBitmap())
+//                ivFaceScan.setImageURI(model.getUri().toUri())
             }
 
             btnProceed.setOnClickListener(this@FaceProceedOrRetakeFragment)

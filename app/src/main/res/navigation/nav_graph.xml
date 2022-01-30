@@ -75,6 +75,9 @@
         <action
             android:id="@+id/action_moodRecognitionFragment_to_profileFragment"
             app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_moodRecognitionFragment_to_fragmentHowToUse"
+            app:destination="@id/fragmentHowToUse" />
     </fragment>
     <fragment
         android:id="@+id/faceProceedOrRetakeFragment"
@@ -123,4 +126,9 @@
         android:name="com.example.emotionbasedmusic.fragments.ProfileFragment"
         android:label="users_profile"
         tools:layout="@layout/users_profile" />
+    <fragment
+        android:id="@+id/fragmentHowToUse"
+        android:name="com.example.emotionbasedmusic.fragments.FragmentHowToUse"
+        android:label="how_to_use_app"
+        tools:layout="@layout/how_to_use_app" />
 </navigation>

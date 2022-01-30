@@ -74,7 +74,7 @@ class SignUpFragment : Fragment(), View.OnClickListener {
                 loginThroughGoogle()
             }
             binding.btnLoginPhone.id -> {
-//                loginWithPhone()
+                loginWithPhone()
             }
         }
     }

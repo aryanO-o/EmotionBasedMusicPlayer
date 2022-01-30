@@ -1,6 +1,7 @@
 package com.example.emotionbasedmusic.fragments
 
 import android.app.Activity
+import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -119,6 +120,9 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
                         R.id.profile -> {
                             toProfileFragment()
                         }
+                        R.id.how_to_use -> {
+                            toHowToUseFrag()
+                        }
                     }
                     return true
                 }
@@ -126,12 +130,17 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
         }
     }
 
+    private fun toHowToUseFrag() {
+        findNavController().navigate(R.id.action_moodRecognitionFragment_to_fragmentHowToUse)
+    }
+
+
     private fun signOutBottom() {
         initBottomSheet()
     }
 
     private fun initBottomSheet() {
-        bottomSheetDialog = BottomSheetDialog(null, requireContext(), null, null, this)
+        bottomSheetDialog = BottomSheetDialog(null, requireParentFragment(), null, null, this)
         bottomSheetDialog.initBottomSheet(Constants.SIGN_OUT_BOTTOM)
     }
 
@@ -194,15 +203,16 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
 
     private val launcher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
+            if (result.resultCode == RESULT_OK) {
                 val data: Intent? = result.data
                 if (data != null) {
                     isFromGallery = true
                     toFaceProceedFragment(data.data!!.toString(), isFromGallery)
                 }
-
             }
         }
+
+
 
     private fun startCamera() {
         val intent = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE)
@@ -235,7 +245,7 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == Constants.CAMERA_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+        if (requestCode == Constants.CAMERA_REQUEST_CODE) {
             bitmap = data?.extras?.get("data") as Bitmap
             model.setBitmap(bitmap!!)
             isFromGallery = false

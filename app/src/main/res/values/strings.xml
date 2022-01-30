@@ -91,4 +91,5 @@
     <string name="how_to_use"><i><b><u>How To Use</u></b></i></string>
     <string name="first_line">On the home screen choose the select image button to click an image or use an image from the gallery or choose emotion from the emoji list given below.</string>
     <string name="second_line">After the recognition of the emotion, The app will load the song according to the mood detected. Here you go enjoy your favorite songs that too served according to your mood.</string>
+    <string name="how_to_use_">How to use</string>
 </resources>

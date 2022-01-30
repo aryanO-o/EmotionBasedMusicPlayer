@@ -27,11 +27,11 @@
 
             <ImageView
                 android:id="@+id/splash_icon"
-                android:layout_width="124dp"
-                android:layout_height="124dp"
+                android:layout_width="130dp"
+                android:layout_height="130dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:src="@drawable/splash_icon"
+                android:src="@drawable/figma_launcher_dark"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 android:contentDescription="@string/app_icon"/>

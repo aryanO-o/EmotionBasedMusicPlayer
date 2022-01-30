@@ -2,15 +2,16 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/background_black"
+    tools:context=".fragments.FragmentHowToUse"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.cardview.widget.CardView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_margin="25dp"
-        app:cardCornerRadius="12dp"
+        android:layout_margin="120dp"
         android:id="@+id/app_icon_img"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -18,6 +19,7 @@
         <ImageView
             android:layout_width="100dp"
             android:layout_height="100dp"
+            android:scaleType="fitXY"
             android:src="@mipmap/figma_launcher_dark"
             android:layout_gravity="center"/>
     </androidx.cardview.widget.CardView>
@@ -56,7 +58,8 @@
                 android:textSize="16sp"
                 android:text="@string/first_line"/>
         </TableRow>
-        <TableRow>
+        <TableRow
+            android:layout_marginTop="25dp">
             <TextView
                 android:layout_column="1"
                 android:textColor="@color/white"

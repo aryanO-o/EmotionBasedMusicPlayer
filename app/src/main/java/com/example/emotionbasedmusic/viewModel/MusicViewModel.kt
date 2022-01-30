@@ -49,6 +49,7 @@ class MusicViewModel(private var fragment: Fragment): ViewModel(), ValueEventLis
     var check = -1
     var aKey = -1
     private var child = ""
+    private var uri = ""
     init {
         getLikedSongs()
     }
@@ -62,6 +63,14 @@ class MusicViewModel(private var fragment: Fragment): ViewModel(), ValueEventLis
         viewModelScope.launch {
             ref.addValueEventListener(this@MusicViewModel)
         }
+    }
+
+    fun setUri(uri: String) {
+        this.uri = uri
+    }
+
+    fun getUri(): String {
+        return uri
     }
 
     private fun updateData(user: UserInfo) {

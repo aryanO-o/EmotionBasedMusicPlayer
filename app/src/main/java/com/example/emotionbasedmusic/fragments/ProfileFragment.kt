@@ -106,7 +106,9 @@ class ProfileFragment: Fragment(), View.OnClickListener, BottomSheetDialog.IBott
                 name = it
             }
             model.imgUri.observe(viewLifecycleOwner) {
-                Picasso.get().load(it).into(userProfilePhoto)
+                if(it.isNotEmpty()) {
+                    it?.let { url -> Picasso.get().load(url).into(userProfilePhoto) }
+                }
             }
         }
     }
@@ -159,12 +161,13 @@ class ProfileFragment: Fragment(), View.OnClickListener, BottomSheetDialog.IBott
     }
 
     private fun initBottomSheet() {
-        bottomSheetDialog = BottomSheetDialog(this.detail, requireContext(), this, textD, null)
+        bottomSheetDialog = BottomSheetDialog(this.detail, requireParentFragment(), this, textD, null)
         bottomSheetDialog.initBottomSheet(Constants.EDIT_BOTTOM)
     }
 
     override fun onCancelClick() {
         bottomSheetDialog.dismiss()
+        bottomSheetDialog.hideKeyboard()
     }
 
     private fun showToast(msg: String) {
@@ -174,6 +177,7 @@ class ProfileFragment: Fragment(), View.OnClickListener, BottomSheetDialog.IBott
     override fun onSaveClick(updatedDetail: String) {
         model.updateDetails(updatedDetail)
         bottomSheetDialog.dismiss()
+        bottomSheetDialog.hideKeyboard()
     }
 
 }
