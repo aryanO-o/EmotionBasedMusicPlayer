@@ -31,7 +31,7 @@ class PhoneFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-            initData()
+        initData()
     }
 
     private fun initData() {
@@ -40,10 +40,9 @@ class PhoneFragment : Fragment() {
         binding.apply {
             btnContinue.setOnClickListener {
                 val phoneNumber = binding.etlPhone.text.toString()
-                if(phoneNumber.isEmpty()) {
+                if (phoneNumber.isEmpty()) {
                     Toast.makeText(requireContext(), R.string.enter_10, Toast.LENGTH_SHORT).show()
-                }
-                else {
+                } else {
                     toOtpFragment(countryCodePicker.fullNumberWithPlus)
                 }
             }

@@ -20,8 +20,6 @@ import com.squareup.picasso.Picasso
 
 class MusicAdapter(private val iPost: IPost?, private val context: Context, private var check: Boolean, private val adapterKey: Int, private val iFavorite: IFavorite?): ListAdapter<Music, RecyclerView.ViewHolder>(DiffCallback) {
 
-    private var index : Int = -1
-    private var songPlaying: Boolean = false
     interface IPost {
         fun onPlay(song: Music, position: Int)
         fun onPauseMusic()
@@ -71,55 +69,6 @@ class MusicAdapter(private val iPost: IPost?, private val context: Context, priv
         }
     }
 
-//    @RequiresApi(Build.VERSION_CODES.M)
-//    override fun onBindViewHolder(holder: MusicViewHolder, position: Int) {
-//            when(check) {
-//                true ->{
-//                    ResultSongsFragment.binding.pfDetect.pFrame.makeGone()
-//                    ResultSongsFragment.binding.pfDetect.progressBarLayout.progressBar.makeGone()
-//                    ResultSongsFragment.binding.cl1.makeGone()
-//                    ResultSongsFragment.binding.cl2.makeVisible()
-//                }
-//                false -> {}
-//            }
-//            val song = getItem(position)
-//            holder.songName.text = song.songName
-//            holder.artistName.text = song.artistName
-//            if(song.playing) {
-//                holder.cv.strokeColor = context.getColor(R.color.border_color)
-//                holder.btnPlay.setImageDrawable(context.getDrawable(R.drawable.ic_baseline_pause_24))
-//            }
-//             else {
-//                holder.cv.strokeColor = context.getColor(R.color.white)
-//                holder.btnPlay.setImageDrawable(context.getDrawable(R.drawable.play_arrow_white))
-//            }
-//            holder.btnPlay.setOnClickListener {
-//                if(song.playing) {
-//                    song.playing = false
-//                    notifyItemChanged(position)
-//                    songPlaying = false
-//                    iPost.onPauseMusic()
-//                }
-//                else {
-//                    if(songPlaying) {
-//                        getItem(index).playing = false
-//                        notifyItemChanged(index)
-//                    }
-//                    else {
-//
-//                    }
-//                    songPlaying = true
-//                    song.playing = true
-//                    notifyItemChanged(position)
-//                    index = position
-//                    iPost.onPlay(song, position)
-//                }
-//            }
-//            holder.itemView.setOnClickListener {
-//                iPost.onItemSongClick(song)
-//            }
-//            Picasso.get().load(song.imgUrl).into(holder.img)
-//    }
 
     override fun getItemViewType(position: Int): Int {
         return adapterKey

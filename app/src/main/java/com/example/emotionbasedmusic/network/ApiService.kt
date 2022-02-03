@@ -10,8 +10,10 @@ import retrofit2.http.GET
 
 
 private val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
-private val retrofit = Retrofit.Builder().addConverterFactory(MoshiConverterFactory.create(moshi)).baseUrl(
-    Constants.BASE_URL).build()
+private val retrofit =
+    Retrofit.Builder().addConverterFactory(MoshiConverterFactory.create(moshi)).baseUrl(
+        Constants.BASE_URL
+    ).build()
 
 interface ApiService {
 
@@ -24,9 +26,12 @@ interface ApiService {
     @GET("neutral_songs_data")
     suspend fun getNeutralSongs(): List<Music>
 
+    @GET("angry_songs_data")
+    suspend fun getAngrySongs(): List<Music>
+
 }
 
 
 object API {
-    val retrofitService : ApiService by lazy { retrofit.create(ApiService::class.java) }
+    val retrofitService: ApiService by lazy { retrofit.create(ApiService::class.java) }
 }

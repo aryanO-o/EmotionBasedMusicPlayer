@@ -6,11 +6,14 @@ import com.example.emotionbasedmusic.helper.Constants
 
 class emojiData {
 
-    fun loadEmoji(): List<emojiDataModel>{
+    fun loadEmoji(): List<emojiDataModel> {
         return listOf(
             emojiDataModel(R.drawable.neutral_face, Constants.NEUTRAL_MOOD),
             emojiDataModel(R.drawable.happy_face, Constants.HAPPY_MOOD),
-            emojiDataModel(R.drawable.sad_face, Constants.SAD_MOOD)
+            emojiDataModel(R.drawable.sad_face, Constants.SAD_MOOD),
+            emojiDataModel(R.drawable.angry_face, Constants.ANGRY_MOOD),
+            emojiDataModel(R.drawable.tired_face, Constants.TIRED_MOOD),
+            emojiDataModel(R.drawable.surprised_face, Constants.SURPRISED_MOOD)
 //            emojiDataModel(R.drawable.surprised_face, "Surprised"),
 //            emojiDataModel(R.drawable.angry_face, "Angry"),
 //            emojiDataModel(R.drawable.tired_face, "Tired"),

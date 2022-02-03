@@ -1,6 +1,7 @@
 package com.example.emotionbasedmusic.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +17,7 @@ import com.example.emotionbasedmusic.MainActivity
 import com.example.emotionbasedmusic.R
 import com.example.emotionbasedmusic.databinding.FragmentCheckBinding
 import com.example.emotionbasedmusic.helper.Constants
+import com.example.emotionbasedmusic.helper.HelpRepo
 import com.example.emotionbasedmusic.viewModel.MusicViewModel
 import com.example.emotionbasedmusic.viewModel.MusicViewModelFactory
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -24,7 +26,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 
-class CheckFragment: Fragment() {
+class CheckFragment : Fragment() {
     private lateinit var binding: FragmentCheckBinding
     private lateinit var googleSignInOptions: GoogleSignInOptions
     private lateinit var googleSignInClient: GoogleSignInClient
@@ -32,9 +34,11 @@ class CheckFragment: Fragment() {
     private lateinit var database: FirebaseDatabase
     private var isFromNotification: Boolean? = false
     private lateinit var navController: NavController
+    private val repo = HelpRepo(requireContext())
     private val model: MusicViewModel by activityViewModels {
         MusicViewModelFactory(requireParentFragment())
     }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -46,43 +50,32 @@ class CheckFragment: Fragment() {
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-            isFromNotification = (requireActivity() as MainActivity).isFromNotification
-            navController = (requireActivity() as MainActivity).navController
-            initData()
-            checkForUser()
+        isFromNotification = (requireActivity() as MainActivity).isFromNotification
+        navController = (requireActivity() as MainActivity).navController
+        initData()
+        checkForUser()
     }
 
     private fun checkForUser() {
-        if(auth.currentUser?.uid != null) {
-            if(isFromNotification!= null) {
-                if(isFromNotification!!) {
-                        toFaceScanFragment()
-                    (requireActivity() as MainActivity).moveToMusic()
-                }
-                else {
-                    toFaceScanFragment()
-                }
-            }
-            else {
+        if (repo.getSharedPreferences(Constants.IS_LOGGED_IN) == Constants.LOGGED_IN) {
+            if (isFromNotification == true) {
+                toFaceScanFragment()
+                (requireActivity() as MainActivity).moveToMusic()
+            } else {
                 toFaceScanFragment()
             }
-        }
-        else {
+        } else {
             toSignUpFragment()
         }
     }
 
-    private fun toMusicFragment() {
-        model.key = false
-        val action = CheckFragmentDirections.actionCheckFragmentToMusicFragment()
-        findNavController().navigate(action)
-    }
 
     private fun toSignUpFragment() {
         findNavController().navigate(R.id.action_checkFragment_to_signUpFragment)
     }
 
     private fun initData() {
+        repo.initSharedPreferences()
         auth = FirebaseAuth.getInstance()
         database = FirebaseDatabase.getInstance()
         googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)

@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -19,18 +20,36 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.emotionbasedmusic.R
+import com.example.emotionbasedmusic.data.AzureResponse
+import com.example.emotionbasedmusic.data.Emotions
+import com.example.emotionbasedmusic.data.ImageBody
+import com.example.emotionbasedmusic.data.Moods
 import com.example.emotionbasedmusic.databinding.FragmentFaceProceedOrRetakeBinding
 import com.example.emotionbasedmusic.helper.Constants
 import com.example.emotionbasedmusic.helper.Dialog
 import com.example.emotionbasedmusic.helper.makeGone
 import com.example.emotionbasedmusic.helper.makeVisible
+import com.example.emotionbasedmusic.network.AZURE
+import com.example.emotionbasedmusic.network.AzureApi
 import com.example.emotionbasedmusic.viewModel.MusicViewModel
 import com.example.emotionbasedmusic.viewModel.MusicViewModelFactory
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.UploadTask
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.Face
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetectorOptions
+import kotlinx.coroutines.*
+import retrofit2.Response
 import java.io.IOException
+import kotlin.math.max
+import android.provider.MediaStore
+import java.io.ByteArrayOutputStream
 
 
 class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.IListener {
@@ -43,8 +62,13 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
     private var boolean: Boolean = false
     private var bitmap: Bitmap? = null
     private lateinit var dialog: Dialog
+    private lateinit var auth: FirebaseAuth
+    private lateinit var ref: StorageReference
+    private lateinit var storage: FirebaseStorage
     private var mood = ""
+    private lateinit var finalUri: Uri
     private lateinit var testImage: InputImage
+    private var max = -1.1
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         imageUri = navArgs.uri
@@ -61,6 +85,13 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initView()
+        initData()
+    }
+
+    private fun initData() {
+        auth = FirebaseAuth.getInstance()
+        storage = FirebaseStorage.getInstance()
+        ref = storage.reference.child("allImages").child(auth.currentUser!!.uid)
     }
 
     private fun initView() {
@@ -70,9 +101,7 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
             }
             else {
                 ivFaceScan.setImageBitmap(model.getBitmap())
-//                ivFaceScan.setImageURI(model.getUri().toUri())
             }
-
             btnProceed.setOnClickListener(this@FaceProceedOrRetakeFragment)
             btnRetake.setOnClickListener(this@FaceProceedOrRetakeFragment)
             faceResultFragment.btnSearchSongs.setOnClickListener(this@FaceProceedOrRetakeFragment)
@@ -104,7 +133,10 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
     override fun onClick(p0: View?) {
         when(p0?.id) {
             R.id.btnRetake -> {showDialog()}
-            R.id.btnProceed -> {detectFace()}
+            R.id.btnProceed -> {
+//                detectFace()
+                getImageUrl()
+            }
             R.id.btnSearchSongs -> {
                 model.getSongs(mood)
                 toResultSongFragment()
@@ -114,6 +146,132 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
             }
         }
     }
+
+    private fun detectFaceThroughAzure(url: String) {
+        GlobalScope.launch(Dispatchers.IO) {
+            try {
+                val imgBody = ImageBody(url)
+                val task = AZURE.azureService.sendImage(imgBody)
+                withContext(Dispatchers.Main) {
+                    azureFaces(task.body())
+                }
+            }
+            catch (e: ApiException) {
+                withContext(Dispatchers.Main) {
+                    makeViewsGone()
+                    binding.cl1.makeVisible()
+                    Toast.makeText(requireContext(), "Some error occurred", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    private fun azureFaces(body: List<AzureResponse>?) {
+        if(body!=null) {
+            if(body.isEmpty()) {
+                binding.apply {
+                    makeViewsGone()
+                    cl4.makeVisible()
+                }
+            }
+            else {
+                binding.apply {
+                    makeViewsGone()
+                    cl3.makeVisible()
+                }
+                analyzeAzureFace(body[0].faceAttributes.emotion)
+            }
+        }
+        else {
+            Toast.makeText(requireContext(), "null", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun analyzeAzureFace(azureResponse: Moods) {
+        azureResponse.apply {
+           max =  maxOf(anger, fear, happiness, neutral, sadness, surprise)
+        }
+        updateUI(max, azureResponse)
+    }
+
+    private fun updateUI(max: Double, emotions: Moods) {
+        when(max) {
+            emotions.sadness ->{
+                setEmotion(R.drawable.sad_face, "Sad")
+                this.mood = Constants.SAD_MOOD
+            }
+            emotions.happiness -> {
+                setEmotion(R.drawable.happy_face, "Happy")
+                this.mood = Constants.HAPPY_MOOD
+            }
+            emotions.neutral -> {
+                setEmotion(R.drawable.neutral_face, "Neutral")
+                this.mood = Constants.NEUTRAL_MOOD
+            }
+            emotions.anger -> {
+                setEmotion(R.drawable.angry_face, "Angry")
+                this.mood = Constants.ANGRY_MOOD
+            }
+            emotions.surprise -> {
+                setEmotion(R.drawable.surprised_face, "Surprise")
+                this.mood = Constants.SAD_MOOD
+            }
+            emotions.disgust -> {
+                setEmotion(R.drawable.tired_face, "Tired")
+                this.mood = Constants.SAD_MOOD
+            }
+        }
+    }
+
+    private fun getImageUrl() {
+        when(boolean) {
+            true -> {
+                this.finalUri = imageUri?.toUri()!!
+            }
+            false -> {
+                this.finalUri = uriFromBitmap()
+            }
+        }
+        binding.apply {
+            cl1.makeGone()
+            cl2.makeVisible()
+            pfDetect.pFrame.makeVisible()
+            pfDetect.progressBarLayout.progressBar.makeVisible()
+        }
+        getStorageUrl()
+    }
+
+    private  fun uriFromBitmap(): Uri {
+        val bytes = ByteArrayOutputStream()
+        model.getBitmap()!!.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+        val path: String = MediaStore.Images.Media.insertImage(
+            requireContext().contentResolver,
+            model.getBitmap(),
+            "Title",
+            null
+        )
+        return Uri.parse(path)
+    }
+
+
+    private fun getStorageUrl() {
+        try {
+            GlobalScope.launch(Dispatchers.IO) {
+                ref.putFile(finalUri).addOnCompleteListener(object: OnCompleteListener<UploadTask.TaskSnapshot> {
+                    override fun onComplete(p0: Task<UploadTask.TaskSnapshot>) {
+                        if(p0.isSuccessful) {
+                            ref.downloadUrl.addOnSuccessListener { uri ->
+                                detectFaceThroughAzure(uri.toString())
+                            }
+                        }
+                    }
+                })
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+    }
+
 
     private fun toResultSongFragment() {
         findNavController().navigate(R.id.action_faceProceedOrRetakeFragment_to_resultSongsFragment)
@@ -277,5 +435,6 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
             }
         }
     }
+
 
 }

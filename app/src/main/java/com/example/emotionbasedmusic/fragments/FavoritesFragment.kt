@@ -23,7 +23,7 @@ import com.example.emotionbasedmusic.viewModel.MusicViewModel
 import com.example.emotionbasedmusic.viewModel.MusicViewModelFactory
 
 
-class FavoritesFragment : Fragment(), MusicAdapter.IFavorite{
+class FavoritesFragment : Fragment(), MusicAdapter.IFavorite {
     private lateinit var binding: FragmentFavoritesBinding
     private lateinit var adapter: MusicAdapter
     private val model: MusicViewModel by activityViewModels {
@@ -67,9 +67,13 @@ class FavoritesFragment : Fragment(), MusicAdapter.IFavorite{
     }
 
     private fun checkForSongs(it: MutableList<Music>?) {
-        when(it!!.isEmpty()) {
-            true -> {binding.clEmpty.makeVisible()}
-            false -> {binding.clEmpty.makeGone()}
+        when (it!!.isEmpty()) {
+            true -> {
+                binding.clEmpty.makeVisible()
+            }
+            false -> {
+                binding.clEmpty.makeGone()
+            }
         }
     }
 
@@ -84,5 +88,4 @@ class FavoritesFragment : Fragment(), MusicAdapter.IFavorite{
         model.setSong(song)
         findNavController().navigate(R.id.action_favoritesFragment_to_musicFragment)
     }
-
 }

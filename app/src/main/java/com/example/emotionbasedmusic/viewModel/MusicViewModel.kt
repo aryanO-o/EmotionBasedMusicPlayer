@@ -27,10 +27,12 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import okhttp3.Dispatcher
 import java.lang.IllegalStateException
 
-class MusicViewModel(private var fragment: Fragment): ViewModel(), ValueEventListener {
+class MusicViewModel(private var fragment: Fragment) : ViewModel(), ValueEventListener {
     private var bitmap: Bitmap? = null
     private lateinit var mood: String
     var key: Boolean? = true
@@ -50,11 +52,18 @@ class MusicViewModel(private var fragment: Fragment): ViewModel(), ValueEventLis
     var aKey = -1
     private var child = ""
     private var uri = ""
+
     init {
         getLikedSongs()
     }
+
     fun parcelData(account: FirebaseUser) {
-        val user = UserInfo(account.displayName!!, account.email!!, account.phoneNumber?:"", account.photoUrl!!.toString())
+        val user = UserInfo(
+            account.displayName!!,
+            account.email!!,
+            account.phoneNumber ?: "",
+            account.photoUrl!!.toString()
+        )
         updateData(user)
     }
 
@@ -75,22 +84,29 @@ class MusicViewModel(private var fragment: Fragment): ViewModel(), ValueEventLis
 
     private fun updateData(user: UserInfo) {
         ref = database.reference.child(Constants.USERS).child(auth.currentUser!!.uid)
-
+        viewModelScope.launch(Dispatchers.IO) {
             ref.setValue(user).addOnCompleteListener(object : OnCompleteListener<Void> {
                 override fun onComplete(task: Task<Void>) {
-                    if(task.isSuccessful) {
-                        Toast.makeText(fragment.requireContext(), R.string.successful_msg, Toast.LENGTH_SHORT).show()
+                    if (task.isSuccessful) {
+                        Toast.makeText(
+                            fragment.requireContext(),
+                            R.string.successful_msg,
+                            Toast.LENGTH_SHORT
+                        ).show()
                         MoodRecognitionFragment.binding.pIndicator.makeGone()
-                    }
-                    else {
-                        Toast.makeText(fragment.requireContext(), R.string.upload_error, Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(
+                            fragment.requireContext(),
+                            R.string.upload_error,
+                            Toast.LENGTH_SHORT
+                        ).show()
                         MoodRecognitionFragment.binding.pIndicator.makeGone()
                     }
                     progressIndicator = false
                 }
 
             })
-
+        }
     }
 
     fun setAdapterKey(key: Int) {
@@ -103,12 +119,13 @@ class MusicViewModel(private var fragment: Fragment): ViewModel(), ValueEventLis
 
 
     fun getSong(): Music? {
-        return if(song==null) {
+        return if (song == null) {
             null
         } else {
             song
         }
     }
+
     fun setBitmap(bitmap: Bitmap) {
         this.bitmap = bitmap
     }
@@ -121,26 +138,29 @@ class MusicViewModel(private var fragment: Fragment): ViewModel(), ValueEventLis
         return mood
     }
 
-     fun getSongs(mood: String) {
-         this.mood = mood
-         musicData.value = mutableListOf()
-         viewModelScope.launch {
-             try {
-                 when (mood) {
-                     Constants.HAPPY_MOOD -> {
-                         musicData.value = API.retrofitService.getHappySongs()
-                     }
-                     Constants.SAD_MOOD -> {
-                         musicData.value = API.retrofitService.getSadSongs()
-                     }
-                     Constants.NEUTRAL_MOOD -> {
-                         musicData.value = API.retrofitService.getNeutralSongs()
-                     }
-                 }
-             } catch (e: Exception) {
-                 ResultSongsFragment.binding.neResultSongs.ne.makeVisible()
-             }
-         }
+    fun getSongs(mood: String) {
+        this.mood = mood
+        musicData.value = mutableListOf()
+        viewModelScope.launch {
+            try {
+                when (mood) {
+                    Constants.HAPPY_MOOD -> {
+                        musicData.value = API.retrofitService.getHappySongs()
+                    }
+                    Constants.SAD_MOOD -> {
+                        musicData.value = API.retrofitService.getSadSongs()
+                    }
+                    Constants.NEUTRAL_MOOD -> {
+                        musicData.value = API.retrofitService.getNeutralSongs()
+                    }
+                    Constants.ANGRY_MOOD -> {
+                        musicData.value = API.retrofitService.getAngrySongs()
+                    }
+                }
+            } catch (e: Exception) {
+                ResultSongsFragment.binding.neResultSongs.ne.makeVisible()
+            }
+        }
     }
 
     fun addToLikedSongs(song: Music) {
@@ -150,12 +170,12 @@ class MusicViewModel(private var fragment: Fragment): ViewModel(), ValueEventLis
         }
     }
 
-    fun removedFromLikedSongs(song:Music) {
+    fun removedFromLikedSongs(song: Music) {
         val ref = database.reference.child(Constants.LIKED_SONGS).child(auth.currentUser!!.uid)
         val query = ref.orderByChild("songName").equalTo(song.songName)
         query.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                for(snap: DataSnapshot in snapshot.children) {
+                for (snap: DataSnapshot in snapshot.children) {
                     viewModelScope.launch {
                         likedSongs.remove(song)
                         _likedSongs.value!!.remove(song)
@@ -163,6 +183,7 @@ class MusicViewModel(private var fragment: Fragment): ViewModel(), ValueEventLis
                     }
                 }
             }
+
             override fun onCancelled(error: DatabaseError) {
 
             }
@@ -175,16 +196,17 @@ class MusicViewModel(private var fragment: Fragment): ViewModel(), ValueEventLis
         _likedSongs.value = mutableListOf()
         resetLikedSongs()
         viewModelScope.launch {
-            ref.addValueEventListener(object: ValueEventListener {
+            ref.addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    for(data: DataSnapshot in snapshot.children) {
+                    for (data: DataSnapshot in snapshot.children) {
                         val song = data.getValue(Music::class.java)
-                        if(!(likedSongs.contains(song))) {
+                        if (!(likedSongs.contains(song))) {
                             likedSongs.add(song!!)
                         }
                     }
                     _likedSongs.value = likedSongs
                 }
+
                 override fun onCancelled(error: DatabaseError) {
 
                 }
@@ -209,19 +231,19 @@ class MusicViewModel(private var fragment: Fragment): ViewModel(), ValueEventLis
     }
 
     fun updateDetails(update: String) {
-        when(check) {
-                0 -> {
-                   this.child = Constants.NAME
-                }
-
-                1-> {
-                    this.child = Constants.PHONE
-                }
-
-                2 -> {
-                  this.child = Constants.EMAIL
-                }
+        when (check) {
+            0 -> {
+                this.child = Constants.NAME
             }
+
+            1 -> {
+                this.child = Constants.PHONE
+            }
+
+            2 -> {
+                this.child = Constants.EMAIL
+            }
+        }
         ref = database.reference.child(Constants.USERS).child(auth.currentUser!!.uid).child(child)
         viewModelScope.launch {
             ref.setValue(update)
@@ -230,9 +252,9 @@ class MusicViewModel(private var fragment: Fragment): ViewModel(), ValueEventLis
 }
 
 
-class MusicViewModelFactory(private val fragment: Fragment): ViewModelProvider.Factory {
+class MusicViewModelFactory(private val fragment: Fragment) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if(modelClass.isAssignableFrom(MusicViewModel::class.java)) {
+        if (modelClass.isAssignableFrom(MusicViewModel::class.java)) {
             return MusicViewModel(fragment) as T
         }
         throw IllegalStateException("Unknown error")

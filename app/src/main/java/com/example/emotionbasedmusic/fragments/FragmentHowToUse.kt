@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.emotionbasedmusic.databinding.HowToUseAppBinding
 
-class FragmentHowToUse: Fragment() {
+class FragmentHowToUse : Fragment() {
     private lateinit var binding: HowToUseAppBinding
     override fun onCreateView(
         inflater: LayoutInflater,

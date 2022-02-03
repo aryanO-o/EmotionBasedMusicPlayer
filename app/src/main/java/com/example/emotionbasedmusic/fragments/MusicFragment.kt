@@ -32,7 +32,8 @@ import com.squareup.picasso.Picasso
 import java.io.Serializable
 import java.util.concurrent.TimeUnit
 
-class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeListener, ServiceConnection {
+class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeListener,
+    ServiceConnection {
 
     private val model: MusicViewModel by activityViewModels {
         MusicViewModelFactory(requireParentFragment())
@@ -47,6 +48,7 @@ class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeL
     private var isBounded: Boolean? = false
     private var isFromFavorite: Boolean = false
     val _likedSongs = MutableLiveData<MutableList<Music>>()
+
     companion object {
         lateinit var binding: FragmentMusicBinding
     }
@@ -66,7 +68,8 @@ class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeL
         intent = Intent(requireContext(), MusicService::class.java)
         key = (requireActivity() as MainActivity).key
         isFromFavorite = (requireActivity() as MainActivity).isFromFavorite
-        notificationManager = requireActivity().getSystemService(NotificationManager::class.java) as NotificationManager
+        notificationManager =
+            requireActivity().getSystemService(NotificationManager::class.java) as NotificationManager
         binding.sBar.setOnSeekBarChangeListener(this)
         songsList.value = mutableListOf()
         _likedSongs.value = mutableListOf()
@@ -89,21 +92,23 @@ class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeL
 
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun checkForLiked() {
-        if(key!!) {
+        if (key!!) {
 
-        }
-        else {
+        } else {
             this.song = service.getSong()
         }
-
-        when(_likedSongs.value!!.contains(song)) {
-            true -> {binding.btnLike.setImageDrawable(resources.getDrawable(R.drawable.ic_outline_favorite_24))}
-            false -> {binding.btnLike.setImageDrawable(resources.getDrawable(R.drawable.ic_baseline_favorite_border_24_4))}
+        when (_likedSongs.value!!.contains(song)) {
+            true -> {
+                binding.btnLike.setImageDrawable(resources.getDrawable(R.drawable.ic_outline_favorite_24))
+            }
+            false -> {
+                binding.btnLike.setImageDrawable(resources.getDrawable(R.drawable.ic_baseline_favorite_border_24_4))
+            }
         }
     }
 
     private fun checkForKey() {
-        when(key!!) {
+        when (key!!) {
             true -> {
                 stopForegroundService()
                 initView()
@@ -123,13 +128,14 @@ class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeL
             requireActivity().bindService(it, this, Context.BIND_AUTO_CREATE)
         }
     }
+
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun initView() {
         this.song = model.getSong()
         binding.apply {
             tvStartTime.text = getString(R.string.tools_text)
             tvEndTime.text = getText(R.string.tools_text)
-            sBar.progress=0
+            sBar.progress = 0
             btnPlay.setImageDrawable(resources.getDrawable(R.drawable.ic_baseline_pause_24_b))
             tvSongName.text = song?.songName
             tvArtist.text = song?.artistName
@@ -166,12 +172,13 @@ class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeL
     private fun showToast(msg: String) {
         Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
     }
+
     @RequiresApi(Build.VERSION_CODES.N)
     @SuppressLint("UseCompatLoadingForDrawables")
     override fun onClick(view: View?) {
-        when(view?.id) {
+        when (view?.id) {
             R.id.btnPlay -> {
-                when(MusicService.mediaPlayer.isPlaying) {
+                when (MusicService.mediaPlayer.isPlaying) {
                     true -> {
                         pauseMediaPlayer()
                         binding.btnPlay.setImageDrawable(resources.getDrawable(R.drawable.play_icon))
@@ -183,26 +190,21 @@ class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeL
                 }
             }
             R.id.ibLoop -> {
-                if(isLooping) {
+                if (isLooping) {
                     isLooping = false
                     binding.ibLoop.setImageDrawable(resources.getDrawable(R.drawable.repeat_icon))
                     setLooping(isLooping)
-                }
-                else {
+                } else {
                     isLooping = true
                     binding.ibLoop.setImageDrawable(resources.getDrawable(R.drawable.ic_baseline_repeat_24_b))
                     setLooping(isLooping)
                 }
             }
             R.id.btnNextSong -> {
-                service.nextSong()
-                getSong()
-                checkForLiked()
+                nextSong()
             }
             R.id.btnPreviousSong -> {
-                service.prevSong()
-                getSong()
-                checkForLiked()
+                prevSong()
             }
             R.id.btnLike -> {
                 checkForFavorite()
@@ -211,6 +213,20 @@ class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeL
                 popBackStack()
             }
         }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    fun nextSong() {
+        service.nextSong()
+        getSong()
+        checkForLiked()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    fun prevSong() {
+        service.prevSong()
+        getSong()
+        checkForLiked()
     }
 
     private fun getSong() {
@@ -222,29 +238,27 @@ class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeL
     }
 
     private fun checkForFavorite() {
-        if(key!!) {
+        if (key!!) {
 
-        }
-        else {
+        } else {
             this.song = service.getSong()
         }
-        if(this._likedSongs.value!!.contains(song)) {
+        if (this._likedSongs.value!!.contains(song)) {
             removeFromLiked(song!!)
-        }
-        else {
+        } else {
             addToLiked(song!!)
         }
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
-    private fun removeFromLiked(song:Music) {
+    private fun removeFromLiked(song: Music) {
         binding.btnLike.setImageDrawable(resources.getDrawable(R.drawable.ic_baseline_favorite_border_24_4))
         model.removedFromLikedSongs(song)
         showToast(Constants.REMOVED_LIKED_SONGS)
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
-    private fun addToLiked(song:Music) {
+    private fun addToLiked(song: Music) {
         binding.btnLike.setImageDrawable(resources.getDrawable(R.drawable.ic_outline_favorite_24))
         model.addToLikedSongs(song)
         showToast(Constants.ADDED_LIKED_SONGS)
@@ -259,7 +273,6 @@ class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeL
     }
 
     override fun onProgressChanged(sb: SeekBar?, progress: Int, p2: Boolean) {
-
     }
 
     private fun seekTo(seekPosition: Int) {
@@ -279,7 +292,7 @@ class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeL
         val binder = service as MusicService.LocalBinder
         this.service = binder.getService()
         isBounded = true
-        when(key!!) {
+        when (key!!) {
             false -> {
                 this.songsList.value = this.service.getSongsList()
                 checkForLiked()
@@ -287,7 +300,7 @@ class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeL
             }
             true -> {
                 checkForLiked()
-                when(isFromFavorite) {
+                when (isFromFavorite) {
                     true -> {
                         this.service.setSongsList(this._likedSongs.value!!)
                     }
@@ -303,7 +316,6 @@ class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeL
     override fun onServiceDisconnected(p0: ComponentName?) {
         isBounded = false
     }
-
 
 
 }

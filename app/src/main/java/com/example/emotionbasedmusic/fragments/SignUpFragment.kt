@@ -2,20 +2,17 @@ package com.example.emotionbasedmusic.fragments
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.emotionbasedmusic.R
-import com.example.emotionbasedmusic.databinding.ProgressBarBinding
-
 import com.example.emotionbasedmusic.databinding.SignUpFragmentBinding
 import com.example.emotionbasedmusic.helper.Constants
+import com.example.emotionbasedmusic.helper.HelpRepo
 import com.example.emotionbasedmusic.helper.makeGone
 import com.example.emotionbasedmusic.helper.makeVisible
 import com.example.emotionbasedmusic.viewModel.MusicViewModel
@@ -40,6 +37,7 @@ class SignUpFragment : Fragment(), View.OnClickListener {
     private lateinit var googleSignInOptions: GoogleSignInOptions
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var auth: FirebaseAuth
+    private val repo = HelpRepo(requireContext())
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -59,6 +57,7 @@ class SignUpFragment : Fragment(), View.OnClickListener {
 
 
     private fun initData() {
+        repo.initSharedPreferences()
         auth = FirebaseAuth.getInstance()
         database = FirebaseDatabase.getInstance()
         googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -94,7 +93,7 @@ class SignUpFragment : Fragment(), View.OnClickListener {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode==Constants.GOOGLE_REQUEST_CODE) {
+        if (requestCode == Constants.GOOGLE_REQUEST_CODE) {
             progressFrameVisible()
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             handleSignInResult(task)
@@ -106,10 +105,10 @@ class SignUpFragment : Fragment(), View.OnClickListener {
         try {
             val account = task?.getResult(ApiException::class.java)
             firebaseAuthWithGoogle(account)
-        }
-        catch (e: ApiException) {
+        } catch (e: ApiException) {
             progressFrameGone()
-            Toast.makeText(requireContext(),getString(R.string.error_msg), Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.error_msg), Toast.LENGTH_SHORT)
+                .show()
         }
     }
 
@@ -131,20 +130,20 @@ class SignUpFragment : Fragment(), View.OnClickListener {
 
     private fun firebaseAuthWithGoogle(account: GoogleSignInAccount?) {
         val credential = GoogleAuthProvider.getCredential(account?.idToken, null)
-        auth.signInWithCredential(credential).addOnCompleteListener(requireActivity()) { task->
-                if(task.isSuccessful) {
-                    if(task.result.additionalUserInfo?.isNewUser ==true) {
-                        model.progressIndicator = true
-                        val account = task.result.user
-                        model.parcelData(account!!)
-                        Toast.makeText(requireContext(), "Setting up", Toast.LENGTH_SHORT).show()
-                        toFaceScanFragment()
-                    }
-                    else {
-                        Toast.makeText(requireContext(), "Welcome Back", Toast.LENGTH_SHORT).show()
-                        toFaceScanFragment()
-                    }
+        auth.signInWithCredential(credential).addOnCompleteListener(requireActivity()) { task ->
+            if (task.isSuccessful) {
+                repo.setSharedPreferences(Constants.IS_LOGGED_IN, Constants.LOGGED_IN)
+                if (task.result.additionalUserInfo?.isNewUser == true) {
+                    model.progressIndicator = true
+                    val account = task.result.user
+                    model.parcelData(account!!)
+                    Toast.makeText(requireContext(), "Setting up", Toast.LENGTH_SHORT).show()
+                    toFaceScanFragment()
+                } else {
+                    Toast.makeText(requireContext(), "Welcome Back", Toast.LENGTH_SHORT).show()
+                    toFaceScanFragment()
                 }
+            }
         }
     }
 

@@ -37,7 +37,7 @@ fun getIntent(context: Context): PendingIntent? {
     val intent = Intent(context, MainActivity::class.java)
     intent.putExtra(Constants.IS_FROM_NOTIFICATION, true)
     intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-                    return PendingIntent.getActivity(context, Constants.INTENT_REQUEST_CODE, intent, 0)
+    return PendingIntent.getActivity(context, Constants.INTENT_REQUEST_CODE, intent, 0)
 }
 
 fun setUpNotificationChannel(context: Context) {
@@ -49,7 +49,11 @@ fun setUpNotificationChannel(context: Context) {
 @RequiresApi(Build.VERSION_CODES.O)
 fun createNotificationChannel(context: Context) {
     val notificationManager = context.getSystemService(NotificationManager::class.java)
-    val channel = NotificationChannel(Constants.NOTIFICATION_CHANNEL_ID, Constants.NOTIFICATION_CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH)
+    val channel = NotificationChannel(
+        Constants.NOTIFICATION_CHANNEL_ID,
+        Constants.NOTIFICATION_CHANNEL_NAME,
+        NotificationManager.IMPORTANCE_HIGH
+    )
     channel.enableLights(true)
     channel.lightColor = Color.RED
     channel.setSound(null, null)

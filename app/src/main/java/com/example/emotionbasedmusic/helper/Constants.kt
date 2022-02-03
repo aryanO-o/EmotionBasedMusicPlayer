@@ -16,6 +16,9 @@ class Constants {
         const val HAPPY_MOOD = "Happy"
         const val SAD_MOOD = "Sad"
         const val NEUTRAL_MOOD = "Neutral"
+        const val ANGRY_MOOD = "Angry"
+        const val SURPRISED_MOOD = "Surprised"
+        const val TIRED_MOOD = "Tired"
         const val MUSIC_FRAGMENT_FROM_NOTIFICATION = "music_fragment_from_notification"
         const val NOTIFICATION_CHANNEL_ID = "EMOTION_BASED_MUSIC_ID"
         const val NOTIFICATION_CHANNEL_NAME = "EMOTION_BASED_MUSIC"
@@ -38,5 +41,10 @@ class Constants {
         const val EDIT_BOTTOM = R.layout.bottom_sheet
         const val SIGN_OUT_BOTTOM = R.layout.sign_out_bottom
         const val EMAIL = "email"
+        const val AZURE_API_KEY = "e29e52ef4ee84fe5b32afdd583984853"
+        const val AZURE_BASE_URL = "https://face118921.cognitiveservices.azure.com/face/v1.0/"
+        const val APP_NAME = "EMOSIC"
+        const val LOGGED_IN = "Logged_In"
+        const val IS_LOGGED_IN = "is_logged_in"
     }
 }

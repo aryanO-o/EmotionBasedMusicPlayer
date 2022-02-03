@@ -23,18 +23,21 @@ import com.example.emotionbasedmusic.helper.makeVisible
 import com.example.emotionbasedmusic.viewModel.MusicViewModel
 import com.example.emotionbasedmusic.viewModel.MusicViewModelFactory
 
-class ResultSongsFragment: Fragment(), MusicAdapter.IPost, MediaPlayer.OnPreparedListener, View.OnClickListener {
+class ResultSongsFragment : Fragment(), MusicAdapter.IPost, MediaPlayer.OnPreparedListener,
+    View.OnClickListener {
 
     private lateinit var adapter: MusicAdapter
     private val model: MusicViewModel by activityViewModels {
         MusicViewModelFactory(requireParentFragment())
     }
     private lateinit var mediaPlayer: MediaPlayer
-    private  var song: Music? = null
+    private var song: Music? = null
     private var index: Int = -1
+
     companion object {
         lateinit var binding: FragmentsResultSongsBinding
     }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -97,6 +100,7 @@ class ResultSongsFragment: Fragment(), MusicAdapter.IPost, MediaPlayer.OnPrepare
     private fun resetMediaPlayer() {
         mediaPlayer.reset()
     }
+
     override fun onItemSongClick(song: Music) {
         (requireActivity() as MainActivity).key = true
         (requireActivity() as MainActivity).isFromFavorite = false
@@ -109,12 +113,13 @@ class ResultSongsFragment: Fragment(), MusicAdapter.IPost, MediaPlayer.OnPrepare
         this.song?.playing = false
         adapter.notifyItemChanged(index)
     }
+
     override fun onPrepared(mediaPlayer: MediaPlayer?) {
         mediaPlayer!!.start()
     }
 
     override fun onClick(view: View?) {
-        when(view?.id) {
+        when (view?.id) {
             R.id.btnRetry -> {
                 binding.neResultSongs.ne.makeGone()
                 model.getSongs(model.getMood())

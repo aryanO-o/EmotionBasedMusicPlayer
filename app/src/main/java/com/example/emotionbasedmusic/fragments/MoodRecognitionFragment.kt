@@ -26,10 +26,7 @@ import com.example.emotionbasedmusic.adapter.emojiAdapter
 import com.example.emotionbasedmusic.dataSource.emojiData
 import com.example.emotionbasedmusic.databinding.FragmentFaceProceedOrRetakeBinding
 import com.example.emotionbasedmusic.databinding.FragmentMoodRecognitionBinding
-import com.example.emotionbasedmusic.helper.BottomSheetDialog
-import com.example.emotionbasedmusic.helper.Constants
-import com.example.emotionbasedmusic.helper.Dialog
-import com.example.emotionbasedmusic.helper.makeVisible
+import com.example.emotionbasedmusic.helper.*
 import com.example.emotionbasedmusic.viewModel.MusicViewModel
 import com.example.emotionbasedmusic.viewModel.MusicViewModelFactory
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -39,11 +36,13 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 
 
-class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListener, emojiAdapter.Ilistener, BottomSheetDialog.SBottom {
+class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListener,
+    emojiAdapter.Ilistener, BottomSheetDialog.SBottom {
 
     private val model: MusicViewModel by activityViewModels {
         MusicViewModelFactory(requireParentFragment())
     }
+    private val repo = HelpRepo(requireContext())
     private lateinit var database: FirebaseDatabase
     private lateinit var googleSignInOptions: GoogleSignInOptions
     private lateinit var googleSignInClient: GoogleSignInClient
@@ -77,8 +76,10 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
     }
 
     private fun checkForPI() {
-        when(model.progressIndicator) {
-            true -> {binding.pIndicator.makeVisible()}
+        when (model.progressIndicator) {
+            true -> {
+                binding.pIndicator.makeVisible()
+            }
         }
     }
 
@@ -87,11 +88,13 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
         val emojiDataSet = emojiData().loadEmoji();
         val emojiRecyclerView = view?.findViewById<RecyclerView>(R.id.emoji_recycler_view)
         emojiRecyclerView?.adapter = emojiAdapter(this, emojiDataSet);
-        emojiRecyclerView?.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        emojiRecyclerView?.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
     }
 
     private fun initData() {
         auth = FirebaseAuth.getInstance()
+        repo.initSharedPreferences()
         database = FirebaseDatabase.getInstance()
         googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.web_client_id))
@@ -153,6 +156,7 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
     }
 
     private fun signOut() {
+        repo.clearSharedPreferences(Constants.IS_LOGGED_IN)
         googleSignInClient.signOut()
         auth.signOut()
         toCheckFragment()
@@ -213,7 +217,6 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
         }
 
 
-
     private fun startCamera() {
         val intent = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
@@ -245,7 +248,7 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == Constants.CAMERA_REQUEST_CODE) {
+        if (requestCode == Constants.CAMERA_REQUEST_CODE && resultCode == RESULT_OK) {
             bitmap = data?.extras?.get("data") as Bitmap
             model.setBitmap(bitmap!!)
             isFromGallery = false
@@ -285,7 +288,7 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
 
     override fun onYesClick() {
         bottomSheetDialog.dismiss()
-       signOut()
+        signOut()
     }
 
 }

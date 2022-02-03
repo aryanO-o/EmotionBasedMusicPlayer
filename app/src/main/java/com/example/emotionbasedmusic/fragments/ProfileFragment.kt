@@ -19,7 +19,7 @@ import com.example.emotionbasedmusic.viewModel.MusicViewModel
 import com.example.emotionbasedmusic.viewModel.MusicViewModelFactory
 import com.squareup.picasso.Picasso
 
-class ProfileFragment: Fragment(), View.OnClickListener, BottomSheetDialog.IBottom {
+class ProfileFragment : Fragment(), View.OnClickListener, BottomSheetDialog.IBottom {
     private lateinit var binding: UsersProfileBinding
     private lateinit var bottomSheetDialog: BottomSheetDialog
     private var detail = ""
@@ -30,6 +30,7 @@ class ProfileFragment: Fragment(), View.OnClickListener, BottomSheetDialog.IBott
     private val model: MusicViewModel by activityViewModels {
         MusicViewModelFactory(requireParentFragment())
     }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -62,7 +63,10 @@ class ProfileFragment: Fragment(), View.OnClickListener, BottomSheetDialog.IBott
     }
 
     private fun checkPermission() {
-        when(ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.CAMERA)==PackageManager.PERMISSION_GRANTED) {
+        when (ContextCompat.checkSelfPermission(
+            requireContext(),
+            android.Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_GRANTED) {
             true -> {
                 binding.btnChange.makeGone()
                 binding.tvCameraPerm.text = "Granted"
@@ -106,7 +110,7 @@ class ProfileFragment: Fragment(), View.OnClickListener, BottomSheetDialog.IBott
                 name = it
             }
             model.imgUri.observe(viewLifecycleOwner) {
-                if(it.isNotEmpty()) {
+                if (it.isNotEmpty()) {
                     it?.let { url -> Picasso.get().load(url).into(userProfilePhoto) }
                 }
             }
@@ -133,16 +137,17 @@ class ProfileFragment: Fragment(), View.OnClickListener, BottomSheetDialog.IBott
         model.check = 1
         initBottomSheet()
     }
+
     override fun onClick(p0: View?) {
-        when(p0?.id) {
+        when (p0?.id) {
             R.id.user_name_card -> {
                 setNameDetails()
             }
             R.id.user_email_card -> {
-              setEmailDetails()
+                setEmailDetails()
             }
             R.id.user_phone_card -> {
-              setPhoneDetails()
+                setPhoneDetails()
             }
             R.id.btn_email_edit -> {
                 setEmailDetails()
@@ -161,7 +166,8 @@ class ProfileFragment: Fragment(), View.OnClickListener, BottomSheetDialog.IBott
     }
 
     private fun initBottomSheet() {
-        bottomSheetDialog = BottomSheetDialog(this.detail, requireParentFragment(), this, textD, null)
+        bottomSheetDialog =
+            BottomSheetDialog(this.detail, requireParentFragment(), this, textD, null)
         bottomSheetDialog.initBottomSheet(Constants.EDIT_BOTTOM)
     }
 

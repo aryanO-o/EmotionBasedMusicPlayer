@@ -22,7 +22,10 @@ class Dialog(private val context: Context, private val listener: IListener) {
         dialog.setCancelable(true)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.fragment_select_image_source)
-        dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
         val btnCamera = dialog.findViewById<ConstraintLayout>(R.id.btnCamera)
         val btnGallery = dialog.findViewById<ConstraintLayout>(R.id.btnGallery)
         val btnCancel = dialog.findViewById<ImageView>(R.id.btnClose)
@@ -37,6 +40,7 @@ class Dialog(private val context: Context, private val listener: IListener) {
         }
         dialog.show()
     }
+
     fun dismissDialog() {
         dialog.dismiss()
     }

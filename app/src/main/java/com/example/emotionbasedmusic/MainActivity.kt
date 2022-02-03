@@ -16,7 +16,7 @@ import com.example.emotionbasedmusic.services.MusicService
 class MainActivity : AppCompatActivity() {
     private lateinit var navHostFragment: NavHostFragment
     lateinit var navController: NavController
-    var isFromNotification: Boolean? = false
+    var isFromNotification: Boolean = false
     var isServiceRunning: Boolean = false
     var key: Boolean? = true
     var isFromFavorite = false
@@ -24,8 +24,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        this.isFromNotification = intent?.extras?.getBoolean(Constants.IS_FROM_NOTIFICATION)
-        navHostFragment = supportFragmentManager.findFragmentById(R.id.fragment_container_view) as NavHostFragment
+        this.isFromNotification =
+            intent?.extras?.getBoolean(Constants.IS_FROM_NOTIFICATION) ?: false
+        navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.fragment_container_view) as NavHostFragment
         navController = navHostFragment.navController
     }
 
@@ -50,7 +52,7 @@ class MainActivity : AppCompatActivity() {
 
     fun moveToMusic() {
         key = false
-        if(navController.currentDestination!!.label == Constants.FRAGMENT_MUSIC) {
+        if (navController.currentDestination!!.label == Constants.FRAGMENT_MUSIC) {
             navController.popBackStack()
         }
         navController.navigate(R.id.musicFragment)

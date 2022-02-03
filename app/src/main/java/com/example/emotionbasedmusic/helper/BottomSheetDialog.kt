@@ -14,30 +14,39 @@ import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 
 
-class BottomSheetDialog(private val detail: String?, private val fragment: Fragment, private val listener: IBottom?, private val textD: String?, private val sBottom: SBottom?): View.OnClickListener {
+class BottomSheetDialog(
+    private val detail: String?,
+    private val fragment: Fragment,
+    private val listener: IBottom?,
+    private val textD: String?,
+    private val sBottom: SBottom?
+) : View.OnClickListener {
 
     private lateinit var etChange: EditText
+
     interface IBottom {
         fun onCancelClick()
         fun onSaveClick(updatedDetail: String)
     }
+
     interface SBottom {
         fun onNoClick()
         fun onYesClick()
     }
-    private lateinit var bottomSheetDialog : BottomSheetDialog
 
-   fun initBottomSheet(layoutId: Int) {
-       when(layoutId) {
-           Constants.EDIT_BOTTOM -> {
-               initEditBottom()
-           }
-           Constants.SIGN_OUT_BOTTOM -> {
-               initSignOutBottom()
-           }
-       }
+    private lateinit var bottomSheetDialog: BottomSheetDialog
 
-   }
+    fun initBottomSheet(layoutId: Int) {
+        when (layoutId) {
+            Constants.EDIT_BOTTOM -> {
+                initEditBottom()
+            }
+            Constants.SIGN_OUT_BOTTOM -> {
+                initSignOutBottom()
+            }
+        }
+
+    }
 
     private fun initSignOutBottom() {
         bottomSheetDialog = BottomSheetDialog(fragment.requireContext())
@@ -60,7 +69,7 @@ class BottomSheetDialog(private val detail: String?, private val fragment: Fragm
         val btnCancel = bottomSheetDialog.findViewById<View>(R.id.btnCancel)
         val btnSave = bottomSheetDialog.findViewById<View>(R.id.btnSave)
         showKeyboard(etChange)
-          bottomSheetDialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+        bottomSheetDialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         btnCancel!!.setOnClickListener(this)
         btnSave!!.setOnClickListener(this)
         bottomSheetDialog.show()
@@ -69,19 +78,21 @@ class BottomSheetDialog(private val detail: String?, private val fragment: Fragm
     private fun showKeyboard(etChange: EditText) {
         etChange.requestFocus()
         val imm: InputMethodManager? =
-            fragment.requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-        imm!!.toggleSoftInput(InputMethodManager.SHOW_FORCED,0)
+            fragment.requireContext()
+                .getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+        imm!!.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
         fragment.requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
     }
 
     fun hideKeyboard() {
         val imm: InputMethodManager? =
-            fragment.requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+            fragment.requireContext()
+                .getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
         imm!!.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
     }
 
     override fun onClick(p0: View?) {
-        when(p0?.id) {
+        when (p0?.id) {
             R.id.btnCancel -> {
                 listener?.onCancelClick()
             }

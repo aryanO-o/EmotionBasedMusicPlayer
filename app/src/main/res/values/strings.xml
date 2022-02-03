@@ -93,4 +93,5 @@
     <string name="second_line">Or choose emotion from the emoji list given below to tell us how you are feeling.</string>
     <string name="third_line">After the recognition of the emotion, The app will load the song according to the mood detected.</string>
     <string name="forth_line">Here you go enjoy your favorite songs that too served according to your mood.</string>
+    <string name="how_to_use_">How to use</string>
 </resources>

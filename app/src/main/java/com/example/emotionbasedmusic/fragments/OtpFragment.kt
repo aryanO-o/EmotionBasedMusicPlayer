@@ -16,6 +16,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.emotionbasedmusic.R
 import com.example.emotionbasedmusic.databinding.FragmentOtpBinding
+import com.example.emotionbasedmusic.helper.Constants
+import com.example.emotionbasedmusic.helper.HelpRepo
 import com.example.emotionbasedmusic.viewModel.MusicViewModel
 import com.example.emotionbasedmusic.viewModel.MusicViewModelFactory
 import com.google.android.gms.tasks.OnCompleteListener
@@ -30,17 +32,18 @@ class OtpFragment : Fragment(), View.OnClickListener {
     private lateinit var auth: FirebaseAuth
     private lateinit var userid: String
     private lateinit var userToken: PhoneAuthProvider.ForceResendingToken
+    private val repo = HelpRepo(requireContext())
     private val model: MusicViewModel by activityViewModels {
         MusicViewModelFactory(requireParentFragment())
     }
     private val args: OtpFragmentArgs by navArgs()
     private lateinit var phone: String
     private lateinit var dialog: ProgressDialog
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         phone = args.phone
     }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -53,6 +56,7 @@ class OtpFragment : Fragment(), View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         auth = FirebaseAuth.getInstance()
+        repo.initSharedPreferences()
         setTextChanger()
         getCallbacks()
         binding.apply {
@@ -62,10 +66,11 @@ class OtpFragment : Fragment(), View.OnClickListener {
     }
 
     private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential) {
-        auth.signInWithCredential(credential).addOnCompleteListener(object:
+        auth.signInWithCredential(credential).addOnCompleteListener(object :
             OnCompleteListener<AuthResult> {
             override fun onComplete(p0: Task<AuthResult>) {
-                if(p0.isSuccessful) {
+                if (p0.isSuccessful) {
+                    repo.setSharedPreferences(Constants.IS_LOGGED_IN, Constants.LOGGED_IN)
                     val newUser = p0.result!!.additionalUserInfo!!.isNewUser
                     if (newUser) {
                         dialog.dismiss()
@@ -80,9 +85,7 @@ class OtpFragment : Fragment(), View.OnClickListener {
                         Toast.makeText(requireContext(), "Welcome Back", Toast.LENGTH_SHORT).show()
                         toFaceScanFragment()
                     }
-                }
-
-                else  {
+                } else {
                     dialog.dismiss()
                     Toast.makeText(requireContext(), "Incorrect OTP", Toast.LENGTH_SHORT).show()
                     findNavController().navigateUp()
@@ -116,7 +119,7 @@ class OtpFragment : Fragment(), View.OnClickListener {
             }
 
             override fun afterTextChanged(s: Editable?) {
-                if(binding.ed1.text.length == 1) {
+                if (binding.ed1.text.length == 1) {
                     binding.ed2.requestFocus()
                 }
             }
@@ -134,7 +137,7 @@ class OtpFragment : Fragment(), View.OnClickListener {
 
 
             override fun afterTextChanged(s: Editable?) {
-                if(binding.ed2.text.length == 1) {
+                if (binding.ed2.text.length == 1) {
                     binding.ed3.requestFocus()
                 }
             }
@@ -151,7 +154,7 @@ class OtpFragment : Fragment(), View.OnClickListener {
             }
 
             override fun afterTextChanged(s: Editable?) {
-                if(binding.ed3.text.length == 1) {
+                if (binding.ed3.text.length == 1) {
                     binding.ed4.requestFocus()
                 }
             }
@@ -168,7 +171,7 @@ class OtpFragment : Fragment(), View.OnClickListener {
             }
 
             override fun afterTextChanged(s: Editable?) {
-                if(binding.ed4.text.length == 1) {
+                if (binding.ed4.text.length == 1) {
                     binding.ed5.requestFocus()
                 }
             }
@@ -185,7 +188,7 @@ class OtpFragment : Fragment(), View.OnClickListener {
             }
 
             override fun afterTextChanged(s: Editable?) {
-                if(binding.ed5.text.length == 1) {
+                if (binding.ed5.text.length == 1) {
                     binding.ed6.requestFocus()
                 }
             }
@@ -197,16 +200,17 @@ class OtpFragment : Fragment(), View.OnClickListener {
 
         val callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
             override fun onVerificationCompleted(p0: PhoneAuthCredential) {
-                Toast.makeText(requireContext(), "Verification Successful", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Verification Successful", Toast.LENGTH_SHORT)
+                    .show()
                 signInWithPhoneAuthCredential(p0)
             }
 
             override fun onVerificationFailed(p0: FirebaseException) {
-                if(p0 is FirebaseAuthInvalidCredentialsException) {
+                if (p0 is FirebaseAuthInvalidCredentialsException) {
                     Toast.makeText(requireContext(), "Invalid Request", Toast.LENGTH_SHORT).show()
-                }
-                else  {
-                    Toast.makeText(requireContext(), "SMS Quota Exceeded", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(requireContext(), "SMS Quota Exceeded", Toast.LENGTH_SHORT)
+                        .show()
                 }
                 findNavController().navigateUp()
             }
@@ -231,7 +235,7 @@ class OtpFragment : Fragment(), View.OnClickListener {
     }
 
     override fun onClick(view: View?) {
-        when(view?.id) {
+        when (view?.id) {
             binding.btnVerify.id -> {
                 verify()
             }

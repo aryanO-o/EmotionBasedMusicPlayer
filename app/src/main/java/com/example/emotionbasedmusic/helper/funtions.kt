@@ -10,6 +10,7 @@ fun View.makeVisible() {
 fun View.makeInvisible() {
     this.visibility = View.INVISIBLE
 }
+
 fun View.makeGone() {
     this.visibility = View.GONE
 }

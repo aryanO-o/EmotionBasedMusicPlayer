@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.emotionbasedmusic.R
 import com.example.emotionbasedmusic.data.emojiDataModel
+import com.example.emotionbasedmusic.helper.Constants
 
 class emojiAdapter (
     private val listener: Ilistener,
@@ -35,7 +36,13 @@ class emojiAdapter (
         holder.emojiImageView.setImageResource(item.emojiResourceId)
         holder.emojiTextView.text = item.emojiText
         holder.itemView.setOnClickListener {
-            listener.onItemClick(item.emojiText)
+            if(item.emojiText == Constants.SURPRISED_MOOD || item.emojiText == Constants.TIRED_MOOD) {
+                listener.onItemClick(Constants.SAD_MOOD)
+            }
+            else {
+                listener.onItemClick(item.emojiText)
+            }
+
         }
     }
 
