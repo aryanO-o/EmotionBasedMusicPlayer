@@ -1,6 +1,7 @@
 package com.example.emotionbasedmusic.fragments
 
 import android.app.ProgressDialog
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
@@ -32,7 +33,7 @@ class OtpFragment : Fragment(), View.OnClickListener {
     private lateinit var auth: FirebaseAuth
     private lateinit var userid: String
     private lateinit var userToken: PhoneAuthProvider.ForceResendingToken
-    private val repo = HelpRepo(requireContext())
+    private lateinit var repo: HelpRepo
     private val model: MusicViewModel by activityViewModels {
         MusicViewModelFactory(requireParentFragment())
     }
@@ -42,6 +43,11 @@ class OtpFragment : Fragment(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         phone = args.phone
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        repo = HelpRepo(context)
     }
 
     override fun onCreateView(

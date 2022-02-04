@@ -167,7 +167,7 @@ class ProfileFragment : Fragment(), View.OnClickListener, BottomSheetDialog.IBot
 
     private fun initBottomSheet() {
         bottomSheetDialog =
-            BottomSheetDialog(this.detail, requireParentFragment(), this, textD, null)
+            BottomSheetDialog(this.detail, requireParentFragment(), this, textD, null, null)
         bottomSheetDialog.initBottomSheet(Constants.EDIT_BOTTOM)
     }
 

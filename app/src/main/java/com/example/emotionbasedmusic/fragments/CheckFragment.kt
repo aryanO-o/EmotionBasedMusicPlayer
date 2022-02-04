@@ -1,5 +1,6 @@
 package com.example.emotionbasedmusic.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -34,11 +35,15 @@ class CheckFragment : Fragment() {
     private lateinit var database: FirebaseDatabase
     private var isFromNotification: Boolean? = false
     private lateinit var navController: NavController
-    private val repo = HelpRepo(requireContext())
+    private lateinit var repo: HelpRepo
     private val model: MusicViewModel by activityViewModels {
         MusicViewModelFactory(requireParentFragment())
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        repo = HelpRepo(context)
+    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

@@ -2,6 +2,7 @@ package com.example.emotionbasedmusic.fragments
 
 import android.app.Activity
 import android.app.Activity.RESULT_OK
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -42,11 +43,11 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
     private val model: MusicViewModel by activityViewModels {
         MusicViewModelFactory(requireParentFragment())
     }
-    private val repo = HelpRepo(requireContext())
     private lateinit var database: FirebaseDatabase
     private lateinit var googleSignInOptions: GoogleSignInOptions
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var auth: FirebaseAuth
+    private lateinit var repo: HelpRepo
     private lateinit var dialog: Dialog
     private var bitmap: Bitmap? = null
     private lateinit var bottomSheetDialog: BottomSheetDialog
@@ -60,6 +61,10 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
         return binding.root
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        repo = HelpRepo(context)
+    }
     companion object {
         lateinit var binding: FragmentMoodRecognitionBinding
     }
@@ -67,11 +72,11 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         checkForPI()
         model.getData()
-        initRecyclerView()
         initToolbar()
         initData()
         binding.apply {
             btnAddImage.setOnClickListener(this@MoodRecognitionFragment)
+            btnChooseFromEmojis.setOnClickListener(this@MoodRecognitionFragment)
         }
     }
 
@@ -86,7 +91,7 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
 
     private fun initRecyclerView() {
         val emojiDataSet = emojiData().loadEmoji();
-        val emojiRecyclerView = view?.findViewById<RecyclerView>(R.id.emoji_recycler_view)
+        val emojiRecyclerView = view?.findViewById<RecyclerView>(R.id.rvEmoji)
         emojiRecyclerView?.adapter = emojiAdapter(this, emojiDataSet);
         emojiRecyclerView?.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
@@ -143,7 +148,7 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
     }
 
     private fun initBottomSheet() {
-        bottomSheetDialog = BottomSheetDialog(null, requireParentFragment(), null, null, this)
+        bottomSheetDialog = BottomSheetDialog(null, requireParentFragment(), null, null, this, this)
         bottomSheetDialog.initBottomSheet(Constants.SIGN_OUT_BOTTOM)
     }
 
@@ -171,7 +176,15 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
             R.id.btnAddImage -> {
                 showDialog()
             }
+            R.id.btnChooseFromEmojis -> {
+                showBottom()
+            }
         }
+    }
+
+    private fun showBottom() {
+        bottomSheetDialog = BottomSheetDialog(null, requireParentFragment(), null, null, null, this)
+        bottomSheetDialog.initBottomSheet(Constants.EMOJI_BOTTOM)
     }
 
     private fun showDialog() {
@@ -274,6 +287,7 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
     }
 
     override fun onItemClick(mood: String) {
+        bottomSheetDialog.dismiss()
         model.getSongs(mood)
         toResultSongFragment()
     }

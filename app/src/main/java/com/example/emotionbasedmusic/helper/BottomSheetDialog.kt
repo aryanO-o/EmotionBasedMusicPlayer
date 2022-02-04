@@ -6,12 +6,18 @@ import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
 import com.example.emotionbasedmusic.R
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.textview.MaterialTextView
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.emotionbasedmusic.adapter.emojiAdapter
+import com.example.emotionbasedmusic.dataSource.emojiData
+import com.example.emotionbasedmusic.fragments.MoodRecognitionFragment
 
 
 class BottomSheetDialog(
@@ -19,11 +25,12 @@ class BottomSheetDialog(
     private val fragment: Fragment,
     private val listener: IBottom?,
     private val textD: String?,
-    private val sBottom: SBottom?
+    private val sBottom: SBottom?,
+    private val moodRecognitionFragment: MoodRecognitionFragment?
 ) : View.OnClickListener {
 
     private lateinit var etChange: EditText
-
+    private lateinit var adapter: emojiAdapter
     interface IBottom {
         fun onCancelClick()
         fun onSaveClick(updatedDetail: String)
@@ -44,8 +51,21 @@ class BottomSheetDialog(
             Constants.SIGN_OUT_BOTTOM -> {
                 initSignOutBottom()
             }
+            Constants.EMOJI_BOTTOM -> {
+                initEmojiBottom()
+            }
         }
 
+    }
+
+    private fun initEmojiBottom() {
+        bottomSheetDialog = BottomSheetDialog(fragment.requireContext())
+        bottomSheetDialog.setContentView(R.layout.emoji_bottom)
+        val emojiDataSet = emojiData().loadEmoji();
+        val rv = bottomSheetDialog.findViewById<RecyclerView>(R.id.rvEmoji)
+        rv?.layoutManager = LinearLayoutManager(fragment.requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        moodRecognitionFragment?.let {rv?.adapter = emojiAdapter(it, emojiDataSet)  }
+        bottomSheetDialog.show()
     }
 
     private fun initSignOutBottom() {

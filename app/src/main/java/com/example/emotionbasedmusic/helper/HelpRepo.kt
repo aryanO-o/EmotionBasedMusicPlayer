@@ -7,8 +7,8 @@ class HelpRepo(private val context: Context) {
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var editor: SharedPreferences.Editor
     fun initSharedPreferences() {
-        editor = sharedPreferences.edit()
         sharedPreferences = context.getSharedPreferences(Constants.APP_NAME, Context.MODE_PRIVATE)
+        editor = sharedPreferences.edit()
     }
 
     fun setSharedPreferences(key: String, value: String) {
@@ -20,6 +20,6 @@ class HelpRepo(private val context: Context) {
     }
 
     fun clearSharedPreferences(key: String) {
-        editor.remove(key)
+        editor.remove(key).apply()
     }
 }

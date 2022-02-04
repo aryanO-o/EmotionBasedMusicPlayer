@@ -1,5 +1,6 @@
 package com.example.emotionbasedmusic.fragments
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -37,7 +38,7 @@ class SignUpFragment : Fragment(), View.OnClickListener {
     private lateinit var googleSignInOptions: GoogleSignInOptions
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var auth: FirebaseAuth
-    private val repo = HelpRepo(requireContext())
+    private lateinit var repo: HelpRepo
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -47,6 +48,10 @@ class SignUpFragment : Fragment(), View.OnClickListener {
         return binding.root
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        repo = HelpRepo(context)
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initData()
         binding.apply {

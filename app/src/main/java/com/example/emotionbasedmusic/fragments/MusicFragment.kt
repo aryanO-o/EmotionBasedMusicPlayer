@@ -53,6 +53,13 @@ class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeL
         lateinit var binding: FragmentMusicBinding
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if(MusicService.currentSong?.songName==model.getSong()?.songName) {
+            (requireActivity() as MainActivity).key = false
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -272,7 +279,9 @@ class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeL
         service.resumeMediaPlayer()
     }
 
+
     override fun onProgressChanged(sb: SeekBar?, progress: Int, p2: Boolean) {
+
     }
 
     private fun seekTo(seekPosition: Int) {

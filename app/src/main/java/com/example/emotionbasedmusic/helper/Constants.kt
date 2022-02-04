@@ -41,6 +41,7 @@ class Constants {
         const val EDIT_BOTTOM = R.layout.bottom_sheet
         const val SIGN_OUT_BOTTOM = R.layout.sign_out_bottom
         const val EMAIL = "email"
+        const val EMOJI_BOTTOM = R.layout.emoji_bottom
         const val AZURE_API_KEY = "e29e52ef4ee84fe5b32afdd583984853"
         const val AZURE_BASE_URL = "https://face118921.cognitiveservices.azure.com/face/v1.0/"
         const val APP_NAME = "EMOSIC"

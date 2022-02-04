@@ -65,30 +65,29 @@
         android:textSize="24sp"
         android:fontFamily="@font/spartanmedium500"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/choose_from_emoji_text"
+        app:layout_constraintBottom_toTopOf="@id/btnChooseFromEmojis"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btnAddImage"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/choose_from_emoji_text"
-        android:text="@string/choose_from_emojis"
-        android:textColor="@color/white"
-        android:layout_marginBottom="8dp"
-        android:layout_marginStart="16dp"
-        app:layout_constraintStart_toStartOf="@id/emoji_recycler_view"
-        app:layout_constraintBottom_toTopOf="@id/emoji_recycler_view"/>
-
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/emoji_recycler_view"
+    <com.google.android.material.button.MaterialButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/btnChooseFromEmojis"
+        android:text="@string/choose_from_emojis"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/orTextView" />
+        android:gravity="center"
+        android:layout_marginHorizontal="50dp"
+        android:backgroundTint="@color/black_90"
+        android:textSize="15sp"
+        android:layout_marginBottom="125dp"
+        android:textAllCaps="false"
+        app:strokeColor="@color/white"
+        app:strokeWidth="1dp"
+        android:padding="12dp"
+        android:fontFamily="@font/spartanreg"
+        />
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -17,6 +17,7 @@ import com.example.emotionbasedmusic.data.Music
 import com.example.emotionbasedmusic.fragments.MusicFragment
 import com.example.emotionbasedmusic.helper.*
 import com.squareup.picasso.Picasso
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -44,6 +45,8 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, Serializable {
     private var songsList: MutableLiveData<List<Music>> = MutableLiveData<List<Music>>()
     private var isPaused = false
     private var isLooping = false
+    var next = false
+    var prev = false
     override fun onBind(p0: Intent?): IBinder {
         return binder
     }
@@ -72,7 +75,6 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, Serializable {
 
     @RequiresApi(Build.VERSION_CODES.N)
     private fun setUpNotification() {
-        GlobalScope.launch {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 helper = createNotification(this@MusicService, song)
             }
@@ -84,8 +86,13 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, Serializable {
             notification?.let {
                 Picasso.get().load(song.imgUrl)
                     .into(helper?.remoteViews!!, R.id.notification_album_image, Constants.ID, it)
+                initToTrue()
             }
-        }
+    }
+
+    private fun initToTrue() {
+        next = true
+        prev = true
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
@@ -186,7 +193,6 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, Serializable {
         }
         checkForPaused()
         checkForLooping()
-
     }
 
     private fun checkForLooping() {
@@ -265,44 +271,54 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, Serializable {
 
     @RequiresApi(Build.VERSION_CODES.N)
     private fun initChanges() {
+        initToFalse()
         resetMediaPlayer()
         initView()
         setUpNotification()
         setUpMediaPlayer()
     }
 
+    private fun initToFalse() {
+        next = false
+        prev = false
+    }
+
     @RequiresApi(Build.VERSION_CODES.N)
     fun nextSong() {
-        if (songsList.value!!.isNotEmpty()) {
-            val indexOfCurrentSong = songsList.value!!.indexOf(song)
-            if (indexOfCurrentSong != songsList.value!!.size - 1) {
-                val index = indexOfCurrentSong + 1
-                this.song = songsList.value!![index]
-                initChanges()
+        if(next) {
+            if (songsList.value!!.isNotEmpty()) {
+                val indexOfCurrentSong = songsList.value!!.indexOf(song)
+                if (indexOfCurrentSong != songsList.value!!.size - 1) {
+                    val index = indexOfCurrentSong + 1
+                    this.song = songsList.value!![index]
+                    initChanges()
+                } else {
+                    Toast.makeText(this, getString(R.string.out_of_songs), Toast.LENGTH_SHORT).show()
+                }
             } else {
-                Toast.makeText(this, getString(R.string.out_of_songs), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.songs_list_empty), Toast.LENGTH_SHORT).show()
             }
-        } else {
-            Toast.makeText(this, getString(R.string.songs_list_empty), Toast.LENGTH_SHORT).show()
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
     fun prevSong() {
-        if (songsList.value!!.isNotEmpty()) {
-            val indexOfCurrentSong = songsList.value!!.indexOf(song)
-            if (indexOfCurrentSong != 0) {
-                val index = indexOfCurrentSong - 1
-                this.song = songsList.value!![index]
-                initChanges()
-            } else {
-                Toast.makeText(this, getString(R.string.out_of_songs), Toast.LENGTH_SHORT).show()
+        if(prev) {
+            if (songsList.value!!.isNotEmpty()) {
+                val indexOfCurrentSong = songsList.value!!.indexOf(song)
+                if (indexOfCurrentSong != 0) {
+                    val index = indexOfCurrentSong - 1
+                    this.song = songsList.value!![index]
+                    initChanges()
+                } else {
+                    Toast.makeText(this, getString(R.string.out_of_songs), Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
 
     private fun resetMediaPlayer() {
-        mediaPlayer.pause()
+        mediaPlayer.stop()
         mediaPlayer.reset()
         runnable?.let { handler.removeCallbacks(it) }
     }
