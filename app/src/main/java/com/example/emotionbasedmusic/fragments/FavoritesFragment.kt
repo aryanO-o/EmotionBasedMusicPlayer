@@ -24,7 +24,7 @@ import com.example.emotionbasedmusic.viewModel.MusicViewModelFactory
 
 
 class FavoritesFragment : Fragment(), MusicAdapter.IFavorite {
-    private lateinit var binding: FragmentFavoritesBinding
+    private var binding: FragmentFavoritesBinding? = null
     private lateinit var adapter: MusicAdapter
     private val model: MusicViewModel by activityViewModels {
         MusicViewModelFactory(requireParentFragment())
@@ -36,7 +36,7 @@ class FavoritesFragment : Fragment(), MusicAdapter.IFavorite {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentFavoritesBinding.inflate(inflater)
-        return binding.root
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -45,7 +45,7 @@ class FavoritesFragment : Fragment(), MusicAdapter.IFavorite {
     }
 
     private fun initToolbar() {
-        binding.apply {
+        binding?.apply {
             tbFavorite.tbCommon.menu.clear()
             tbFavorite.tbCommon.setTitleTextColor(resources.getColor(R.color.white))
             tbFavorite.tbCommon.title = "Favorites"
@@ -55,7 +55,7 @@ class FavoritesFragment : Fragment(), MusicAdapter.IFavorite {
     @SuppressLint("NotifyDataSetChanged")
     private fun setUpRecyclerView() {
         adapter = MusicAdapter(null, requireContext(), false, 1, this)
-        binding.apply {
+        binding?.apply {
             rvFavorites.adapter = adapter
             rvFavorites.layoutManager = GridLayoutManager(requireContext(), 1)
         }
@@ -69,10 +69,10 @@ class FavoritesFragment : Fragment(), MusicAdapter.IFavorite {
     private fun checkForSongs(it: MutableList<Music>?) {
         when (it!!.isEmpty()) {
             true -> {
-                binding.clEmpty.makeVisible()
+                binding?.clEmpty?.makeVisible()
             }
             false -> {
-                binding.clEmpty.makeGone()
+                binding?.clEmpty?.makeGone()
             }
         }
     }

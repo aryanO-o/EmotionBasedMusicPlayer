@@ -75,19 +75,19 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, Serializable {
 
     @RequiresApi(Build.VERSION_CODES.N)
     private fun setUpNotification() {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                helper = createNotification(this@MusicService, song)
-            }
-            notification = helper?.notification
-            val notificationManager =
-                getSystemService(NotificationManager::class.java) as NotificationManager
-            this@MusicService.notificationManager = notificationManager
-            notification?.let { startForeground(Constants.ID, it) }
-            notification?.let {
-                Picasso.get().load(song.imgUrl)
-                    .into(helper?.remoteViews!!, R.id.notification_album_image, Constants.ID, it)
-                initToTrue()
-            }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            helper = createNotification(this@MusicService, song)
+        }
+        notification = helper?.notification
+        val notificationManager =
+            getSystemService(NotificationManager::class.java) as NotificationManager
+        this@MusicService.notificationManager = notificationManager
+        notification?.let { startForeground(Constants.ID, it) }
+        notification?.let {
+            Picasso.get().load(song.imgUrl)
+                .into(helper?.remoteViews!!, R.id.notification_album_image, Constants.ID, it)
+            initToTrue()
+        }
     }
 
     private fun initToTrue() {
@@ -104,6 +104,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, Serializable {
             tvStartTime.text = getString(R.string.tools_text)
             tvEndTime.text = getText(R.string.tools_text)
             sBar.progress = 0
+            ibLoop.setImageDrawable(resources.getDrawable(R.drawable.repeat_icon))
             btnPlay.setImageDrawable(resources.getDrawable(R.drawable.ic_baseline_pause_24_b))
             tvSongName.text = song.songName
             tvArtist.text = song.artistName
@@ -285,7 +286,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, Serializable {
 
     @RequiresApi(Build.VERSION_CODES.N)
     fun nextSong() {
-        if(next) {
+        if (next) {
             if (songsList.value!!.isNotEmpty()) {
                 val indexOfCurrentSong = songsList.value!!.indexOf(song)
                 if (indexOfCurrentSong != songsList.value!!.size - 1) {
@@ -293,17 +294,19 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, Serializable {
                     this.song = songsList.value!![index]
                     initChanges()
                 } else {
-                    Toast.makeText(this, getString(R.string.out_of_songs), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.out_of_songs), Toast.LENGTH_SHORT)
+                        .show()
                 }
             } else {
-                Toast.makeText(this, getString(R.string.songs_list_empty), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.songs_list_empty), Toast.LENGTH_SHORT)
+                    .show()
             }
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
     fun prevSong() {
-        if(prev) {
+        if (prev) {
             if (songsList.value!!.isNotEmpty()) {
                 val indexOfCurrentSong = songsList.value!!.indexOf(song)
                 if (indexOfCurrentSong != 0) {
@@ -311,7 +314,8 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, Serializable {
                     this.song = songsList.value!![index]
                     initChanges()
                 } else {
-                    Toast.makeText(this, getString(R.string.out_of_songs), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.out_of_songs), Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
         }

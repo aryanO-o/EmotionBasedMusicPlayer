@@ -24,9 +24,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.emotionbasedmusic.R
 import com.example.emotionbasedmusic.adapter.emojiAdapter
+import com.example.emotionbasedmusic.container.AppContainer
 import com.example.emotionbasedmusic.dataSource.emojiData
 import com.example.emotionbasedmusic.databinding.FragmentFaceProceedOrRetakeBinding
 import com.example.emotionbasedmusic.databinding.FragmentMoodRecognitionBinding
+import com.example.emotionbasedmusic.eventBus.MessageEvent
 import com.example.emotionbasedmusic.helper.*
 import com.example.emotionbasedmusic.viewModel.MusicViewModel
 import com.example.emotionbasedmusic.viewModel.MusicViewModelFactory
@@ -35,8 +37,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
+import dagger.hilt.android.AndroidEntryPoint
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListener,
     emojiAdapter.Ilistener, BottomSheetDialog.SBottom {
 
@@ -47,7 +54,8 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
     private lateinit var googleSignInOptions: GoogleSignInOptions
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var auth: FirebaseAuth
-    private lateinit var repo: HelpRepo
+    @Inject
+    lateinit var appContainer: AppContainer
     private lateinit var dialog: Dialog
     private var bitmap: Bitmap? = null
     private lateinit var bottomSheetDialog: BottomSheetDialog
@@ -61,12 +69,18 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
         return binding.root
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        repo = HelpRepo(context)
-    }
     companion object {
         lateinit var binding: FragmentMoodRecognitionBinding
+    }
+
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this);
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -89,6 +103,15 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
     }
 
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onMessageEvent(event: MessageEvent?) {
+        when (event?.getString()) {
+            Constants.EXECUTE_CAMERA_PERM -> {
+                startCamera()
+            }
+        }
+    }
+
     private fun initRecyclerView() {
         val emojiDataSet = emojiData().loadEmoji();
         val emojiRecyclerView = view?.findViewById<RecyclerView>(R.id.rvEmoji)
@@ -99,7 +122,7 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
 
     private fun initData() {
         auth = FirebaseAuth.getInstance()
-        repo.initSharedPreferences()
+        appContainer.repo.initSharedPreferences()
         database = FirebaseDatabase.getInstance()
         googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.web_client_id))
@@ -161,7 +184,7 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
     }
 
     private fun signOut() {
-        repo.clearSharedPreferences(Constants.IS_LOGGED_IN)
+        appContainer.repo.clearSharedPreferences(Constants.IS_LOGGED_IN)
         googleSignInClient.signOut()
         auth.signOut()
         toCheckFragment()
@@ -194,23 +217,11 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
 
     override fun btnCamera() {
         dismissDialog()
-        openCamera()
+        checkForCamPerm()
     }
 
-    private fun openCamera() {
-        if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                android.Manifest.permission.CAMERA
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            startCamera()
-        } else {
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                arrayOf(android.Manifest.permission.CAMERA),
-                Constants.CAMERA_PERMISSION_CODE
-            )
-        }
+    private fun checkForCamPerm() {
+        appContainer.permissionHelper.checkForPerm(Constants.CAMERA_PERM)
     }
 
     override fun btnGallery() {
@@ -269,22 +280,6 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
         }
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        if (requestCode == Constants.CAMERA_PERMISSION_CODE) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults.size == 1) {
-                Toast.makeText(requireContext(), "Camera permission granted", Toast.LENGTH_SHORT)
-                    .show()
-                startCamera()
-            } else {
-                Toast.makeText(requireContext(), "Camera permission denied", Toast.LENGTH_SHORT)
-                    .show()
-            }
-        }
-    }
 
     override fun onItemClick(mood: String) {
         bottomSheetDialog.dismiss()

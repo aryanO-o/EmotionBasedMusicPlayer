@@ -16,6 +16,7 @@ import androidx.navigation.NavDestination
 import androidx.navigation.fragment.findNavController
 import com.example.emotionbasedmusic.MainActivity
 import com.example.emotionbasedmusic.R
+import com.example.emotionbasedmusic.container.AppContainer
 import com.example.emotionbasedmusic.databinding.FragmentCheckBinding
 import com.example.emotionbasedmusic.helper.Constants
 import com.example.emotionbasedmusic.helper.HelpRepo
@@ -26,31 +27,31 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class CheckFragment : Fragment() {
-    private lateinit var binding: FragmentCheckBinding
+    private var binding: FragmentCheckBinding? = null
     private lateinit var googleSignInOptions: GoogleSignInOptions
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var auth: FirebaseAuth
     private lateinit var database: FirebaseDatabase
     private var isFromNotification: Boolean? = false
     private lateinit var navController: NavController
-    private lateinit var repo: HelpRepo
+    @Inject
+    lateinit var appContainer: AppContainer
     private val model: MusicViewModel by activityViewModels {
         MusicViewModelFactory(requireParentFragment())
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        repo = HelpRepo(context)
-    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         binding = FragmentCheckBinding.inflate(inflater)
-        return binding.root
+        return binding?.root
     }
 
 
@@ -62,7 +63,7 @@ class CheckFragment : Fragment() {
     }
 
     private fun checkForUser() {
-        if (repo.getSharedPreferences(Constants.IS_LOGGED_IN) == Constants.LOGGED_IN) {
+        if (appContainer.repo.getSharedPreferences(Constants.IS_LOGGED_IN) == Constants.LOGGED_IN) {
             if (isFromNotification == true) {
                 toFaceScanFragment()
                 (requireActivity() as MainActivity).moveToMusic()
@@ -79,8 +80,13 @@ class CheckFragment : Fragment() {
         findNavController().navigate(R.id.action_checkFragment_to_signUpFragment)
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
+    }
+
     private fun initData() {
-        repo.initSharedPreferences()
+        appContainer.repo.initSharedPreferences()
         auth = FirebaseAuth.getInstance()
         database = FirebaseDatabase.getInstance()
         googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)

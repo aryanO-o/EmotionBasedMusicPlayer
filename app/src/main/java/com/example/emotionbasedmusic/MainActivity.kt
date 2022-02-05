@@ -1,5 +1,8 @@
 package com.example.emotionbasedmusic
 
+import android.app.ActivityManager
+import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -12,13 +15,16 @@ import androidx.navigation.fragment.NavHostFragment
 import com.example.emotionbasedmusic.fragments.MusicFragment
 import com.example.emotionbasedmusic.helper.Constants
 import com.example.emotionbasedmusic.services.MusicService
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var navHostFragment: NavHostFragment
     lateinit var navController: NavController
     var isFromNotification: Boolean = false
     var isServiceRunning: Boolean = false
     var key: Boolean? = true
+    private lateinit var activityManager: ActivityManager
     var isFromFavorite = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +35,7 @@ class MainActivity : AppCompatActivity() {
         navHostFragment =
             supportFragmentManager.findFragmentById(R.id.fragment_container_view) as NavHostFragment
         navController = navHostFragment.navController
+        activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
     }
 
     override fun onBackPressed() {
@@ -47,7 +54,20 @@ class MainActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        moveToMusic()
+        if (getListOfServices()) {
+            moveToMusic()
+        }
+    }
+
+    private fun getListOfServices(): Boolean {
+        for (service: ActivityManager.RunningServiceInfo in activityManager.getRunningServices(
+            Integer.MAX_VALUE
+        )) {
+            if (service.service.shortClassName == Constants.MUSIC_SERVICE) {
+                return true
+            }
+        }
+        return false
     }
 
     fun moveToMusic() {

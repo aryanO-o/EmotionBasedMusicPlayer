@@ -49,11 +49,19 @@ import retrofit2.Response
 import java.io.IOException
 import kotlin.math.max
 import android.provider.MediaStore
+import com.example.emotionbasedmusic.container.AppContainer
+import com.example.emotionbasedmusic.eventBus.MessageEvent
+import dagger.hilt.android.AndroidEntryPoint
+import org.greenrobot.eventbus.EventBus
 import java.io.ByteArrayOutputStream
+import org.greenrobot.eventbus.ThreadMode
 
+import org.greenrobot.eventbus.Subscribe
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.IListener {
-    private lateinit var binding: FragmentFaceProceedOrRetakeBinding
+    private var binding: FragmentFaceProceedOrRetakeBinding? = null
     private val model: MusicViewModel by activityViewModels {
         MusicViewModelFactory(requireParentFragment())
     }
@@ -69,23 +77,38 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
     private lateinit var finalUri: Uri
     private lateinit var testImage: InputImage
     private var max = -1.1
+
+    @Inject
+    lateinit var appContainer: AppContainer
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         imageUri = navArgs.uri
         boolean = navArgs.isFromGallery
     }
+
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this);
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         binding = FragmentFaceProceedOrRetakeBinding.inflate(inflater)
-        return binding.root
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initView()
         initData()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
     }
 
     private fun initData() {
@@ -95,11 +118,10 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
     }
 
     private fun initView() {
-        binding.apply {
-            if(boolean) {
+        binding?.apply {
+            if (boolean) {
                 ivFaceScan.setImageURI(imageUri?.toUri())
-            }
-            else {
+            } else {
                 ivFaceScan.setImageBitmap(model.getBitmap())
             }
             btnProceed.setOnClickListener(this@FaceProceedOrRetakeFragment)
@@ -112,17 +134,19 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
         }
     }
 
-    private val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val data: Intent?  = result.data
-            if(data!=null) {
-                binding.ivFaceScan.setImageURI(data.data)
-                this.imageUri = data.data.toString()
-                boolean = true
-            }
+    private val launcher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data: Intent? = result.data
+                if (data != null) {
+                    binding?.ivFaceScan?.setImageURI(data.data)
+                    this.imageUri = data.data.toString()
+                    boolean = true
+                }
 
+            }
         }
-    }
+
     private fun galleryCall() {
         val intent = Intent()
         intent.type = "image/*"
@@ -131,8 +155,10 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
     }
 
     override fun onClick(p0: View?) {
-        when(p0?.id) {
-            R.id.btnRetake -> {showDialog()}
+        when (p0?.id) {
+            R.id.btnRetake -> {
+                showDialog()
+            }
             R.id.btnProceed -> {
 //                detectFace()
                 getImageUrl()
@@ -155,48 +181,46 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
                 withContext(Dispatchers.Main) {
                     azureFaces(task.body())
                 }
-            }
-            catch (e: ApiException) {
+            } catch (e: ApiException) {
                 withContext(Dispatchers.Main) {
                     makeViewsGone()
-                    binding.cl1.makeVisible()
-                    Toast.makeText(requireContext(), "Some error occurred", Toast.LENGTH_SHORT).show()
+                    binding?.cl1?.makeVisible()
+                    Toast.makeText(requireContext(), "Some error occurred", Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
         }
     }
 
     private fun azureFaces(body: List<AzureResponse>?) {
-        if(body!=null) {
-            if(body.isEmpty()) {
-                binding.apply {
+        if (body != null) {
+            if (body.isEmpty()) {
+                binding?.apply {
                     makeViewsGone()
                     cl4.makeVisible()
                 }
-            }
-            else {
-                binding.apply {
+            } else {
+                binding?.apply {
                     makeViewsGone()
                     cl3.makeVisible()
                 }
                 analyzeAzureFace(body[0].faceAttributes.emotion)
             }
-        }
-        else {
+        } else {
             Toast.makeText(requireContext(), "null", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun analyzeAzureFace(azureResponse: Moods) {
         azureResponse.apply {
-           max =  maxOf(anger, fear, happiness, neutral, sadness, surprise)
+            max = maxOf(anger, fear, happiness, neutral, sadness, surprise)
         }
         updateUI(max, azureResponse)
     }
 
     private fun updateUI(max: Double, emotions: Moods) {
-        when(max) {
-            emotions.sadness ->{
+        when (max) {
+            emotions.sadness -> {
                 setEmotion(R.drawable.sad_face, "Sad")
                 this.mood = Constants.SAD_MOOD
             }
@@ -224,24 +248,51 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
     }
 
     private fun getImageUrl() {
-        when(boolean) {
+        when (boolean) {
             true -> {
                 this.finalUri = imageUri?.toUri()!!
+                getStorageUrl()
             }
             false -> {
-                this.finalUri = uriFromBitmap()
+                checkForWritePerm()
             }
         }
-        binding.apply {
+        binding?.apply {
             cl1.makeGone()
             cl2.makeVisible()
             pfDetect.pFrame.makeVisible()
             pfDetect.progressBarLayout.progressBar.makeVisible()
         }
+
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onMessageEvent(event: MessageEvent?) {
+        when (event?.getString()) {
+            Constants.EXECUTE_WRITE_PERM -> {
+                execute()
+            }
+            Constants.EXECUTE_CAMERA_PERM -> {
+                startCamera()
+            }
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this);
+    }
+
+    private fun execute() {
+        this.finalUri = uriFromBitmap()
         getStorageUrl()
     }
 
-    private  fun uriFromBitmap(): Uri {
+    private fun checkForWritePerm() {
+        appContainer.permissionHelper.checkForPerm(Constants.WRITE_PERM)
+    }
+
+    private fun uriFromBitmap(): Uri {
         val bytes = ByteArrayOutputStream()
         model.getBitmap()!!.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
         val path: String = MediaStore.Images.Media.insertImage(
@@ -255,20 +306,21 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
 
 
     private fun getStorageUrl() {
-        try {
-            GlobalScope.launch(Dispatchers.IO) {
-                ref.putFile(finalUri).addOnCompleteListener(object: OnCompleteListener<UploadTask.TaskSnapshot> {
+        GlobalScope.launch(Dispatchers.IO) {
+            try {
+                ref.putFile(finalUri).addOnCompleteListener(object :
+                    OnCompleteListener<UploadTask.TaskSnapshot> {
                     override fun onComplete(p0: Task<UploadTask.TaskSnapshot>) {
-                        if(p0.isSuccessful) {
+                        if (p0.isSuccessful) {
                             ref.downloadUrl.addOnSuccessListener { uri ->
                                 detectFaceThroughAzure(uri.toString())
                             }
                         }
                     }
                 })
+            } catch (e: IOException) {
+                e.printStackTrace()
             }
-        } catch (e: IOException) {
-            e.printStackTrace()
         }
     }
 
@@ -284,7 +336,7 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
             .setContourMode(FaceDetectorOptions.CONTOUR_MODE_ALL)
             .build()
 
-        when(boolean) {
+        when (boolean) {
             true -> {
                 try {
                     testImage = InputImage.fromFilePath(requireContext(), imageUri!!.toUri())
@@ -293,7 +345,7 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
                 }
             }
             false -> {
-                 testImage = InputImage.fromBitmap(model.getBitmap()!!, 0)
+                testImage = InputImage.fromBitmap(model.getBitmap()!!, 0)
             }
         }
 
@@ -302,7 +354,7 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
     }
 
     private fun detect(testImage: InputImage, highAccuracyOpts: FaceDetectorOptions) {
-        binding.apply {
+        binding?.apply {
             cl1.makeGone()
             cl2.makeVisible()
             pfDetect.pFrame.makeVisible()
@@ -315,7 +367,7 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
                 facesInfo(faces)
             }
             .addOnFailureListener { e ->
-                binding.apply {
+                binding?.apply {
                     cl1.makeVisible()
                     makeViewsGone()
                 }
@@ -324,7 +376,7 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
     }
 
     private fun makeViewsGone() {
-        binding.apply {
+        binding?.apply {
             cl2.makeGone()
             pfDetect.pFrame.makeGone()
             pfDetect.progressBarLayout.progressBar.makeGone()
@@ -332,14 +384,13 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
     }
 
     private fun facesInfo(faces: List<Face>) {
-        if(faces.isEmpty()) {
-            binding.apply {
+        if (faces.isEmpty()) {
+            binding?.apply {
                 makeViewsGone()
                 cl4.makeVisible()
             }
-        }
-        else {
-            binding.apply {
+        } else {
+            binding?.apply {
                 makeViewsGone()
                 cl3.makeVisible()
             }
@@ -350,16 +401,14 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
 
     private fun analyzeFace(face: Face) {
         val sProb = face.smilingProbability
-        if(sProb != null) {
-            if(sProb < 0.15.toFloat()) {
+        if (sProb != null) {
+            if (sProb < 0.15.toFloat()) {
                 setEmotion(R.drawable.sad_face, "Sad")
                 this.mood = Constants.SAD_MOOD
-            }
-            else if(sProb in 0.15..0.7) {
+            } else if (sProb in 0.15..0.7) {
                 setEmotion(R.drawable.neutral_face, "Neutral")
                 this.mood = Constants.NEUTRAL_MOOD
-            }
-            else if(sProb > 0.7 && sProb <=1) {
+            } else if (sProb > 0.7 && sProb <= 1) {
                 setEmotion(R.drawable.happy_face, "Happy")
                 this.mood = Constants.HAPPY_MOOD
             }
@@ -368,8 +417,8 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
 
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun setEmotion(i: Int, mood: String) {
-        binding.faceResultFragment.detectedEmotion.setImageDrawable(resources.getDrawable(i))
-        binding.faceResultFragment.tvEmotion.text = mood
+        binding?.faceResultFragment?.detectedEmotion?.setImageDrawable(resources.getDrawable(i))
+        binding?.faceResultFragment?.tvEmotion?.text = mood
     }
 
 
@@ -379,7 +428,11 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
 
     override fun btnCamera() {
         dismissDialog()
-        openCamera()
+        checkForCamPerm()
+    }
+
+    private fun checkForCamPerm() {
+        appContainer.permissionHelper.checkForPerm(Constants.CAMERA_PERM)
     }
 
     override fun btnGallery() {
@@ -396,44 +449,20 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
         dialog.showDialog()
     }
 
-    private fun openCamera() {
-        if(ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-            startCamera()
-        }
-        else {
-            ActivityCompat.requestPermissions(requireActivity(),arrayOf(android.Manifest.permission.CAMERA), Constants.CAMERA_PERMISSION_CODE)
-        }
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if(requestCode == Constants.CAMERA_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+        if (requestCode == Constants.CAMERA_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             bitmap = data?.extras?.get("data") as Bitmap
-            binding.apply {
+            binding?.apply {
                 ivFaceScan.setImageBitmap(bitmap)
                 model.setBitmap(bitmap!!)
                 boolean = false
             }
         }
     }
+
     private fun startCamera() {
         val intent = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE)
         startActivityForResult(intent, Constants.CAMERA_REQUEST_CODE)
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        if(requestCode==Constants.CAMERA_PERMISSION_CODE) {
-            if(grantResults[0]==PackageManager.PERMISSION_GRANTED && grantResults.size==1) {
-                Toast.makeText(requireContext(), "Camera permission granted", Toast.LENGTH_SHORT).show()
-                startCamera()
-            }
-            else {
-                Toast.makeText(requireContext(), "Camera permission denied", Toast.LENGTH_SHORT).show()
-            }
-        }
     }
 
 

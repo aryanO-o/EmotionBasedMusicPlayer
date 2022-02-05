@@ -52,6 +52,7 @@ class SignUpFragment : Fragment(), View.OnClickListener {
         super.onAttach(context)
         repo = HelpRepo(context)
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initData()
         binding.apply {

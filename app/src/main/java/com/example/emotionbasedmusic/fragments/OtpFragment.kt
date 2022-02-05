@@ -16,6 +16,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.emotionbasedmusic.R
+import com.example.emotionbasedmusic.container.AppContainer
 import com.example.emotionbasedmusic.databinding.FragmentOtpBinding
 import com.example.emotionbasedmusic.helper.Constants
 import com.example.emotionbasedmusic.helper.HelpRepo
@@ -25,15 +26,18 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.*
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class OtpFragment : Fragment(), View.OnClickListener {
     private lateinit var binding: FragmentOtpBinding
     private lateinit var auth: FirebaseAuth
     private lateinit var userid: String
     private lateinit var userToken: PhoneAuthProvider.ForceResendingToken
-    private lateinit var repo: HelpRepo
+    @Inject
+    lateinit var appContainer: AppContainer
     private val model: MusicViewModel by activityViewModels {
         MusicViewModelFactory(requireParentFragment())
     }
@@ -43,11 +47,6 @@ class OtpFragment : Fragment(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         phone = args.phone
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        repo = HelpRepo(context)
     }
 
     override fun onCreateView(
@@ -62,7 +61,7 @@ class OtpFragment : Fragment(), View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         auth = FirebaseAuth.getInstance()
-        repo.initSharedPreferences()
+        appContainer.repo.initSharedPreferences()
         setTextChanger()
         getCallbacks()
         binding.apply {
@@ -76,7 +75,7 @@ class OtpFragment : Fragment(), View.OnClickListener {
             OnCompleteListener<AuthResult> {
             override fun onComplete(p0: Task<AuthResult>) {
                 if (p0.isSuccessful) {
-                    repo.setSharedPreferences(Constants.IS_LOGGED_IN, Constants.LOGGED_IN)
+                    appContainer.repo.setSharedPreferences(Constants.IS_LOGGED_IN, Constants.LOGGED_IN)
                     val newUser = p0.result!!.additionalUserInfo!!.isNewUser
                     if (newUser) {
                         dialog.dismiss()
@@ -236,8 +235,6 @@ class OtpFragment : Fragment(), View.OnClickListener {
             .build()
 
         PhoneAuthProvider.verifyPhoneNumber(options)
-
-
     }
 
     override fun onClick(view: View?) {

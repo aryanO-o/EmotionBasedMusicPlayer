@@ -47,5 +47,12 @@ class Constants {
         const val APP_NAME = "EMOSIC"
         const val LOGGED_IN = "Logged_In"
         const val IS_LOGGED_IN = "is_logged_in"
+        const val WRITE_REQUEST_CODE = 199
+        const val MUSIC_SERVICE = ".services.MusicService"
+        const val WRITE_PERM = "write"
+        const val CAMERA_PERM = "camera_perm"
+        const val EXECUTE_WRITE_PERM = "execute_WRITE_PERM"
+        const val EXECUTE_CAMERA_PERM = "execute_camera_perm"
+        const val OPEN_CAMERA = "open_camera"
     }
 }

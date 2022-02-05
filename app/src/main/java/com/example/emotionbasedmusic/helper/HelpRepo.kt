@@ -2,8 +2,15 @@ package com.example.emotionbasedmusic.helper
 
 import android.content.Context
 import android.content.SharedPreferences
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityComponent
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
-class HelpRepo(private val context: Context) {
+
+class HelpRepo @Inject constructor(@ApplicationContext private val context: Context) {
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var editor: SharedPreferences.Editor
     fun initSharedPreferences() {
@@ -23,3 +30,8 @@ class HelpRepo(private val context: Context) {
         editor.remove(key).apply()
     }
 }
+
+
+
+
+
