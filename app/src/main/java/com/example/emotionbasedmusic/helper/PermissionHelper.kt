@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.core.content.ContextCompat
 import com.example.emotionbasedmusic.MainActivity
 import com.example.emotionbasedmusic.container.BaseFragment
@@ -15,9 +16,7 @@ import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
 
 
-class PermissionHelper @Inject constructor(@ApplicationContext private val applicationContext: Context) :
-    BaseFragment() {
-
+class PermissionHelper (private val activity: Activity) {
 
     fun checkForPerm(perm: String) {
         when (perm) {
@@ -32,7 +31,7 @@ class PermissionHelper @Inject constructor(@ApplicationContext private val appli
 
     private fun checkForCameraPerm() {
         if (ContextCompat.checkSelfPermission(
-                applicationContext,
+                activity.applicationContext,
                 android.Manifest.permission.CAMERA
             ) == PackageManager.PERMISSION_GRANTED
         ) {
@@ -44,7 +43,7 @@ class PermissionHelper @Inject constructor(@ApplicationContext private val appli
 
     private fun checkForWritePerm() {
         if (ContextCompat.checkSelfPermission(
-                applicationContext,
+                activity.applicationContext,
                 android.Manifest.permission.WRITE_EXTERNAL_STORAGE
             ) == PackageManager.PERMISSION_GRANTED
         ) {
@@ -54,4 +53,17 @@ class PermissionHelper @Inject constructor(@ApplicationContext private val appli
         }
     }
 
+    private fun requestPermForWrite() {
+        requestPermissions(activity,
+            arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE),
+            Constants.WRITE_REQUEST_CODE
+        )
+    }
+
+    private fun requestPermForCam() {
+        requestPermissions(activity,
+            arrayOf(android.Manifest.permission.CAMERA),
+            Constants.CAMERA_PERMISSION_CODE
+        )
+    }
 }

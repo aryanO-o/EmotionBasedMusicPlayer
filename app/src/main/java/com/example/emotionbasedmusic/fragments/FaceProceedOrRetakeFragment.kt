@@ -25,10 +25,6 @@ import com.example.emotionbasedmusic.data.Emotions
 import com.example.emotionbasedmusic.data.ImageBody
 import com.example.emotionbasedmusic.data.Moods
 import com.example.emotionbasedmusic.databinding.FragmentFaceProceedOrRetakeBinding
-import com.example.emotionbasedmusic.helper.Constants
-import com.example.emotionbasedmusic.helper.Dialog
-import com.example.emotionbasedmusic.helper.makeGone
-import com.example.emotionbasedmusic.helper.makeVisible
 import com.example.emotionbasedmusic.network.AZURE
 import com.example.emotionbasedmusic.network.AzureApi
 import com.example.emotionbasedmusic.viewModel.MusicViewModel
@@ -51,6 +47,7 @@ import kotlin.math.max
 import android.provider.MediaStore
 import com.example.emotionbasedmusic.container.AppContainer
 import com.example.emotionbasedmusic.eventBus.MessageEvent
+import com.example.emotionbasedmusic.helper.*
 import dagger.hilt.android.AndroidEntryPoint
 import org.greenrobot.eventbus.EventBus
 import java.io.ByteArrayOutputStream
@@ -72,6 +69,7 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
     private lateinit var dialog: Dialog
     private lateinit var auth: FirebaseAuth
     private lateinit var ref: StorageReference
+    private lateinit var permissionHelper: PermissionHelper
     private lateinit var storage: FirebaseStorage
     private var mood = ""
     private lateinit var finalUri: Uri
@@ -113,6 +111,7 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
 
     private fun initData() {
         auth = FirebaseAuth.getInstance()
+        permissionHelper = PermissionHelper(requireActivity())
         storage = FirebaseStorage.getInstance()
         ref = storage.reference.child("allImages").child(auth.currentUser!!.uid)
     }
@@ -263,7 +262,6 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
             pfDetect.pFrame.makeVisible()
             pfDetect.progressBarLayout.progressBar.makeVisible()
         }
-
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -289,7 +287,7 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
     }
 
     private fun checkForWritePerm() {
-        appContainer.permissionHelper.checkForPerm(Constants.WRITE_PERM)
+      permissionHelper.checkForPerm(Constants.WRITE_PERM)
     }
 
     private fun uriFromBitmap(): Uri {
@@ -432,7 +430,7 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
     }
 
     private fun checkForCamPerm() {
-        appContainer.permissionHelper.checkForPerm(Constants.CAMERA_PERM)
+        permissionHelper.checkForPerm(Constants.CAMERA_PERM)
     }
 
     override fun btnGallery() {

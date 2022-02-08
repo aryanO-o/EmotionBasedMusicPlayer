@@ -45,7 +45,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListener,
-    emojiAdapter.Ilistener, BottomSheetDialog.SBottom {
+    emojiAdapter.Ilistener, BottomSheetDialog.SBottom{
 
     private val model: MusicViewModel by activityViewModels {
         MusicViewModelFactory(requireParentFragment())
@@ -57,6 +57,7 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
     @Inject
     lateinit var appContainer: AppContainer
     private lateinit var dialog: Dialog
+    private lateinit var permissionHelper: PermissionHelper
     private var bitmap: Bitmap? = null
     private lateinit var bottomSheetDialog: BottomSheetDialog
     private var isFromGallery: Boolean = false
@@ -85,6 +86,7 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         checkForPI()
+        checkForPermissions()
         model.getData()
         initToolbar()
         initData()
@@ -92,6 +94,10 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
             btnAddImage.setOnClickListener(this@MoodRecognitionFragment)
             btnChooseFromEmojis.setOnClickListener(this@MoodRecognitionFragment)
         }
+    }
+
+    private fun checkForPermissions() {
+        checkForCamPerm()
     }
 
     private fun checkForPI() {
@@ -122,6 +128,7 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
 
     private fun initData() {
         auth = FirebaseAuth.getInstance()
+        permissionHelper = PermissionHelper(requireActivity())
         appContainer.repo.initSharedPreferences()
         database = FirebaseDatabase.getInstance()
         googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -221,7 +228,11 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
     }
 
     private fun checkForCamPerm() {
-        appContainer.permissionHelper.checkForPerm(Constants.CAMERA_PERM)
+    permissionHelper.checkForPerm(Constants.CAMERA_PERM)
+    }
+
+    fun checkForWritePerm() {
+
     }
 
     override fun btnGallery() {
@@ -299,5 +310,6 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
         bottomSheetDialog.dismiss()
         signOut()
     }
+
 
 }
