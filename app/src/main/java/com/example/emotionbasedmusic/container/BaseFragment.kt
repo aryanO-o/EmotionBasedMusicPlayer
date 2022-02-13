@@ -39,29 +39,4 @@ open class BaseFragment : Fragment() {
         binding = null
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        if (requestCode == Constants.CAMERA_PERMISSION_CODE) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults.size == 1) {
-                Toast.makeText(requireContext(), "Camera permission granted", Toast.LENGTH_SHORT)
-                    .show()
-                EventBus.getDefault().post(MessageEvent(Constants.EXECUTE_CAMERA_PERM))
-            } else {
-                Toast.makeText(requireContext(), "Camera permission denied", Toast.LENGTH_SHORT)
-                    .show()
-            }
-        } else if (requestCode == Constants.WRITE_REQUEST_CODE) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults.size == 1) {
-                Toast.makeText(requireContext(), "Permission Granted", Toast.LENGTH_SHORT)
-                    .show()
-                EventBus.getDefault().post(MessageEvent(Constants.EXECUTE_WRITE_PERM))
-            } else {
-                Toast.makeText(requireContext(), "permission denied", Toast.LENGTH_SHORT)
-                    .show()
-            }
-        }
-    }
 }

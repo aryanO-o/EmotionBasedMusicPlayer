@@ -1,5 +1,6 @@
 package com.example.emotionbasedmusic.fragments
 
+import android.Manifest
 import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.content.Context
@@ -45,7 +46,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListener,
-    emojiAdapter.Ilistener, BottomSheetDialog.SBottom{
+    emojiAdapter.Ilistener, BottomSheetDialog.SBottom {
 
     private val model: MusicViewModel by activityViewModels {
         MusicViewModelFactory(requireParentFragment())
@@ -54,6 +55,7 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
     private lateinit var googleSignInOptions: GoogleSignInOptions
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var auth: FirebaseAuth
+
     @Inject
     lateinit var appContainer: AppContainer
     private lateinit var dialog: Dialog
@@ -86,7 +88,7 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         checkForPI()
-        checkForPermissions()
+        permissionHelper = PermissionHelper(requireActivity())
         model.getData()
         initToolbar()
         initData()
@@ -96,9 +98,6 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
         }
     }
 
-    private fun checkForPermissions() {
-        checkForCamPerm()
-    }
 
     private fun checkForPI() {
         when (model.progressIndicator) {
@@ -228,11 +227,22 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
     }
 
     private fun checkForCamPerm() {
-    permissionHelper.checkForPerm(Constants.CAMERA_PERM)
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            EventBus.getDefault().post(MessageEvent(Constants.EXECUTE_CAMERA_PERM))
+        } else {
+            requestPermForCam()
+        }
     }
 
-    fun checkForWritePerm() {
-
+    private fun requestPermForCam() {
+        requestPermissions(
+            arrayOf(Manifest.permission.CAMERA),
+            Constants.CAMERA_PERMISSION_CODE
+        )
     }
 
     override fun btnGallery() {
@@ -311,5 +321,20 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
         signOut()
     }
 
-
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        if (requestCode == Constants.CAMERA_PERMISSION_CODE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults.size == 1) {
+                Toast.makeText(requireContext(), "Camera permission granted", Toast.LENGTH_SHORT)
+                    .show()
+                EventBus.getDefault().post(MessageEvent(Constants.EXECUTE_CAMERA_PERM))
+            } else {
+                Toast.makeText(requireContext(), "Camera permission denied", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        }
+    }
 }

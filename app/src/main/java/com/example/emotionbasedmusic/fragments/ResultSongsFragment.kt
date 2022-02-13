@@ -53,17 +53,6 @@ class ResultSongsFragment : Fragment(), MusicAdapter.IPost, MediaPlayer.OnPrepar
         binding.neResultSongs.btnRetry.setOnClickListener(this)
     }
 
-    private fun setUpMediaPlayer() {
-        mediaPlayer = MediaPlayer().apply {
-            setAudioAttributes(
-                AudioAttributes.Builder()
-                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                    .setUsage(AudioAttributes.USAGE_MEDIA)
-                    .build()
-            )
-        }
-    }
-
     private fun initView() {
         binding.cl1.makeVisible()
         binding.pfDetect.progressBarLayout.progressBar.makeVisible()

@@ -1,11 +1,13 @@
 package com.example.emotionbasedmusic.fragments
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -251,11 +253,16 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
             true -> {
                 this.finalUri = imageUri?.toUri()!!
                 getStorageUrl()
+                updateForProceed()
             }
             false -> {
                 checkForWritePerm()
             }
         }
+
+    }
+
+    private fun updateForProceed() {
         binding?.apply {
             cl1.makeGone()
             cl2.makeVisible()
@@ -276,6 +283,15 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
         }
     }
 
+    private fun update() {
+        binding?.apply {
+            cl1.makeVisible()
+            cl2.makeGone()
+            pfDetect.pFrame.makeGone()
+            pfDetect.progressBarLayout.progressBar.makeGone()
+        }
+    }
+
     override fun onStop() {
         super.onStop()
         EventBus.getDefault().unregister(this);
@@ -284,10 +300,27 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
     private fun execute() {
         this.finalUri = uriFromBitmap()
         getStorageUrl()
+        updateForProceed()
     }
 
     private fun checkForWritePerm() {
-      permissionHelper.checkForPerm(Constants.WRITE_PERM)
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            EventBus.getDefault().post(MessageEvent(Constants.EXECUTE_WRITE_PERM))
+        } else {
+            requestPermForWrite()
+        }
+    }
+
+    private fun requestPermForWrite() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) { requestPermissions(
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                Constants.WRITE_REQUEST_CODE
+            )
+        }
     }
 
     private fun uriFromBitmap(): Uri {
@@ -430,7 +463,22 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
     }
 
     private fun checkForCamPerm() {
-        permissionHelper.checkForPerm(Constants.CAMERA_PERM)
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            EventBus.getDefault().post(MessageEvent(Constants.EXECUTE_CAMERA_PERM))
+        } else {
+            requestPermForCam()
+        }
+    }
+
+    private fun requestPermForCam() {
+        requestPermissions(
+            arrayOf(Manifest.permission.CAMERA),
+            Constants.CAMERA_PERMISSION_CODE
+        )
     }
 
     override fun btnGallery() {
@@ -459,9 +507,34 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
     }
 
     private fun startCamera() {
-        val intent = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE)
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         startActivityForResult(intent, Constants.CAMERA_REQUEST_CODE)
     }
 
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        if (requestCode == Constants.CAMERA_PERMISSION_CODE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults.size == 1) {
+                Toast.makeText(requireContext(), "Camera permission granted", Toast.LENGTH_SHORT)
+                    .show()
+                EventBus.getDefault().post(MessageEvent(Constants.EXECUTE_CAMERA_PERM))
+            } else {
+                Toast.makeText(requireContext(), "Camera permission denied", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        } else if (requestCode == Constants.WRITE_REQUEST_CODE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults.size == 1) {
+                Toast.makeText(requireContext(), "Storage Permission Granted", Toast.LENGTH_SHORT)
+                    .show()
+                EventBus.getDefault().post(MessageEvent(Constants.EXECUTE_WRITE_PERM))
+            } else {
+                Toast.makeText(requireContext(), "Storage permission denied", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        }
+    }
 
 }

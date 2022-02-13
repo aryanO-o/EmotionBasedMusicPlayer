@@ -5,6 +5,8 @@ import com.example.emotionbasedmusic.R
 
 class Constants {
     companion object {
+        const val DENIED_WRITE_PERM_TOAST: String = "Storage Permissions Denied"
+        const val DENIED_WRITE_PERM: String = "denied_write_perm"
         const val GOOGLE_REQUEST_CODE = 0
         const val FRAGMENT_MOOD_RECOGNITION = "fragment_mood_recognition"
         const val SIGN_UP_FRAGMENT = "sign_up_fragment"

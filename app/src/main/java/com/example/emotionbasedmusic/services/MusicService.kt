@@ -13,6 +13,7 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.MutableLiveData
 import com.example.emotionbasedmusic.R
 import com.example.emotionbasedmusic.Utils.createNotification
+import com.example.emotionbasedmusic.Utils.createNotificationChannel
 import com.example.emotionbasedmusic.data.Music
 import com.example.emotionbasedmusic.fragments.MusicFragment
 import com.example.emotionbasedmusic.helper.*
@@ -59,7 +60,6 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, Serializable {
     inner class LocalBinder : Binder() {
         fun getService(): MusicService = this@MusicService
     }
-
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
