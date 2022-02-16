@@ -45,4 +45,14 @@ Once Emosic guesses how you are feeling, then based on its guess, Emosic fetches
 - Edge cases where user is not connected to the internet or the picture of the user is not clear to detect emotion
 - Changing the songs by sliding over the music player for better user experience.
 
+### Contributors
+
+* [Aryan Dadhich](https://github.com/aryanO-o)
+* [Amaan Ur Rahman](https://github.com/amaan118921)
+
+### Our LinkedIn Profile
+
+* [Aryan Dadhich](https://www.linkedin.com/in/aryan-dadhich-014a60189/)
+* [Amaan Ur Rahman](https://www.linkedin.com/in/amaan-ur-rahman-037b541b8/)
+
 
