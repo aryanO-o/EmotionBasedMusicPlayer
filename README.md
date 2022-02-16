@@ -18,7 +18,8 @@ Going back to our example, now we can think how a relaxed face, open mouth and d
 - Control Flow
   * Kotlin
   * Java
--UI
+
+- UI
   * XML
   * Android Navigation Components
 - Backend and API
