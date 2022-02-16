@@ -30,7 +30,7 @@ Going back to our example, now we can think how a relaxed face, open mouth and d
   * PostgreSQL
   * Nodemon
 
-- Microsoft Azure Services for Face Detection
+- Microsoft Azure Services for Emotion Detection
 - Various other android dependencies
 
 
