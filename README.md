@@ -15,17 +15,21 @@ Have you seen drawings in which we are given various dots and when we connect th
 Going back to our example, now we can think how a relaxed face, open mouth and distance between eyebrows can be used to detect that we are happy. Things are not this easy but anyways this was an overview how AI detects emotion. Let's go ahead with this small understanding of the black box algorithms of detecting emotions. Once your friend guesses how you are feeling, and based on his guess, Emosic fetches the songs from the database using the backend that we have deployed on heroku and voila it's how things work here.
 
 ### Tech Stacks
-- Kotlin
-- Java
-- XML
-- Android Navigation Components
-- Retrofit + Moshi
-- Firebase
-- Microsoft Azure Services
-- Heroku
-- Express + Node JS
-- PostgreSQL
-- Nodemon
+- Control Flow
+  * Kotlin
+  * Java
+-UI
+  * XML
+  * Android Navigation Components
+- Backend and API
+  * Retrofit + Moshi
+  * Firebase
+  * Heroku
+  * Express + Node JS
+  * PostgreSQL
+  * Nodemon
+
+- Microsoft Azure Services for Face Detection
 - Various other android dependencies
 
 
