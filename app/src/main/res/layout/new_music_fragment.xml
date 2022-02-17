@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/gradient_for_background_of_new_media_player"
     tools:context=".MainActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -12,8 +13,7 @@
         app:layout_constraintHeight_percent="0.75"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="@color/black">
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -142,7 +142,7 @@
         android:id="@+id/bottom_bar"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@color/black"
+        android:background="@color/transparent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.25"
@@ -243,7 +243,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:background="@color/black"
+                android:background="@color/transparent"
                 android:src="@drawable/repeat_icon" />
 
             <ImageButton
@@ -251,7 +251,7 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:id="@+id/btnPreviousSong"
-                android:background="@color/black"
+                android:background="@color/transparent"
                 android:src="@drawable/previous_song_icon"/>
 
             <com.google.android.material.imageview.ShapeableImageView
@@ -261,7 +261,7 @@
                 android:id="@+id/btnPlay"
                 android:background="@drawable/gradient_for_new_media_player"
                 android:scaleType="center"
-                android:src="@drawable/play_arrow_white"/>
+                android:src="@drawable/play_icon"/>
 
             <ImageButton
                 android:layout_width="0dp"
@@ -269,14 +269,14 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/btnNextSong"
                 android:src="@drawable/next_song_icon"
-                android:background="@color/black"/>
+                android:background="@color/transparent"/>
 
             <ImageButton
                 android:id="@+id/shuffle_btn"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:background="@color/black"
+                android:background="@color/transparent"
                 android:src="@drawable/shuffle_icon" />
 
         </LinearLayout>
