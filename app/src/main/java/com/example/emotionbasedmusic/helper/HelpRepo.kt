@@ -26,8 +26,8 @@ class HelpRepo @Inject constructor(@ApplicationContext private val context: Cont
         return sharedPreferences.getString(key, "") ?: ""
     }
 
-    fun clearSharedPreferences(key: String) {
-        editor.remove(key).apply()
+    fun clearSharedPreferences() {
+        editor.clear().apply()
     }
 }
 

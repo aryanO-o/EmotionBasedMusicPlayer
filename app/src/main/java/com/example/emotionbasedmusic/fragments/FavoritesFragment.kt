@@ -20,15 +20,13 @@ import com.example.emotionbasedmusic.helper.Constants
 import com.example.emotionbasedmusic.helper.makeGone
 import com.example.emotionbasedmusic.helper.makeVisible
 import com.example.emotionbasedmusic.viewModel.MusicViewModel
-import com.example.emotionbasedmusic.viewModel.MusicViewModelFactory
+
 
 
 class FavoritesFragment : Fragment(), MusicAdapter.IFavorite {
     private var binding: FragmentFavoritesBinding? = null
     private lateinit var adapter: MusicAdapter
-    private val model: MusicViewModel by activityViewModels {
-        MusicViewModelFactory(requireParentFragment())
-    }
+    private val model: MusicViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,

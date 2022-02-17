@@ -21,7 +21,7 @@ import com.example.emotionbasedmusic.databinding.FragmentOtpBinding
 import com.example.emotionbasedmusic.helper.Constants
 import com.example.emotionbasedmusic.helper.HelpRepo
 import com.example.emotionbasedmusic.viewModel.MusicViewModel
-import com.example.emotionbasedmusic.viewModel.MusicViewModelFactory
+
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseException
@@ -38,9 +38,7 @@ class OtpFragment : Fragment(), View.OnClickListener {
     private lateinit var userToken: PhoneAuthProvider.ForceResendingToken
     @Inject
     lateinit var appContainer: AppContainer
-    private val model: MusicViewModel by activityViewModels {
-        MusicViewModelFactory(requireParentFragment())
-    }
+    private val model: MusicViewModel by activityViewModels()
     private val args: OtpFragmentArgs by navArgs()
     private lateinit var phone: String
     private lateinit var dialog: ProgressDialog
@@ -76,6 +74,7 @@ class OtpFragment : Fragment(), View.OnClickListener {
             override fun onComplete(p0: Task<AuthResult>) {
                 if (p0.isSuccessful) {
                     appContainer.repo.setSharedPreferences(Constants.IS_LOGGED_IN, Constants.LOGGED_IN)
+                    appContainer.repo.setSharedPreferences(Constants.MOBILE, phone)
                     val newUser = p0.result!!.additionalUserInfo!!.isNewUser
                     if (newUser) {
                         dialog.dismiss()
@@ -84,7 +83,7 @@ class OtpFragment : Fragment(), View.OnClickListener {
                             "Verification Successful",
                             Toast.LENGTH_SHORT
                         ).show()
-                        toFaceScanFragment()
+                        toAddProfileFragment()
                     } else {
                         dialog.dismiss()
                         Toast.makeText(requireContext(), "Welcome Back", Toast.LENGTH_SHORT).show()
@@ -99,6 +98,10 @@ class OtpFragment : Fragment(), View.OnClickListener {
             }
 
         })
+    }
+
+    private fun toAddProfileFragment() {
+        findNavController().navigate(R.id.action_otpFragment_to_usersDataFragment)
     }
 
     private fun toFaceScanFragment() {

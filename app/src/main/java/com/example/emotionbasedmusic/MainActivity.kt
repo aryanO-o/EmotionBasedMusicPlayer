@@ -7,15 +7,21 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.add
 import androidx.fragment.app.commit
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
+import com.example.emotionbasedmusic.data.Music
+import com.example.emotionbasedmusic.eventBus.MessageEvent
 import com.example.emotionbasedmusic.fragments.MusicFragment
 import com.example.emotionbasedmusic.helper.Constants
 import com.example.emotionbasedmusic.services.MusicService
 import dagger.hilt.android.AndroidEntryPoint
+import org.greenrobot.eventbus.EventBus
+import java.util.*
+import kotlin.collections.HashSet
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -26,10 +32,14 @@ class MainActivity : AppCompatActivity() {
     var key: Boolean? = true
     private lateinit var activityManager: ActivityManager
     var isFromFavorite = false
+    private var musicList = listOf<Music>()
+    private var musicIntent: Intent? = null
+    private var song: Music? = null
+    private val permissionEventsListeners: MutableSet<RequestPermissionEventListener> = HashSet()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        musicIntent = Intent(this, MusicService::class.java)
         this.isFromNotification =
             intent?.extras?.getBoolean(Constants.IS_FROM_NOTIFICATION) ?: false
         navHostFragment =
@@ -38,12 +48,20 @@ class MainActivity : AppCompatActivity() {
         activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        EventBus.getDefault().post(MessageEvent(getString(R.string.activity_destroyed)))
+    }
+
     override fun onBackPressed() {
         when (navController.currentDestination!!.label) {
             Constants.FRAGMENT_MOOD_RECOGNITION -> {
                 finish()
             }
             Constants.SIGN_UP_FRAGMENT -> {
+                finish()
+            }
+            Constants.USERS_DATA_FRAGMENT -> {
                 finish()
             }
             else -> {
@@ -59,6 +77,25 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
+    fun startService() {
+        musicIntent?.putExtra(Constants.SONG, this.song)
+        musicIntent?.putExtra(Constants.INDEX, musicList.indexOf(song))
+        musicIntent?.let {ContextCompat.startForegroundService(this, it)}
+    }
+
+    fun stopForegroundService() {
+        musicIntent?.let { stopService(it) }
+    }
+
+    fun setSong(song: Music?) {
+        this.song = song
+    }
+
+    fun setSongList(musicList: List<Music>) {
+        this.musicList = musicList
+    }
+
     private fun getListOfServices(): Boolean {
         for (service: ActivityManager.RunningServiceInfo in activityManager.getRunningServices(
             Integer.MAX_VALUE
@@ -72,9 +109,39 @@ class MainActivity : AppCompatActivity() {
 
     fun moveToMusic() {
         key = false
-        if (navController.currentDestination!!.label == Constants.FRAGMENT_MUSIC) {
-            navController.popBackStack()
-        }
+        if (navController.currentDestination!!.label == Constants.FRAGMENT_MUSIC) { navController.popBackStack() }
         navController.navigate(R.id.musicFragment)
     }
+
+    interface RequestPermissionEventListener {
+        fun onRequestPermissionsResults(
+            requestCode: Int,
+            permissions: Array<out String>,
+            grantResults: IntArray
+        )
+    }
+
+    fun registerPermissionListener(listener: RequestPermissionEventListener) {
+        permissionEventsListeners.add(listener)
+    }
+
+    fun unregisterPermissionListener(listener: RequestPermissionEventListener) {
+        permissionEventsListeners.remove(listener)
+    }
+
+    fun getActivityPermissionListener(): MutableSet<RequestPermissionEventListener> {
+        return Collections.unmodifiableSet(permissionEventsListeners)
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        for (listener in permissionEventsListeners) {
+            listener.onRequestPermissionsResults(requestCode, permissions, grantResults)
+        }
+    }
+
 }

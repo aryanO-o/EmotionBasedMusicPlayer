@@ -21,7 +21,7 @@ import com.example.emotionbasedmusic.databinding.FragmentCheckBinding
 import com.example.emotionbasedmusic.helper.Constants
 import com.example.emotionbasedmusic.helper.HelpRepo
 import com.example.emotionbasedmusic.viewModel.MusicViewModel
-import com.example.emotionbasedmusic.viewModel.MusicViewModelFactory
+
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -41,9 +41,7 @@ class CheckFragment : Fragment() {
     private lateinit var navController: NavController
     @Inject
     lateinit var appContainer: AppContainer
-    private val model: MusicViewModel by activityViewModels {
-        MusicViewModelFactory(requireParentFragment())
-    }
+    private val model: MusicViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -63,18 +61,25 @@ class CheckFragment : Fragment() {
     }
 
     private fun checkForUser() {
-        if (appContainer.repo.getSharedPreferences(Constants.IS_LOGGED_IN) == Constants.LOGGED_IN) {
+        if (appContainer.repo.getSharedPreferences(Constants.IS_LOGGED_IN) == Constants.LOGGED_IN && appContainer.repo.getSharedPreferences(Constants.IS_PROFILE_COMPLETE)==Constants.PROFILE_COMPLETE) {
             if (isFromNotification == true) {
                 toFaceScanFragment()
                 (requireActivity() as MainActivity).moveToMusic()
             } else {
                 toFaceScanFragment()
             }
-        } else {
+        }
+        else if(appContainer.repo.getSharedPreferences(Constants.IS_LOGGED_IN) == Constants.LOGGED_IN && appContainer.repo.getSharedPreferences(Constants.IS_PROFILE_COMPLETE)!=Constants.PROFILE_COMPLETE) {
+            toAddProfileFragment()
+        }
+        else {
             toSignUpFragment()
         }
     }
 
+    private fun toAddProfileFragment() {
+        findNavController().navigate(R.id.action_checkFragment_to_usersDataFragment)
+    }
 
     private fun toSignUpFragment() {
         findNavController().navigate(R.id.action_checkFragment_to_signUpFragment)

@@ -37,6 +37,9 @@
         <action
             android:id="@+id/action_otpFragment_to_moodRecognitionFragment"
             app:destination="@id/moodRecognitionFragment" />
+        <action
+            android:id="@+id/action_otpFragment_to_usersDataFragment"
+            app:destination="@id/usersDataFragment" />
     </fragment>
     <fragment
         android:id="@+id/checkFragment"
@@ -51,6 +54,9 @@
         <action
             android:id="@+id/action_checkFragment_to_musicFragment"
             app:destination="@id/musicFragment" />
+        <action
+            android:id="@+id/action_checkFragment_to_usersDataFragment"
+            app:destination="@id/usersDataFragment" />
     </fragment>
     <fragment
         android:id="@+id/moodRecognitionFragment"
@@ -131,4 +137,12 @@
         android:name="com.example.emotionbasedmusic.fragments.FragmentHowToUse"
         android:label="how_to_use_app"
         tools:layout="@layout/how_to_use_app" />
+    <fragment
+        android:id="@+id/usersDataFragment"
+        android:name="com.example.emotionbasedmusic.fragments.UsersDataFragment"
+        android:label="UsersDataFragment" >
+        <action
+            android:id="@+id/action_usersDataFragment_to_moodRecognitionFragment"
+            app:destination="@id/moodRecognitionFragment" />
+    </fragment>
 </navigation>

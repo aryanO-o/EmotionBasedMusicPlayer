@@ -21,15 +21,13 @@ import com.example.emotionbasedmusic.databinding.FragmentsResultSongsBinding
 import com.example.emotionbasedmusic.helper.makeGone
 import com.example.emotionbasedmusic.helper.makeVisible
 import com.example.emotionbasedmusic.viewModel.MusicViewModel
-import com.example.emotionbasedmusic.viewModel.MusicViewModelFactory
+
 
 class ResultSongsFragment : Fragment(), MusicAdapter.IPost, MediaPlayer.OnPreparedListener,
     View.OnClickListener {
 
     private lateinit var adapter: MusicAdapter
-    private val model: MusicViewModel by activityViewModels {
-        MusicViewModelFactory(requireParentFragment())
-    }
+    private val model: MusicViewModel by activityViewModels()
     private lateinit var mediaPlayer: MediaPlayer
     private var song: Music? = null
     private var index: Int = -1

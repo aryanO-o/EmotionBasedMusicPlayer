@@ -23,6 +23,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.emotionbasedmusic.MainActivity
 import com.example.emotionbasedmusic.R
 import com.example.emotionbasedmusic.adapter.emojiAdapter
 import com.example.emotionbasedmusic.container.AppContainer
@@ -32,7 +33,7 @@ import com.example.emotionbasedmusic.databinding.FragmentMoodRecognitionBinding
 import com.example.emotionbasedmusic.eventBus.MessageEvent
 import com.example.emotionbasedmusic.helper.*
 import com.example.emotionbasedmusic.viewModel.MusicViewModel
-import com.example.emotionbasedmusic.viewModel.MusicViewModelFactory
+
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -46,11 +47,10 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListener,
-    emojiAdapter.Ilistener, BottomSheetDialog.SBottom {
+    emojiAdapter.Ilistener, BottomSheetDialog.SBottom, MainActivity.RequestPermissionEventListener,
+    PermissionHelper.Listener {
 
-    private val model: MusicViewModel by activityViewModels {
-        MusicViewModelFactory(requireParentFragment())
-    }
+    private val model: MusicViewModel by activityViewModels()
     private lateinit var database: FirebaseDatabase
     private lateinit var googleSignInOptions: GoogleSignInOptions
     private lateinit var googleSignInClient: GoogleSignInClient
@@ -59,10 +59,15 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
     @Inject
     lateinit var appContainer: AppContainer
     private lateinit var dialog: Dialog
-    private lateinit var permissionHelper: PermissionHelper
+    private var permissionHelper: PermissionHelper? = null
     private var bitmap: Bitmap? = null
     private lateinit var bottomSheetDialog: BottomSheetDialog
     private var isFromGallery: Boolean = false
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -76,26 +81,30 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
         lateinit var binding: FragmentMoodRecognitionBinding
     }
 
-    override fun onStart() {
-        super.onStart()
-        EventBus.getDefault().register(this);
-    }
-
-    override fun onStop() {
-        super.onStop()
-        EventBus.getDefault().unregister(this)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         checkForPI()
         permissionHelper = PermissionHelper(requireActivity())
         model.getData()
         initToolbar()
         initData()
+        initRecyclerView()
         binding.apply {
             btnAddImage.setOnClickListener(this@MoodRecognitionFragment)
-            btnChooseFromEmojis.setOnClickListener(this@MoodRecognitionFragment)
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if(!(EventBus.getDefault().isRegistered(this))) { EventBus.getDefault().register(this)}
+        if(permissionHelper?.getListeners()?.contains(this)==false){permissionHelper?.registerListener(this)}
+        if(!(requireActivity() as MainActivity).getActivityPermissionListener().contains(this)){registerPermissionListener(this)}
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        unregisterPermissionListener(this)
+        permissionHelper?.unregisterListener(this)
+        EventBus.getDefault().unregister(this)
     }
 
 
@@ -119,7 +128,7 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
 
     private fun initRecyclerView() {
         val emojiDataSet = emojiData().loadEmoji();
-        val emojiRecyclerView = view?.findViewById<RecyclerView>(R.id.rvEmoji)
+        val emojiRecyclerView = view?.findViewById<RecyclerView>(R.id.emoji_recycler_view)
         emojiRecyclerView?.adapter = emojiAdapter(this, emojiDataSet);
         emojiRecyclerView?.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
@@ -190,7 +199,7 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
     }
 
     private fun signOut() {
-        appContainer.repo.clearSharedPreferences(Constants.IS_LOGGED_IN)
+        appContainer.repo.clearSharedPreferences()
         googleSignInClient.signOut()
         auth.signOut()
         toCheckFragment()
@@ -205,16 +214,9 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
             R.id.btnAddImage -> {
                 showDialog()
             }
-            R.id.btnChooseFromEmojis -> {
-                showBottom()
-            }
         }
     }
 
-    private fun showBottom() {
-        bottomSheetDialog = BottomSheetDialog(null, requireParentFragment(), null, null, null, this)
-        bottomSheetDialog.initBottomSheet(Constants.EMOJI_BOTTOM)
-    }
 
     private fun showDialog() {
         dialog = Dialog(requireContext(), this)
@@ -227,22 +229,22 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
     }
 
     private fun checkForCamPerm() {
-        if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.CAMERA
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
+        if (permissionHelper?.isPermissionGranted(Manifest.permission.CAMERA) == true) {
             EventBus.getDefault().post(MessageEvent(Constants.EXECUTE_CAMERA_PERM))
         } else {
-            requestPermForCam()
+            permissionHelper?.requestPermission(
+                arrayOf(Manifest.permission.CAMERA),
+                Constants.CAMERA_PERMISSION_CODE
+            )
         }
     }
 
-    private fun requestPermForCam() {
-        requestPermissions(
-            arrayOf(Manifest.permission.CAMERA),
-            Constants.CAMERA_PERMISSION_CODE
-        )
+    private fun registerPermissionListener(listener: MainActivity.RequestPermissionEventListener) {
+        (requireActivity() as MainActivity).registerPermissionListener(listener)
+    }
+
+    private fun unregisterPermissionListener(listener: MainActivity.RequestPermissionEventListener) {
+        (requireActivity() as MainActivity).unregisterPermissionListener(listener)
     }
 
     override fun btnGallery() {
@@ -303,7 +305,6 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
 
 
     override fun onItemClick(mood: String) {
-        bottomSheetDialog.dismiss()
         model.getSongs(mood)
         toResultSongFragment()
     }
@@ -334,6 +335,46 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
             } else {
                 Toast.makeText(requireContext(), "Camera permission denied", Toast.LENGTH_SHORT)
                     .show()
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResults(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        permissionHelper?.onPermissionResult(requestCode, permissions, grantResults)
+    }
+
+    override fun onPermissionGranted(permission: String?, requestCode: Int) {
+        when (requestCode) {
+            Constants.CAMERA_PERMISSION_CODE -> {
+                startCamera()
+            }
+        }
+    }
+
+    override fun onPermissionDenied(permission: String?, requestCode: Int) {
+        when (requestCode) {
+            Constants.CAMERA_PERMISSION_CODE -> {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.camera_perm_denied),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
+    override fun onPermissionDeniedPermanent(permission: String?, requestCode: Int) {
+        when (requestCode) {
+            Constants.CAMERA_PERMISSION_CODE -> {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.camera_perm_denied_permanently),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }

@@ -30,7 +30,7 @@ import com.example.emotionbasedmusic.databinding.FragmentFaceProceedOrRetakeBind
 import com.example.emotionbasedmusic.network.AZURE
 import com.example.emotionbasedmusic.network.AzureApi
 import com.example.emotionbasedmusic.viewModel.MusicViewModel
-import com.example.emotionbasedmusic.viewModel.MusicViewModelFactory
+
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
@@ -61,9 +61,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.IListener {
     private var binding: FragmentFaceProceedOrRetakeBinding? = null
-    private val model: MusicViewModel by activityViewModels {
-        MusicViewModelFactory(requireParentFragment())
-    }
+    private val model: MusicViewModel by activityViewModels()
     private val navArgs: FaceProceedOrRetakeFragmentArgs by navArgs()
     private var imageUri: String? = null
     private var boolean: Boolean = false
