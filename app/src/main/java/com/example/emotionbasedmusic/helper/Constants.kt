@@ -14,6 +14,7 @@ class Constants {
         const val CAMERA_PERMISSION_CODE = 275
         const val CAMERA_P_C = 2505
         const val CAMERA_REQUEST_CODE = 200
+        const val USERS_DATA_FRAGMENT = "UsersDataFragment"
         const val BASE_URL = "https://limitless-everglades-59097.herokuapp.com/"
         const val HAPPY_MOOD = "Happy"
         const val SAD_MOOD = "Sad"
@@ -48,13 +49,17 @@ class Constants {
         const val AZURE_BASE_URL = "https://face118921.cognitiveservices.azure.com/face/v1.0/"
         const val APP_NAME = "EMOSIC"
         const val LOGGED_IN = "Logged_In"
+        const val PROFILE_COMPLETE = "profile_complete"
         const val IS_LOGGED_IN = "is_logged_in"
         const val WRITE_REQUEST_CODE = 199
+        const val MOBILE = "mobile"
+        const val SERVICE = "MusicService"
         const val MUSIC_SERVICE = ".services.MusicService"
         const val WRITE_PERM = "write"
         const val CAMERA_PERM = "camera_perm"
         const val EXECUTE_WRITE_PERM = "execute_WRITE_PERM"
         const val EXECUTE_CAMERA_PERM = "execute_camera_perm"
         const val OPEN_CAMERA = "open_camera"
+        const val IS_PROFILE_COMPLETE = "is_profile_complete"
     }
 }

@@ -11,9 +11,12 @@
     <string name="select_image_source">Select image source</string>
     <string name="camera">Camera</string>
     <string name="gallery">Gallery</string>
-
+    <string name="camera_perm_denied">Camera Permissions denied</string>
+    <string name="camera_perm_denied_permanently">Camera Permissions denied</string>
+    <string name="user_data_required_info">Enter all required details</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="web_client_id">866756795982-havtme3a12r0cr30hgrk1paqffkc3490.apps.googleusercontent.com</string>
+    <string name="activity_destroyed">activity_destroyed</string>
     <string name="continue_">Continue</string>
     <string name="a_6_digit_otp_will_be_sent_via_sms_to_verify_your_mobile_number">A 6 digit OTP will be sent via SMS to verify your mobile number.</string>
     <string name="enter_phone_number">Enter phone number</string>

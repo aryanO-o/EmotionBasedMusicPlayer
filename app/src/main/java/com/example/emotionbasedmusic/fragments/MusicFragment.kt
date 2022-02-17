@@ -1,14 +1,11 @@
 package com.example.emotionbasedmusic.fragments
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.NotificationManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
-import android.media.AudioAttributes
-import android.media.MediaPlayer
 import android.os.*
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -17,47 +14,53 @@ import android.view.ViewGroup
 import android.widget.SeekBar
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.MutableLiveData
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.PagerSnapHelper
+import androidx.recyclerview.widget.RecyclerView
 import com.example.emotionbasedmusic.MainActivity
 import com.example.emotionbasedmusic.R
+import com.example.emotionbasedmusic.adapter.SongImageAdapter
 import com.example.emotionbasedmusic.data.Music
 import com.example.emotionbasedmusic.databinding.FragmentMusicBinding
+import com.example.emotionbasedmusic.databinding.NewMusicFragmentBinding
 import com.example.emotionbasedmusic.helper.Constants
+import com.example.emotionbasedmusic.helper.ScrollListenerHelper
 import com.example.emotionbasedmusic.services.MusicService
 import com.example.emotionbasedmusic.viewModel.MusicViewModel
-import com.example.emotionbasedmusic.viewModel.MusicViewModelFactory
-import com.squareup.picasso.Picasso
-import java.io.Serializable
-import java.util.concurrent.TimeUnit
 
 class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeListener,
-    ServiceConnection {
+    ServiceConnection, ScrollListenerHelper.OnSnapPositionChangeListener {
 
-    private val model: MusicViewModel by activityViewModels {
-        MusicViewModelFactory(requireParentFragment())
-    }
+    private val model: MusicViewModel by activityViewModels()
     private var song: Music? = null
     private var intent: Intent? = null
     private var notificationManager: NotificationManager? = null
     private var songsList: MutableLiveData<List<Music>> = MutableLiveData<List<Music>>()
+    private var shuffledList = MutableLiveData<MutableList<Music>>()
     private var isLooping = false
     private var key: Boolean? = true
-    private lateinit var service: MusicService
+    private var service: MusicService? = null
     private var isBounded: Boolean? = false
     private var isFromFavorite: Boolean = false
     val _likedSongs = MutableLiveData<MutableList<Music>>()
-
+    private var pagerSnapHelper: PagerSnapHelper? = null
+    private var recyclerView: RecyclerView? = null
+    private var snapPosition = 0
+    private var prevPosition = 0
+    private var scrollListenerHelper: ScrollListenerHelper? = null
+    private var songImageAdapter: SongImageAdapter? = null
+    private var urlList = mutableListOf<String>()
+    private var shuffledLikedSongs = mutableListOf<Music>()
+    private var shuffledLikedSongUrl = mutableListOf<String>()
     companion object {
-        lateinit var binding: FragmentMusicBinding
+        lateinit var binding: NewMusicFragmentBinding
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if(MusicService.currentSong?.songName==model.getSong()?.songName) {
-            (requireActivity() as MainActivity).key = false
-        }
     }
 
     override fun onCreateView(
@@ -65,16 +68,16 @@ class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeL
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentMusicBinding.inflate(inflater)
+        binding = NewMusicFragmentBinding.inflate(inflater)
         return binding.root
     }
 
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        intent = Intent(requireContext(), MusicService::class.java)
         key = (requireActivity() as MainActivity).key
         isFromFavorite = (requireActivity() as MainActivity).isFromFavorite
+        shuffledList.value = mutableListOf()
         notificationManager =
             requireActivity().getSystemService(NotificationManager::class.java) as NotificationManager
         binding.sBar.setOnSeekBarChangeListener(this)
@@ -82,10 +85,15 @@ class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeL
         _likedSongs.value = mutableListOf()
         model.musicData.observe(viewLifecycleOwner) {
             this.songsList.value = it
+            setUpRecyclerViewWithPager()
         }
         model._likedSongs.observe(viewLifecycleOwner) {
             this._likedSongs.value = it
+
         }
+        this.song = model.getSong()
+        song?.let { (requireActivity() as MainActivity).setSong(it) }
+        songsList.value?.let { (requireActivity() as MainActivity).setSongList(it) }
         checkForKey()
         binding.apply {
             btnBack.setOnClickListener(this@MusicFragment)
@@ -97,12 +105,66 @@ class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeL
         }
     }
 
+    private fun getShuffledList(): MutableList<String> {
+        song?.let {
+            urlList.add(it.imgUrl)
+            shuffledList.value?.add(it)
+        }
+        songsList.value!!.forEach { music ->
+            if (music != song) {
+                urlList.add(music.imgUrl)
+                shuffledList.value?.add(music)
+            }
+        }
+        this.songsList.value = shuffledList.value
+        return urlList
+    }
+
+    private fun setUpRecyclerViewWithPager() {
+        pagerSnapHelper = PagerSnapHelper()
+        songImageAdapter = SongImageAdapter(requireContext())
+        songImageAdapter?.bindList(getShuffledList())
+        binding.rvMusic.apply {
+            layoutManager =
+                LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            pagerSnapHelper?.attachToRecyclerView(this)
+            adapter = songImageAdapter
+        }
+        pagerSnapHelper?.let { scrollListenerHelper = ScrollListenerHelper(this, it, snapPosition) }
+        scrollListenerHelper?.let { binding.rvMusic.addOnScrollListener(it) }
+        service?.setSongsList(this.songsList.value!!)
+        service?.setImageUrlList(urlList)
+    }
+
+    private fun getUrlList(): List<String> {
+        songsList.value!!.forEach { music ->
+            urlList.add(music.imgUrl)
+        }
+        return urlList
+    }
+
+    private fun getList(): MutableList<Int> {
+        var list = mutableListOf<Int>()
+        for (i in 1..8) {
+            list.add(R.drawable.album_cover)
+        }
+        return list
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    override fun onSnapPositionChange(position: Int) {
+        service?.setTo(position)
+        prevPosition = position
+        service?.setPosition(position)
+    }
+
+
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun checkForLiked() {
         if (key!!) {
 
         } else {
-            this.song = service.getSong()
+            this.song = service?.getSong()
         }
         when (_likedSongs.value!!.contains(song)) {
             true -> {
@@ -117,7 +179,7 @@ class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeL
     private fun checkForKey() {
         when (key!!) {
             true -> {
-                stopForegroundService()
+                (requireActivity() as MainActivity).stopForegroundService()
                 initView()
             }
             false -> {
@@ -138,7 +200,6 @@ class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeL
 
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun initView() {
-        this.song = model.getSong()
         binding.apply {
             tvStartTime.text = getString(R.string.tools_text)
             tvEndTime.text = getText(R.string.tools_text)
@@ -146,21 +207,17 @@ class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeL
             btnPlay.setImageDrawable(resources.getDrawable(R.drawable.ic_baseline_pause_24_b))
             tvSongName.text = song?.songName
             tvArtist.text = song?.artistName
-            Picasso.get().load(song?.imgUrl).into(ivSong)
         }
         startMusicService()
     }
 
     private fun startMusicService() {
-        intent!!.putExtra(Constants.SONG, this.song)
-        intent!!.putExtra(Constants.INDEX, songsList.value?.indexOf(song))
-        ContextCompat.startForegroundService(requireContext(), intent!!)
-        (requireActivity() as MainActivity).isServiceRunning = true
+        (requireActivity() as MainActivity).startService()
         bindToService()
     }
 
     private fun pauseMediaPlayer() {
-        service.pauseMediaPlayer()
+        service?.pauseMediaPlayer()
     }
 
     override fun onDestroy() {
@@ -170,10 +227,6 @@ class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeL
 
     private fun destroyResources() {
         requireActivity().unbindService(this)
-    }
-
-    private fun stopForegroundService() {
-        intent?.let { requireActivity().stopService(it) }
     }
 
     private fun showToast(msg: String) {
@@ -224,20 +277,20 @@ class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeL
 
     @RequiresApi(Build.VERSION_CODES.N)
     fun nextSong() {
-        service.nextSong()
+        service?.nextSong()
         getSong()
         checkForLiked()
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
     fun prevSong() {
-        service.prevSong()
+        service?.prevSong()
         getSong()
         checkForLiked()
     }
 
     private fun getSong() {
-        this.song = service.getSong()
+        this.song = service?.getSong()
     }
 
     private fun popBackStack() {
@@ -248,7 +301,7 @@ class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeL
         if (key!!) {
 
         } else {
-            this.song = service.getSong()
+            this.song = service?.getSong()
         }
         if (this._likedSongs.value!!.contains(song)) {
             removeFromLiked(song!!)
@@ -272,20 +325,20 @@ class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeL
     }
 
     private fun setLooping(looping: Boolean) {
-        service.setLooping(looping)
+        service?.setLooping(looping)
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun resumeMediaPlayer() {
-        service.resumeMediaPlayer()
+        service?.resumeMediaPlayer()
     }
-
 
     override fun onProgressChanged(sb: SeekBar?, progress: Int, p2: Boolean) {
 
     }
 
     private fun seekTo(seekPosition: Int) {
-        service.seekTo(seekPosition)
+        service?.seekTo(seekPosition)
     }
 
     override fun onStartTrackingTouch(sb: SeekBar?) {
@@ -303,29 +356,52 @@ class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeL
         isBounded = true
         when (key!!) {
             false -> {
-                this.songsList.value = this.service.getSongsList()
+                this.songsList.value = this.service?.getSongsList()
+                this.urlList = this.service?.getImageUrlList() as MutableList<String>
+                updateRecyclerView()
                 checkForLiked()
-                this.service.setUI()
+                this.service?.getPagerPosition()?.let { binding.rvMusic.scrollToPosition(it)}
+                this.service?.setUI()
             }
             true -> {
                 checkForLiked()
                 when (isFromFavorite) {
                     true -> {
-                        this.service.setSongsList(this._likedSongs.value!!)
+                        this.service?.setSongsList(this._likedSongs.value!!)
                     }
                     false -> {
-                        this.service.setSongsList(this.songsList.value!!)
+                        this.service?.recyclerViewPriority(true)
+                        this.service?.setSongsList(this.songsList.value!!)
+                        this.service?.setImageUrlList(urlList)
                     }
                 }
             }
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
+    private fun updateRecyclerView() {
+        pagerSnapHelper = PagerSnapHelper()
+        songImageAdapter = SongImageAdapter(requireContext())
+        songImageAdapter?.bindList(getShuffledList())
+        binding.rvMusic.apply {
+            layoutManager =
+                LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            pagerSnapHelper?.attachToRecyclerView(this)
+            adapter = songImageAdapter
+        }
+        pagerSnapHelper?.let { scrollListenerHelper =
+            this.service?.getPagerPosition()?.let { it1 -> ScrollListenerHelper(this, it, it1) }
+        }
+        scrollListenerHelper?.let { binding.rvMusic.addOnScrollListener(it) }
+        service?.setSongsList(this.songsList.value!!)
+        service?.setImageUrlList(urlList)
+    }
+
 
     override fun onServiceDisconnected(p0: ComponentName?) {
         isBounded = false
     }
-
 
 }
 

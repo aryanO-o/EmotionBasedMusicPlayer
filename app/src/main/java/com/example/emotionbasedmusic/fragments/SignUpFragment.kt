@@ -11,13 +11,14 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.emotionbasedmusic.R
+import com.example.emotionbasedmusic.data.UserInfo
 import com.example.emotionbasedmusic.databinding.SignUpFragmentBinding
 import com.example.emotionbasedmusic.helper.Constants
 import com.example.emotionbasedmusic.helper.HelpRepo
 import com.example.emotionbasedmusic.helper.makeGone
 import com.example.emotionbasedmusic.helper.makeVisible
 import com.example.emotionbasedmusic.viewModel.MusicViewModel
-import com.example.emotionbasedmusic.viewModel.MusicViewModelFactory
+
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -25,15 +26,14 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.database.FirebaseDatabase
 
 
 class SignUpFragment : Fragment(), View.OnClickListener {
     private lateinit var binding: SignUpFragmentBinding
-    private val model: MusicViewModel by activityViewModels {
-        MusicViewModelFactory(requireParentFragment())
-    }
+    private val model: MusicViewModel by activityViewModels()
     private lateinit var database: FirebaseDatabase
     private lateinit var googleSignInOptions: GoogleSignInOptions
     private lateinit var googleSignInClient: GoogleSignInClient
@@ -139,10 +139,11 @@ class SignUpFragment : Fragment(), View.OnClickListener {
         auth.signInWithCredential(credential).addOnCompleteListener(requireActivity()) { task ->
             if (task.isSuccessful) {
                 repo.setSharedPreferences(Constants.IS_LOGGED_IN, Constants.LOGGED_IN)
+                repo.setSharedPreferences(Constants.IS_PROFILE_COMPLETE, Constants.PROFILE_COMPLETE)
                 if (task.result.additionalUserInfo?.isNewUser == true) {
                     model.progressIndicator = true
                     val account = task.result.user
-                    model.parcelData(account!!)
+                    model.parcelData(getUser(account))
                     Toast.makeText(requireContext(), "Setting up", Toast.LENGTH_SHORT).show()
                     toFaceScanFragment()
                 } else {
@@ -151,6 +152,15 @@ class SignUpFragment : Fragment(), View.OnClickListener {
                 }
             }
         }
+    }
+
+    private fun getUser(account: FirebaseUser?): UserInfo {
+        return UserInfo(
+            account?.displayName!!,
+            account.email!!,
+            account.phoneNumber ?: "",
+            account.photoUrl!!.toString()
+        )
     }
 
     private fun toFaceScanFragment() {

@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.emotionbasedmusic.adapter.emojiAdapter
 import com.example.emotionbasedmusic.dataSource.emojiData
 import com.example.emotionbasedmusic.fragments.MoodRecognitionFragment
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 
 
 class BottomSheetDialog(
@@ -75,6 +76,7 @@ class BottomSheetDialog(
         val btnYes = bottomSheetDialog.findViewById<View>(R.id.btnYes)
         btnNo?.setOnClickListener(this)
         btnYes?.setOnClickListener(this)
+        bottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
         bottomSheetDialog.show()
     }
 

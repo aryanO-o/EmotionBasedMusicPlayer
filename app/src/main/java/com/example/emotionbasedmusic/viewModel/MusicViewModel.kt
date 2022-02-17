@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.ServiceConnection
 import android.graphics.Bitmap
+import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -27,22 +28,34 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import okhttp3.Dispatcher
+import java.io.IOException
 import java.lang.IllegalStateException
+import javax.inject.Inject
 
-class MusicViewModel(private var fragment: Fragment) : ViewModel(), ValueEventListener {
+@HiltViewModel
+class MusicViewModel @Inject constructor(@ApplicationContext private val context: Context) : ViewModel(), ValueEventListener {
+
+
+    private var auth: FirebaseAuth = FirebaseAuth.getInstance()
+    private var database: FirebaseDatabase = FirebaseDatabase.getInstance()
+    private var storage: FirebaseStorage = FirebaseStorage.getInstance()
     private var bitmap: Bitmap? = null
     private lateinit var mood: String
-    var key: Boolean? = true
     val musicData = MutableLiveData<List<Music>>()
     private var song: Music? = null
-    private var database: FirebaseDatabase = FirebaseDatabase.getInstance()
-    private var auth: FirebaseAuth = FirebaseAuth.getInstance()
     private lateinit var ref: DatabaseReference
     var progressIndicator: Boolean = false
     val _likedSongs = MutableLiveData<MutableList<Music>>()
+    private var storageRef: StorageReference? = null
+    private var firebaseUri: Uri? = null
     val likedSongs = mutableListOf<Music>()
     var name = MutableLiveData("")
     var phone = MutableLiveData("")
@@ -57,13 +70,7 @@ class MusicViewModel(private var fragment: Fragment) : ViewModel(), ValueEventLi
         getLikedSongs()
     }
 
-    fun parcelData(account: FirebaseUser) {
-        val user = UserInfo(
-            account.displayName!!,
-            account.email!!,
-            account.phoneNumber ?: "",
-            account.photoUrl!!.toString()
-        )
+    fun parcelData(user: UserInfo) {
         updateData(user)
     }
 
@@ -89,14 +96,14 @@ class MusicViewModel(private var fragment: Fragment) : ViewModel(), ValueEventLi
                 override fun onComplete(task: Task<Void>) {
                     if (task.isSuccessful) {
                         Toast.makeText(
-                            fragment.requireContext(),
+                            context,
                             R.string.successful_msg,
                             Toast.LENGTH_SHORT
                         ).show()
                         MoodRecognitionFragment.binding.pIndicator.makeGone()
                     } else {
                         Toast.makeText(
-                            fragment.requireContext(),
+                            context,
                             R.string.upload_error,
                             Toast.LENGTH_SHORT
                         ).show()
@@ -249,18 +256,30 @@ class MusicViewModel(private var fragment: Fragment) : ViewModel(), ValueEventLi
             ref.setValue(update)
         }
     }
-}
 
-
-class MusicViewModelFactory(private val fragment: Fragment) : ViewModelProvider.Factory {
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(MusicViewModel::class.java)) {
-            return MusicViewModel(fragment) as T
+    fun fetchAndParcel(localUri: Uri, user: UserInfo) {
+        storageRef = auth.currentUser?.uid?.let { storage.reference.child(it) }
+        GlobalScope.launch(Dispatchers.IO) {
+            try {
+                localUri.let {
+                    storageRef?.putFile(it)?.addOnCompleteListener { p0 ->
+                        if (p0.isSuccessful) {
+                            storageRef?.downloadUrl?.addOnSuccessListener { uri ->
+                                firebaseUri = uri
+                                user.imgUri = firebaseUri.toString()
+                                parcelData(user)
+                            }
+                        }
+                    }
+                }
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
         }
-        throw IllegalStateException("Unknown error")
     }
 
 }
+
 
 
 

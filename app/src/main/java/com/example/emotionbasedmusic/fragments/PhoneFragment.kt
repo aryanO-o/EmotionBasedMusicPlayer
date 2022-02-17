@@ -11,15 +11,13 @@ import androidx.navigation.fragment.findNavController
 import com.example.emotionbasedmusic.R
 import com.example.emotionbasedmusic.databinding.FragmentPhoneBinding
 import com.example.emotionbasedmusic.viewModel.MusicViewModel
-import com.example.emotionbasedmusic.viewModel.MusicViewModelFactory
+
 import com.hbb20.CountryCodePicker
 
 
 class PhoneFragment : Fragment() {
     private lateinit var binding: FragmentPhoneBinding
-    private val model: MusicViewModel by activityViewModels {
-        MusicViewModelFactory(requireParentFragment())
-    }
+    private val model: MusicViewModel by activityViewModels()
     private lateinit var countryCodePicker: CountryCodePicker
     override fun onCreateView(
         inflater: LayoutInflater,

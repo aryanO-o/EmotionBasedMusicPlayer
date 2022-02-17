@@ -40,7 +40,7 @@
         android:layout_height="96dp"
         android:background="@drawable/img_view"
         android:scaleType="center"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="45dp"
         android:src="@drawable/ic_baseline_photo_camera_24"
         app:layout_constraintBottom_toBottomOf="@id/orTextView"
         app:layout_constraintEnd_toEndOf="parent"
@@ -65,28 +65,30 @@
         android:textSize="24sp"
         android:fontFamily="@font/spartanmedium500"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/btnChooseFromEmojis"
+        app:layout_constraintBottom_toTopOf="@id/emoji_recycler_view"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btnAddImage"/>
 
-    <com.google.android.material.button.MaterialButton
+    <com.google.android.material.textview.MaterialTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/btnChooseFromEmojis"
+        android:id="@+id/choose_from_emojis"
         android:text="@string/choose_from_emojis"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:gravity="center"
-        android:layout_marginHorizontal="50dp"
-        android:backgroundTint="@color/black_90"
+        android:textColor="@color/white"
         android:textSize="15sp"
-        android:layout_marginBottom="125dp"
-        android:textAllCaps="false"
-        app:strokeColor="@color/white"
-        app:strokeWidth="1dp"
-        android:padding="12dp"
-        android:fontFamily="@font/spartanreg"
+        android:layout_marginStart="7dp"
+        android:gravity="start"
+        app:layout_constraintBottom_toTopOf="@id/emoji_recycler_view"
+        android:layout_marginBottom="7dp"
         />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/emoji_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/orTextView" />
 
 
 

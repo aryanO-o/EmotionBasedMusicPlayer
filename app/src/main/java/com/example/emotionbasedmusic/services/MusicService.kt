@@ -15,6 +15,7 @@ import com.example.emotionbasedmusic.R
 import com.example.emotionbasedmusic.Utils.createNotification
 import com.example.emotionbasedmusic.Utils.createNotificationChannel
 import com.example.emotionbasedmusic.data.Music
+import com.example.emotionbasedmusic.eventBus.MessageEvent
 import com.example.emotionbasedmusic.fragments.MusicFragment
 import com.example.emotionbasedmusic.helper.*
 import com.squareup.picasso.Picasso
@@ -22,11 +23,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import java.io.Serializable
 import java.util.concurrent.TimeUnit
 
 class MusicService : Service(), MediaPlayer.OnPreparedListener, Serializable {
 
+    private var urlList: List<String> = listOf()
+    private var pagerPosition: Int? = null
     private lateinit var song: Music
     private var notification: Notification? = null
     private var notificationManager: NotificationManager? = null
@@ -46,6 +52,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, Serializable {
     private var songsList: MutableLiveData<List<Music>> = MutableLiveData<List<Music>>()
     private var isPaused = false
     private var isLooping = false
+    private var isRecyclerViewUp = true
     var next = false
     var prev = false
     override fun onBind(p0: Intent?): IBinder {
@@ -57,9 +64,31 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, Serializable {
         var currentSong: Music? = null
     }
 
+    override fun onCreate() {
+        super.onCreate()
+        if(!EventBus.getDefault().isRegistered(this)) EventBus.getDefault().register(this)
+    }
+
+    override fun onDestroy() {
+        resetMediaPlayer()
+        stopForeground(true)
+        EventBus.getDefault().unregister(this)
+    }
+
+
     inner class LocalBinder : Binder() {
         fun getService(): MusicService = this@MusicService
     }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onMessageEvent(event: MessageEvent?) {
+        when (event?.getString()) {
+            getString(R.string.activity_destroyed) -> {
+                isRecyclerViewUp = false
+            }
+        }
+    }
+
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -72,6 +101,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, Serializable {
         setUpMediaPlayer()
         return START_STICKY
     }
+
 
     @RequiresApi(Build.VERSION_CODES.N)
     private fun setUpNotification() {
@@ -108,7 +138,6 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, Serializable {
             btnPlay.setImageDrawable(resources.getDrawable(R.drawable.ic_baseline_pause_24_b))
             tvSongName.text = song.songName
             tvArtist.text = song.artistName
-            Picasso.get().load(song.imgUrl).into(ivSong)
         }
     }
 
@@ -124,22 +153,21 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, Serializable {
         return this.song
     }
 
-    override fun onDestroy() {
-        resetMediaPlayer()
-        stopForeground(true)
-    }
 
 
+    @RequiresApi(Build.VERSION_CODES.N)
     fun resumeMediaPlayer() {
         isPaused = false
         mediaPlayer.start()
         runnable?.let { handler.postDelayed(it, 100) }
+        setUpNotification()
     }
 
     fun pauseMediaPlayer() {
         isPaused = true
         mediaPlayer.pause()
         runnable?.let { handler.removeCallbacks(it) }
+        stopForeground(false)
     }
 
     private fun setUpMediaPlayer() {
@@ -190,7 +218,6 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, Serializable {
             tvEndTime.text = end
             tvSongName.text = song.songName
             tvArtist.text = song.artistName
-            Picasso.get().load(song.imgUrl).into(ivSong)
         }
         checkForPaused()
         checkForLooping()
@@ -203,6 +230,8 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, Serializable {
             MusicFragment.binding.ibLoop.setImageDrawable(resources.getDrawable(R.drawable.repeat_icon))
         }
     }
+
+
 
     private fun checkForPaused() {
         if (isPaused) {
@@ -270,11 +299,14 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, Serializable {
         isLooping = looping
     }
 
+    fun getPagerPosition(): Int? {return pagerPosition}
+
     @RequiresApi(Build.VERSION_CODES.N)
     private fun initChanges() {
         initToFalse()
         resetMediaPlayer()
         initView()
+        stopForeground(true)
         setUpNotification()
         setUpMediaPlayer()
     }
@@ -283,6 +315,10 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, Serializable {
         next = false
         prev = false
     }
+
+    fun recyclerViewPriority(boolean: Boolean) { isRecyclerViewUp = boolean }
+    fun getRecyclerViewPriority(): Boolean = isRecyclerViewUp
+
 
     @RequiresApi(Build.VERSION_CODES.N)
     fun nextSong() {
@@ -304,6 +340,20 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, Serializable {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
+    fun setTo(position: Int) {
+        if(songsList.value!!.isNotEmpty()) {
+           this.song = songsList.value!![position]
+            initChanges()
+        }
+    }
+
+    fun setPosition(pagerPosition: Int) {
+        this.pagerPosition = pagerPosition
+    }
+
+    fun setImageUrlList(list: List<String>) {this.urlList = list}
+    fun getImageUrlList(): List<String> = urlList
     @RequiresApi(Build.VERSION_CODES.N)
     fun prevSong() {
         if (prev) {
@@ -331,6 +381,8 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, Serializable {
         super.onTaskRemoved(rootIntent)
         stopSelf()
     }
+
+
 
 }
 

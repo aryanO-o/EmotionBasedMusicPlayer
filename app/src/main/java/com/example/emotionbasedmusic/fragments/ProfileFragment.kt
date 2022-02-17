@@ -16,7 +16,7 @@ import com.example.emotionbasedmusic.helper.BottomSheetDialog
 import com.example.emotionbasedmusic.helper.Constants
 import com.example.emotionbasedmusic.helper.makeGone
 import com.example.emotionbasedmusic.viewModel.MusicViewModel
-import com.example.emotionbasedmusic.viewModel.MusicViewModelFactory
+
 import com.squareup.picasso.Picasso
 
 class ProfileFragment : Fragment(), View.OnClickListener, BottomSheetDialog.IBottom {
@@ -27,9 +27,7 @@ class ProfileFragment : Fragment(), View.OnClickListener, BottomSheetDialog.IBot
     private var phone = ""
     private var name = ""
     private var email = ""
-    private val model: MusicViewModel by activityViewModels {
-        MusicViewModelFactory(requireParentFragment())
-    }
+    private val model: MusicViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -117,21 +115,21 @@ class ProfileFragment : Fragment(), View.OnClickListener, BottomSheetDialog.IBot
         }
     }
 
-    fun setNameDetails() {
+    private fun setNameDetails() {
         this.detail = Constants.NAME_DETAIL
         this.textD = name
         model.check = 0
         initBottomSheet()
     }
 
-    fun setEmailDetails() {
+    private fun setEmailDetails() {
         this.detail = Constants.EMAIL_DETAIL
         this.textD = email
         model.check = 2
         initBottomSheet()
     }
 
-    fun setPhoneDetails() {
+    private fun setPhoneDetails() {
         this.detail = Constants.PHONE_DETAIL
         this.textD = phone
         model.check = 1

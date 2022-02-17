@@ -1,5 +1,6 @@
 package com.example.emotionbasedmusic.helper
 
+import android.app.Activity
 import android.view.View
 
 
@@ -14,3 +15,4 @@ fun View.makeInvisible() {
 fun View.makeGone() {
     this.visibility = View.GONE
 }
+
