@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.*
+import android.text.method.Touch.scrollTo
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -26,10 +27,16 @@ import com.example.emotionbasedmusic.adapter.SongImageAdapter
 import com.example.emotionbasedmusic.data.Music
 import com.example.emotionbasedmusic.databinding.FragmentMusicBinding
 import com.example.emotionbasedmusic.databinding.NewMusicFragmentBinding
+import com.example.emotionbasedmusic.eventBus.MessageEvent
+import com.example.emotionbasedmusic.eventBus.PositionEvent
 import com.example.emotionbasedmusic.helper.Constants
 import com.example.emotionbasedmusic.helper.ScrollListenerHelper
 import com.example.emotionbasedmusic.services.MusicService
 import com.example.emotionbasedmusic.viewModel.MusicViewModel
+import com.google.android.material.snackbar.Snackbar
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeListener,
     ServiceConnection, ScrollListenerHelper.OnSnapPositionChangeListener {
@@ -44,6 +51,7 @@ class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeL
     private var key: Boolean? = true
     private var service: MusicService? = null
     private var isBounded: Boolean? = false
+    private var isRecyclerViewSetUp = false
     private var isFromFavorite: Boolean = false
     val _likedSongs = MutableLiveData<MutableList<Music>>()
     private var pagerSnapHelper: PagerSnapHelper? = null
@@ -61,6 +69,7 @@ class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeL
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if(!(EventBus.getDefault().isRegistered(this))) {EventBus.getDefault().register(this)}
     }
 
     override fun onCreateView(
@@ -86,6 +95,7 @@ class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeL
         model.musicData.observe(viewLifecycleOwner) {
             this.songsList.value = it
             setUpRecyclerViewWithPager()
+            isRecyclerViewSetUp = true
         }
         model._likedSongs.observe(viewLifecycleOwner) {
             this._likedSongs.value = it
@@ -103,6 +113,24 @@ class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeL
             ibLoop.setOnClickListener(this@MusicFragment)
             btnPreviousSong.setOnClickListener(this@MusicFragment)
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        EventBus.getDefault().unregister(this)
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onMessageEvent(event: MessageEvent?) {
+        when (event?.getString()) {
+            getString(R.string.scroll_to) -> {
+                scrollRecyclerView((event as PositionEvent).getIndex())
+            }
+        }
+    }
+
+    private fun scrollRecyclerView(index: Int) {
+        binding.rvMusic.scrollToPosition(index)
     }
 
     private fun getShuffledList(): MutableList<String> {
@@ -314,14 +342,20 @@ class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeL
     private fun removeFromLiked(song: Music) {
         binding.btnLike.setImageDrawable(resources.getDrawable(R.drawable.ic_baseline_favorite_border_24_4))
         model.removedFromLikedSongs(song)
-        showToast(Constants.REMOVED_LIKED_SONGS)
+        showSnackbar(Constants.REMOVED_LIKED_SONGS)
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun addToLiked(song: Music) {
         binding.btnLike.setImageDrawable(resources.getDrawable(R.drawable.ic_outline_favorite_24))
         model.addToLikedSongs(song)
-        showToast(Constants.ADDED_LIKED_SONGS)
+        showSnackbar(Constants.ADDED_LIKED_SONGS)
+    }
+
+    private fun showSnackbar(msg: String) {
+        Snackbar.make(binding.constraint, msg, Snackbar.LENGTH_LONG).setTextColor(resources.getColor(R.color.black))
+            .setBackgroundTint(resources.getColor(R.color.white))
+            .show()
     }
 
     private fun setLooping(looping: Boolean) {
@@ -358,7 +392,9 @@ class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeL
             false -> {
                 this.songsList.value = this.service?.getSongsList()
                 this.urlList = this.service?.getImageUrlList() as MutableList<String>
-                updateRecyclerView()
+                if(!isRecyclerViewSetUp) {
+                    updateRecyclerView()
+                }
                 checkForLiked()
                 this.service?.getPagerPosition()?.let { binding.rvMusic.scrollToPosition(it)}
                 this.service?.setUI()
@@ -370,7 +406,6 @@ class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeL
                         this.service?.setSongsList(this._likedSongs.value!!)
                     }
                     false -> {
-                        this.service?.recyclerViewPriority(true)
                         this.service?.setSongsList(this.songsList.value!!)
                         this.service?.setImageUrlList(urlList)
                     }
@@ -383,7 +418,7 @@ class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeL
     private fun updateRecyclerView() {
         pagerSnapHelper = PagerSnapHelper()
         songImageAdapter = SongImageAdapter(requireContext())
-        songImageAdapter?.bindList(getShuffledList())
+        songImageAdapter?.bindList(urlList)
         binding.rvMusic.apply {
             layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)

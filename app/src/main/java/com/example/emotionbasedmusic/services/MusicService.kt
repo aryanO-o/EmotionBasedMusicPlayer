@@ -16,6 +16,7 @@ import com.example.emotionbasedmusic.Utils.createNotification
 import com.example.emotionbasedmusic.Utils.createNotificationChannel
 import com.example.emotionbasedmusic.data.Music
 import com.example.emotionbasedmusic.eventBus.MessageEvent
+import com.example.emotionbasedmusic.eventBus.PositionEvent
 import com.example.emotionbasedmusic.fragments.MusicFragment
 import com.example.emotionbasedmusic.helper.*
 import com.squareup.picasso.Picasso
@@ -316,10 +317,6 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, Serializable {
         prev = false
     }
 
-    fun recyclerViewPriority(boolean: Boolean) { isRecyclerViewUp = boolean }
-    fun getRecyclerViewPriority(): Boolean = isRecyclerViewUp
-
-
     @RequiresApi(Build.VERSION_CODES.N)
     fun nextSong() {
         if (next) {
@@ -328,6 +325,8 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, Serializable {
                 if (indexOfCurrentSong != songsList.value!!.size - 1) {
                     val index = indexOfCurrentSong + 1
                     this.song = songsList.value!![index]
+                    EventBus.getDefault().post(PositionEvent(getString(R.string.scroll_to), index))
+                    setPosition(index)
                     initChanges()
                 } else {
                     Toast.makeText(this, getString(R.string.out_of_songs), Toast.LENGTH_SHORT)
@@ -340,11 +339,15 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, Serializable {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.N)
+
     fun setTo(position: Int) {
         if(songsList.value!!.isNotEmpty()) {
-           this.song = songsList.value!![position]
-            initChanges()
+            if(position!=songsList.value?.size){
+                this.song = songsList.value!![position]
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    initChanges()
+                }
+            }
         }
     }
 
@@ -362,6 +365,8 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, Serializable {
                 if (indexOfCurrentSong != 0) {
                     val index = indexOfCurrentSong - 1
                     this.song = songsList.value!![index]
+                    EventBus.getDefault().post(PositionEvent(getString(R.string.scroll_to), index))
+                    setPosition(index)
                     initChanges()
                 } else {
                     Toast.makeText(this, getString(R.string.out_of_songs), Toast.LENGTH_SHORT)
