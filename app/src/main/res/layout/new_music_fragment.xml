@@ -25,8 +25,9 @@
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
                 android:id="@+id/btnBack"
-                android:src="@drawable/back_icon"
+                android:src="@drawable/down_icon"
                 android:background="@color/transparent"
                 android:layout_margin="16dp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -242,9 +243,10 @@
                 android:id="@+id/ibLoop"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_height="wrap_content"
+                android:layout_height="25dp"
+                android:scaleType="centerInside"
                 android:background="@color/transparent"
-                android:src="@drawable/repeat_icon" />
+                android:src="@drawable/repeat_icon_new" />
 
             <ImageButton
                 android:layout_width="0dp"

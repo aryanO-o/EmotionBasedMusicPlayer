@@ -102,6 +102,15 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="#7C7C7C"
+            app:layout_constraintStart_toStartOf="@id/user_name_card"
+            app:layout_constraintEnd_toEndOf="@id/user_name_card"
+            app:layout_constraintTop_toBottomOf="@id/user_name_card"
+            />
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -156,6 +165,15 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="#7C7C7C"
+            app:layout_constraintStart_toStartOf="@id/user_name_card"
+            app:layout_constraintEnd_toEndOf="@id/user_name_card"
+            app:layout_constraintTop_toBottomOf="@id/user_email_card"
+            />
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -209,6 +227,16 @@
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="#7C7C7C"
+
+            app:layout_constraintStart_toStartOf="@id/user_name_card"
+            app:layout_constraintEnd_toEndOf="@id/user_name_card"
+            app:layout_constraintTop_toBottomOf="@id/user_phone_card"
+            />
 
         <View
             android:layout_width="match_parent"
