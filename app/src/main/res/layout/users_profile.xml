@@ -105,6 +105,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
+            android:layout_marginStart="56dp"
             android:background="#7C7C7C"
             app:layout_constraintStart_toStartOf="@id/user_name_card"
             app:layout_constraintEnd_toEndOf="@id/user_name_card"
@@ -168,6 +169,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
+            android:layout_marginStart="56dp"
             android:background="#7C7C7C"
             app:layout_constraintStart_toStartOf="@id/user_name_card"
             app:layout_constraintEnd_toEndOf="@id/user_name_card"
@@ -232,7 +234,7 @@
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
             android:background="#7C7C7C"
-
+            android:layout_marginStart="56dp"
             app:layout_constraintStart_toStartOf="@id/user_name_card"
             app:layout_constraintEnd_toEndOf="@id/user_name_card"
             app:layout_constraintTop_toBottomOf="@id/user_phone_card"

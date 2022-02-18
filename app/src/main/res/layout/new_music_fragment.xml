@@ -228,10 +228,11 @@
             <ImageButton
                 android:id="@+id/ibLoop"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="25dp"
                 android:layout_weight="1"
                 android:background="#181b21"
-                android:src="@drawable/repeat_icon" />
+                android:scaleType="centerInside"
+                android:src="@drawable/repeat_icon_new" />
 
             <ImageButton
                 android:id="@+id/btnPreviousSong"
