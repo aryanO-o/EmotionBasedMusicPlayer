@@ -37,7 +37,7 @@ class SongImageAdapter(private val context: Context): RecyclerView.Adapter<SongI
     @SuppressLint("UseCompatLoadingForDrawables")
     override fun onBindViewHolder(holder: SongImageViewHolder, position: Int) {
         val imgUrl = list[position]
-        Picasso.get().load(imgUrl).placeholder(R.drawable.album_cover).into(holder.img)
+        Picasso.get().load(imgUrl).placeholder(R.drawable.untitled_141).into(holder.img)
     }
 
     override fun getItemCount(): Int {
