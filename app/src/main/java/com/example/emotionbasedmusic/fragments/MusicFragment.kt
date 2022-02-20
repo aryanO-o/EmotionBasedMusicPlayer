@@ -176,6 +176,7 @@ class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeL
                 shuffledList.value?.add(music)
             }
         }
+        this.songsList.value = shuffledList.value
         return urlList
     }
 
@@ -413,11 +414,10 @@ class MusicFragment : Fragment(), View.OnClickListener, SeekBar.OnSeekBarChangeL
             true -> {
                 checkForLiked()
                 setUpRecyclerViewWithPager(isFromFavorite)
-                songsList.value = _likedSongs.value
                 when (isFromFavorite) {
                     true -> {
-                        this.service?.setPosition(this._likedSongs.value?.indexOf(song)!!)
-                        this.service?.setSongsList(this._likedSongs.value!!)
+                        this.service?.setPosition(this.songsList.value?.indexOf(song)!!)
+                        this.service?.setSongsList(this.songsList.value!!)
                     }
                     false -> {
                         this.service?.setPosition(this.songsList.value?.indexOf(song)!!)
