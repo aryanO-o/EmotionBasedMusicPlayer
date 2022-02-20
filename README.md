@@ -107,6 +107,9 @@ Once Emosic guesses how you are feeling, then based on its guess, Emosic fetches
 ### Demo of the Project
 - [Video](https://limitless-everglades-59097.herokuapp.com/video/video.mp4)
 
+### Get the app
+- [Google Drive Link](https://drive.google.com/file/d/1eEWbySEpeW-6WtU3IrQR4oAJKiF-k957/view)
+
 ### Contributors
 
 * [Aryan Dadhich](https://github.com/aryanO-o)
