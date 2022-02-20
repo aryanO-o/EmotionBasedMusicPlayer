@@ -37,7 +37,7 @@ class emojiAdapter (
         holder.emojiTextView.text = item.emojiText
         holder.itemView.setOnClickListener {
             if(item.emojiText == Constants.SURPRISED_MOOD || item.emojiText == Constants.TIRED_MOOD) {
-                listener.onItemClick(Constants.SAD_MOOD)
+                listener.onItemClick(Constants.NONE)
             }
             else {
                 listener.onItemClick(item.emojiText)

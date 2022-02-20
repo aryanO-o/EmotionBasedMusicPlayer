@@ -1,16 +1,19 @@
 package com.example.emotionbasedmusic.fragments
 
 import android.annotation.SuppressLint
+import android.content.res.Configuration
 import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.emotionbasedmusic.MainActivity
@@ -31,11 +34,16 @@ class ResultSongsFragment : Fragment(), MusicAdapter.IPost, MediaPlayer.OnPrepar
     private lateinit var mediaPlayer: MediaPlayer
     private var song: Music? = null
     private var index: Int = -1
-
+    private var show = false
+    private val navArgs: ResultSongsFragmentArgs by navArgs()
     companion object {
         lateinit var binding: FragmentsResultSongsBinding
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        show = navArgs.show
+    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -46,9 +54,13 @@ class ResultSongsFragment : Fragment(), MusicAdapter.IPost, MediaPlayer.OnPrepar
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        setUpRecyclerView()
-        initView()
-        binding.neResultSongs.btnRetry.setOnClickListener(this)
+        if(!show) {
+            setUpRecyclerView()
+            initView()
+            binding.neResultSongs.btnRetry.setOnClickListener(this)
+        }else {
+            binding.noSongFound.clNo.makeVisible()
+        }
     }
 
     private fun initView() {

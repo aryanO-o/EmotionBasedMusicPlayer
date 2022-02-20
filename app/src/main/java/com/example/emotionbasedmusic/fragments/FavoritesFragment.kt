@@ -2,12 +2,11 @@ package com.example.emotionbasedmusic.fragments
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.view.get
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -20,7 +19,6 @@ import com.example.emotionbasedmusic.helper.Constants
 import com.example.emotionbasedmusic.helper.makeGone
 import com.example.emotionbasedmusic.helper.makeVisible
 import com.example.emotionbasedmusic.viewModel.MusicViewModel
-
 
 
 class FavoritesFragment : Fragment(), MusicAdapter.IFavorite {
@@ -39,7 +37,22 @@ class FavoritesFragment : Fragment(), MusicAdapter.IFavorite {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initToolbar()
+        progressFrameVisible()
         setUpRecyclerView()
+    }
+
+    private fun progressFrameVisible() {
+        binding?.pfDetect?.apply {
+            pFrame.makeVisible()
+            progressBarLayout.progressBar.makeVisible()
+        }
+    }
+
+    private fun progressFrameHide() {
+        binding?.pfDetect?.apply {
+            pFrame.makeGone()
+            progressBarLayout.progressBar.makeGone()
+        }
     }
 
     private fun initToolbar() {
@@ -73,10 +86,12 @@ class FavoritesFragment : Fragment(), MusicAdapter.IFavorite {
                 binding?.clEmpty?.makeGone()
             }
         }
+        progressFrameHide()
     }
 
     override fun onRemoveClick(song: Music) {
         model.removedFromLikedSongs(song)
+//        EventBus.getDefault().post(SongEvent(getString(R.string.remove_from_liked), song))
         Toast.makeText(requireContext(), Constants.REMOVED_LIKED_SONGS, Toast.LENGTH_SHORT).show()
     }
 

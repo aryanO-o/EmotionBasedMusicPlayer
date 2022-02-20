@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var activityManager: ActivityManager
     var isFromFavorite = false
     private var musicList = listOf<Music>()
-    private var musicIntent: Intent? = null
+    var musicIntent: Intent? = null
     private var song: Music? = null
     private val permissionEventsListeners: MutableSet<RequestPermissionEventListener> = HashSet()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,6 +64,9 @@ class MainActivity : AppCompatActivity() {
             Constants.USERS_DATA_FRAGMENT -> {
                 finish()
             }
+            Constants.SPLASH_FRAGMENT -> {
+                finish()
+            }
             else -> {
                 super.onBackPressed()
             }
@@ -78,14 +81,8 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    fun startService() {
-        musicIntent?.putExtra(Constants.SONG, this.song)
-        musicIntent?.putExtra(Constants.INDEX, musicList.indexOf(song))
-        musicIntent?.let {ContextCompat.startForegroundService(this, it)}
-    }
-
     fun stopForegroundService() {
-        musicIntent?.let { stopService(it) }
+        if(getListOfServices()) { musicIntent?.let { stopService(it) }}
     }
 
     fun setSong(song: Music?) {

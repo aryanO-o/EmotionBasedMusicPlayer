@@ -16,9 +16,13 @@
     <string name="user_data_required_info">Enter all required details</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="web_client_id">866756795982-havtme3a12r0cr30hgrk1paqffkc3490.apps.googleusercontent.com</string>
+    <string name="something_went_wrong">Something went wrong, please try again later...</string>
+    <string name="remove_from_liked">Remove</string>
+    <string name="add_to_liked">Add</string>
     <string name="activity_destroyed">activity_destroyed</string>
     <string name="scroll_to">scroll_to</string>
     <string name="continue_">Continue</string>
+    <string name="updating">Updating…</string>
     <string name="a_6_digit_otp_will_be_sent_via_sms_to_verify_your_mobile_number">A 6 digit OTP will be sent via SMS to verify your mobile number.</string>
     <string name="enter_phone_number">Enter phone number</string>
     <string name="enter_10">Enter 10 digit Mobile Number</string>
@@ -74,6 +78,7 @@
     <string name="songs_list_empty">Songs List Empty</string>
     <string name="error_msg">Failed, try again in some time or use alternate method of authentication</string>
     <string name="_1_12">1:12</string>
+    <string name="update_song">Update</string>
     <string name="_3_05">3:05</string>
     <string name="tools_text">- -</string>
     <string name="please_wait">Please wait...</string>
@@ -89,6 +94,7 @@
     <string name="cancel">Cancel</string>
     <string name="save">Save</string>
     <string name="permissions">Permissions</string>
+    <string name="permission_granted">Permission granted</string>
     <string name="denied">Denied</string>
     <string name="change">Change</string>
     <string name="are_you_sure_you_want_to_sign_out">Are you sure, you want to sign out?</string>
@@ -98,4 +104,5 @@
     <string name="third_line">After the recognition of the emotion, The app will load the song according to the mood detected.</string>
     <string name="forth_line">Here you go enjoy your favorite songs that too served according to your mood.</string>
     <string name="how_to_use_">How to use</string>
+    <string name="no_songs_found">No songs found...</string>
 </resources>

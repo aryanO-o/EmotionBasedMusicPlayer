@@ -59,7 +59,6 @@ class UsersDataFragment : Fragment(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_MODE_CHANGED)
         appContainer.repo.initSharedPreferences()
         phone = appContainer.repo.getSharedPreferences(Constants.MOBILE)
     }
@@ -138,7 +137,8 @@ class UsersDataFragment : Fragment(), View.OnClickListener {
 
     private fun parcelAndContinue() {
         if (localUri != null) {
-            localUri?.let { model.fetchAndParcel(it, getUser()) }
+            localUri?.let { model.fetchAndParcel(it, getUser())
+                toFaceScanFragment()}
         } else {
             model.parcelData(getUser())
             toFaceScanFragment()

@@ -13,33 +13,29 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.MutableLiveData
 import com.example.emotionbasedmusic.R
 import com.example.emotionbasedmusic.Utils.createNotification
-import com.example.emotionbasedmusic.Utils.createNotificationChannel
 import com.example.emotionbasedmusic.data.Music
 import com.example.emotionbasedmusic.eventBus.MessageEvent
 import com.example.emotionbasedmusic.eventBus.PositionEvent
+import com.example.emotionbasedmusic.eventBus.SongEvent
 import com.example.emotionbasedmusic.fragments.MusicFragment
 import com.example.emotionbasedmusic.helper.*
 import com.squareup.picasso.Picasso
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.io.Serializable
 import java.util.concurrent.TimeUnit
 
-class MusicService : Service(), MediaPlayer.OnPreparedListener, Serializable {
+class MusicService : Service(), MediaPlayer.OnPreparedListener, Serializable, Runnable {
 
-    private var urlList: List<String> = listOf()
+    private var urlList: MutableList<String> = mutableListOf()
     private var pagerPosition: Int? = null
     private lateinit var song: Music
     private var notification: Notification? = null
     private var notificationManager: NotificationManager? = null
     private var helper: Helper? = null
     private var index: Int? = -1
-    private val handler = Handler(Looper.myLooper()!!)
+    private var handler = Handler(Looper.myLooper()!!)
     private var startTime: Int? = 0
     private var endTime: Int? = 0
     private var start: String? = ""
@@ -50,16 +46,18 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, Serializable {
     private var lastString = ""
     private var endL: Long = 0
     private var endString = ""
-    private var songsList: MutableLiveData<List<Music>> = MutableLiveData<List<Music>>()
+    private var songsList: MutableLiveData<MutableList<Music>> = MutableLiveData<MutableList<Music>>()
     private var isPaused = false
     private var isLooping = false
     private var isRecyclerViewUp = true
+    private var songRunnable: Runnable? = null
+    private var songHandler: Handler? = Handler(Looper.myLooper()!!)
+    private var likedSongsList = mutableListOf<Music>()
     var next = false
     var prev = false
     override fun onBind(p0: Intent?): IBinder {
         return binder
     }
-
     companion object {
         lateinit var mediaPlayer: MediaPlayer
         var currentSong: Music? = null
@@ -71,7 +69,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, Serializable {
     }
 
     override fun onDestroy() {
-        resetMediaPlayer()
+        resetMediaPlayer(true)
         stopForeground(true)
         EventBus.getDefault().unregister(this)
     }
@@ -87,7 +85,23 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, Serializable {
             getString(R.string.activity_destroyed) -> {
                 isRecyclerViewUp = false
             }
+            getString(R.string.remove_from_liked) -> {
+                val songEvent = event as SongEvent
+                removeFromLiked(songEvent.getMusic())
+            }
+            getString(R.string.add_to_liked) -> {
+                val songEvent = event as SongEvent
+                addToLiked(songEvent.getMusic())
+            }
         }
+    }
+
+    private fun addToLiked(music: Music) {
+        this.likedSongsList.add(music)
+    }
+
+    private fun removeFromLiked(music: Music) {
+        this.likedSongsList.remove(music)
     }
 
 
@@ -125,25 +139,34 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, Serializable {
         next = true
         prev = true
     }
-
+    private fun setUpMediaPlayer() {
+        initSome()
+        mediaPlayer.apply {
+            setDataSource(song.songUrl)
+            setOnPreparedListener(this@MusicService)
+            prepareAsync()
+        }
+    }
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun initView() {
         MusicFragment.binding.apply {
             pIndicator.makeVisible()
             sBar.makeInvisible()
-            btnLike.setImageDrawable(resources.getDrawable(R.drawable.ic_baseline_favorite_border_24_4))
+            btnLike.makeGone()
             tvStartTime.text = getString(R.string.tools_text)
             tvEndTime.text = getText(R.string.tools_text)
             sBar.progress = 0
-            ibLoop.setImageDrawable(resources.getDrawable(R.drawable.repeat_icon))
+            ibLoop.setImageDrawable(resources.getDrawable(R.drawable.repeat_icon_new))
             btnPlay.setImageDrawable(resources.getDrawable(R.drawable.ic_baseline_pause_24_b))
             tvSongName.text = song.songName
             tvArtist.text = song.artistName
+            btnPlay.isEnabled = false
+            btnPlay.isClickable = false
         }
     }
 
     fun setSongsList(songsList: List<Music>) {
-        this.songsList.value = songsList
+        this.songsList.value = songsList as MutableList<Music>
     }
 
     fun getSongsList(): List<Music> {
@@ -155,30 +178,21 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, Serializable {
     }
 
 
-
     @RequiresApi(Build.VERSION_CODES.N)
     fun resumeMediaPlayer() {
         isPaused = false
         mediaPlayer.start()
-        runnable?.let { handler.postDelayed(it, 100) }
+        handler.postDelayed(this, 100)
         setUpNotification()
     }
 
     fun pauseMediaPlayer() {
         isPaused = true
         mediaPlayer.pause()
-        runnable?.let { handler.removeCallbacks(it) }
+        handler.removeCallbacks(this)
         stopForeground(false)
     }
 
-    private fun setUpMediaPlayer() {
-        initSome()
-        mediaPlayer.apply {
-            setDataSource(song.songUrl)
-            setOnPreparedListener(this@MusicService)
-            prepareAsync()
-        }
-    }
 
     private fun initSome() {
         MusicFragment.binding.apply {
@@ -206,8 +220,8 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, Serializable {
 
     fun setUI() {
         initViews()
-        runnable?.let { handler.removeCallbacks(it) }
-        handler.postDelayed(updateTime, 100)
+        handler.removeCallbacks(this)
+        handler.postDelayed(this, 100)
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
@@ -226,9 +240,10 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, Serializable {
 
     private fun checkForLooping() {
         if (isLooping) {
-            MusicFragment.binding.ibLoop.setImageDrawable(resources.getDrawable(R.drawable.ic_baseline_repeat_24_b))
+            isLooping = true
+            MusicFragment.binding.ibLoop.setImageDrawable(resources.getDrawable(R.drawable.repeat_button_blue))
         } else {
-            MusicFragment.binding.ibLoop.setImageDrawable(resources.getDrawable(R.drawable.repeat_icon))
+            MusicFragment.binding.ibLoop.setImageDrawable(resources.getDrawable(R.drawable.repeat_icon_new))
         }
     }
 
@@ -242,35 +257,17 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, Serializable {
         }
     }
 
-    private var updateTime = object : Runnable {
-        override fun run() {
-            startTime = mediaPlayer.currentPosition
-            last =
-                TimeUnit.MILLISECONDS.toSeconds(startTime!!.toLong()) - TimeUnit.MINUTES.toSeconds(
-                    TimeUnit.MILLISECONDS.toMinutes(startTime!!.toLong())
-                )
-            if (last in 0..9) {
-                lastString = "0$last"
-                start = "${TimeUnit.MILLISECONDS.toMinutes(startTime!!.toLong())}:" + lastString
-            } else {
-                start =
-                    "${TimeUnit.MILLISECONDS.toMinutes(startTime!!.toLong())}:" + last.toString()
-            }
-            MusicFragment.binding.apply {
-                tvStartTime.text = start
-                sBar.progress = startTime!!
-            }
-            this@MusicService.runnable = this
-            handler.postDelayed(this, 100)
-        }
-    }
 
     override fun onPrepared(mediaPlayer: MediaPlayer?) {
-        mediaPlayer!!.start()
+        MusicFragment.binding.apply {
+            btnPlay.isEnabled = true
+            btnPlay.isClickable = true
+        }
+        mediaPlayer?.start()
         MusicFragment.binding.pIndicator.makeGone()
         MusicFragment.binding.sBar.makeVisible()
-        startTime = mediaPlayer.currentPosition
-        endTime = mediaPlayer.duration
+        startTime = mediaPlayer?.currentPosition
+        endTime = mediaPlayer?.duration
         start = "${TimeUnit.MILLISECONDS.toMinutes(startTime!!.toLong())}:${
             TimeUnit.MILLISECONDS.toSeconds(startTime!!.toLong()) - TimeUnit.MINUTES.toSeconds(
                 TimeUnit.MILLISECONDS.toMinutes(startTime!!.toLong())
@@ -292,7 +289,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, Serializable {
             tvEndTime.text = end
             sBar.progress = startTime!!
         }
-        handler.postDelayed(updateTime, 100)
+        handler.postDelayed(this, 100)
     }
 
     fun setLooping(looping: Boolean) {
@@ -304,12 +301,20 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, Serializable {
 
     @RequiresApi(Build.VERSION_CODES.N)
     private fun initChanges() {
-        initToFalse()
-        resetMediaPlayer()
+        songRunnable?.let { songHandler?.removeCallbacks(it) }
+        EventBus.getDefault().post(SongEvent(getString(R.string.update_song), this.song))
         initView()
+        resetMediaPlayer(false)
         stopForeground(true)
         setUpNotification()
-        setUpMediaPlayer()
+        initRunnable()
+        songRunnable?.let { songHandler?.postDelayed(it, 1000) }
+    }
+
+    private fun initRunnable() {
+        songRunnable = Runnable {
+            setUpMediaPlayer()
+        }
     }
 
     private fun initToFalse() {
@@ -324,10 +329,9 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, Serializable {
                 val indexOfCurrentSong = songsList.value!!.indexOf(song)
                 if (indexOfCurrentSong != songsList.value!!.size - 1) {
                     val index = indexOfCurrentSong + 1
-                    this.song = songsList.value!![index]
+                    initToFalse()
                     EventBus.getDefault().post(PositionEvent(getString(R.string.scroll_to), index))
                     setPosition(index)
-                    initChanges()
                 } else {
                     Toast.makeText(this, getString(R.string.out_of_songs), Toast.LENGTH_SHORT)
                         .show()
@@ -341,21 +345,25 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, Serializable {
 
 
     fun setTo(position: Int) {
-        if(songsList.value!!.isNotEmpty()) {
-            if(position!=songsList.value?.size){
-                this.song = songsList.value!![position]
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    initChanges()
+            if(songsList.value!!.isNotEmpty()) {
+                if(position!=songsList.value?.size){
+                    this.song = songsList.value!![position]
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        initChanges()
+                    }
                 }
-            }
-        }
+            } else {showToast("Empty")}
+    }
+
+    private fun showToast(msg: String) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     }
 
     fun setPosition(pagerPosition: Int) {
         this.pagerPosition = pagerPosition
     }
 
-    fun setImageUrlList(list: List<String>) {this.urlList = list}
+    fun setImageUrlList(list: List<String>) {this.urlList = list as MutableList<String>}
     fun getImageUrlList(): List<String> = urlList
     @RequiresApi(Build.VERSION_CODES.N)
     fun prevSong() {
@@ -364,10 +372,9 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, Serializable {
                 val indexOfCurrentSong = songsList.value!!.indexOf(song)
                 if (indexOfCurrentSong != 0) {
                     val index = indexOfCurrentSong - 1
-                    this.song = songsList.value!![index]
+                    initToFalse()
                     EventBus.getDefault().post(PositionEvent(getString(R.string.scroll_to), index))
                     setPosition(index)
-                    initChanges()
                 } else {
                     Toast.makeText(this, getString(R.string.out_of_songs), Toast.LENGTH_SHORT)
                         .show()
@@ -376,10 +383,11 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, Serializable {
         }
     }
 
-    private fun resetMediaPlayer() {
+    private fun resetMediaPlayer(release: Boolean) {
         mediaPlayer.stop()
         mediaPlayer.reset()
-        runnable?.let { handler.removeCallbacks(it) }
+        handler.removeCallbacks(this)
+        if(release) mediaPlayer.release()
     }
 
     override fun onTaskRemoved(rootIntent: Intent?) {
@@ -387,7 +395,25 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, Serializable {
         stopSelf()
     }
 
-
+    override fun run() {
+        startTime = mediaPlayer.currentPosition
+        last =
+            TimeUnit.MILLISECONDS.toSeconds(startTime!!.toLong()) - TimeUnit.MINUTES.toSeconds(
+                TimeUnit.MILLISECONDS.toMinutes(startTime!!.toLong())
+            )
+        if (last in 0..9) {
+            lastString = "0$last"
+            start = "${TimeUnit.MILLISECONDS.toMinutes(startTime!!.toLong())}:" + lastString
+        } else {
+            start =
+                "${TimeUnit.MILLISECONDS.toMinutes(startTime!!.toLong())}:" + last.toString()
+        }
+        MusicFragment.binding.apply {
+            tvStartTime.text = start
+            sBar.progress = startTime!!
+        }
+        handler.postDelayed(this, 100)
+    }
 
 }
 

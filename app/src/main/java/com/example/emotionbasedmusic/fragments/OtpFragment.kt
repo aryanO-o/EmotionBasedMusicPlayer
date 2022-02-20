@@ -215,9 +215,9 @@ class OtpFragment : Fragment(), View.OnClickListener {
 
             override fun onVerificationFailed(p0: FirebaseException) {
                 if (p0 is FirebaseAuthInvalidCredentialsException) {
-                    Toast.makeText(requireContext(), "Invalid Request", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(requireContext(), "SMS Quota Exceeded", Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), getString(R.string.something_went_wrong), Toast.LENGTH_SHORT)
                         .show()
                 }
                 findNavController().navigateUp()

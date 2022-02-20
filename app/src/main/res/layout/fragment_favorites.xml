@@ -52,5 +52,11 @@
          />
    </androidx.constraintlayout.widget.ConstraintLayout>
 
-
+   <include layout="@layout/progress_frame"
+       android:id="@+id/pfDetect"
+       android:layout_width="match_parent"
+       android:layout_height="0dp"
+       app:layout_constraintTop_toBottomOf="@id/tbFav"
+       app:layout_constraintBottom_toBottomOf="parent"
+       />
 </androidx.constraintlayout.widget.ConstraintLayout>

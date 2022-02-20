@@ -6,7 +6,7 @@
         <item name="actionOverflowButtonStyle">@style/MyOverflowButtonStyle</item>
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/google_black_primary</item>
-        <item name="colorPrimaryVariant">@color/google_black_primary_dark</item>
+        <item name="colorPrimaryVariant">#181b21</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/google_blue_primary</item>

@@ -11,9 +11,11 @@ class Constants {
         const val FRAGMENT_MOOD_RECOGNITION = "fragment_mood_recognition"
         const val SIGN_UP_FRAGMENT = "sign_up_fragment"
         const val FRAGMENT_MUSIC = "MusicFragment"
+        const val NONE = "none"
         const val CAMERA_PERMISSION_CODE = 275
         const val CAMERA_P_C = 2505
         const val CAMERA_REQUEST_CODE = 200
+        const val SPLASH_FRAGMENT = "SplashFragment"
         const val USERS_DATA_FRAGMENT = "UsersDataFragment"
         const val BASE_URL = "https://limitless-everglades-59097.herokuapp.com/"
         const val HAPPY_MOOD = "Happy"

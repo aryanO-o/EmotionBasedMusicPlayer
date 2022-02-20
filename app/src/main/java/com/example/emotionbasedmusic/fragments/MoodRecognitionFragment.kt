@@ -199,6 +199,7 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
     }
 
     private fun signOut() {
+        (requireActivity() as MainActivity).stopForegroundService()
         appContainer.repo.clearSharedPreferences()
         googleSignInClient.signOut()
         auth.signOut()
@@ -305,12 +306,20 @@ class MoodRecognitionFragment : Fragment(), View.OnClickListener, Dialog.IListen
 
 
     override fun onItemClick(mood: String) {
-        model.getSongs(mood)
-        toResultSongFragment()
+        when(mood) {
+            Constants.NONE -> {
+                toResultSongFragment(true)
+            }
+            else -> {
+                model.getSongs(mood)
+                toResultSongFragment(false)
+            }
+        }
     }
 
-    private fun toResultSongFragment() {
-        findNavController().navigate(R.id.action_moodRecognitionFragment_to_resultSongsFragment)
+    private fun toResultSongFragment(bool: Boolean) {
+        val action = MoodRecognitionFragmentDirections.actionMoodRecognitionFragmentToResultSongsFragment(bool)
+        findNavController().navigate(action)
     }
 
     override fun onNoClick() {

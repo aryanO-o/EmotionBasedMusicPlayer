@@ -116,6 +116,37 @@ class MusicViewModel @Inject constructor(@ApplicationContext private val context
         }
     }
 
+    fun updateImage(uri: Uri) {
+        storageRef = auth.currentUser?.uid?.let { storage.reference.child(it) }
+        viewModelScope.launch{
+            try {
+                uri.let {
+                    storageRef?.putFile(it)?.addOnCompleteListener { p0 ->
+                        if (p0.isSuccessful) {
+                            storageRef?.downloadUrl?.addOnSuccessListener { uri ->
+                               database.reference.child("users").child(auth.currentUser?.uid!!).child("imgUri").setValue(uri.toString()).addOnCompleteListener(object: OnCompleteListener<Void> {
+                                   override fun onComplete(p0: Task<Void>) {
+                                       if(p0.isSuccessful) {
+                                           showToast("Image Updated Successfully")
+                                       }
+                                       else {showToast("cannot Update Image")}
+                                   }
+
+                               })
+                            }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+               showToast("Something Went Wrong")
+            }
+        }
+    }
+
+    fun showToast(msg: String) {
+        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+    }
+
     fun setAdapterKey(key: Int) {
         aKey = key
     }
@@ -259,7 +290,7 @@ class MusicViewModel @Inject constructor(@ApplicationContext private val context
 
     fun fetchAndParcel(localUri: Uri, user: UserInfo) {
         storageRef = auth.currentUser?.uid?.let { storage.reference.child(it) }
-        GlobalScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 localUri.let {
                     storageRef?.putFile(it)?.addOnCompleteListener { p0 ->

@@ -41,7 +41,6 @@ class CheckFragment : Fragment() {
     private lateinit var navController: NavController
     @Inject
     lateinit var appContainer: AppContainer
-    private val model: MusicViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,

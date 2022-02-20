@@ -163,11 +163,22 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
                 getImageUrl()
             }
             R.id.btnSearchSongs -> {
-                model.getSongs(mood)
-                toResultSongFragment()
+                fetchSongs()
             }
             R.id.btnHome -> {
                 findNavController().navigate(R.id.action_faceProceedOrRetakeFragment_to_moodRecognitionFragment)
+            }
+        }
+    }
+
+    private fun fetchSongs() {
+        when(mood) {
+            Constants.NONE -> {
+                toResultSongFragment(true)
+            }
+            else -> {
+                model.getSongs(mood)
+                toResultSongFragment(false)
             }
         }
     }
@@ -237,11 +248,11 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
             }
             emotions.surprise -> {
                 setEmotion(R.drawable.surprised_face, "Surprise")
-                this.mood = Constants.SAD_MOOD
+                this.mood = Constants.NONE
             }
             emotions.disgust -> {
                 setEmotion(R.drawable.tired_face, "Tired")
-                this.mood = Constants.SAD_MOOD
+                this.mood = Constants.NONE
             }
         }
     }
@@ -354,8 +365,9 @@ class FaceProceedOrRetakeFragment : Fragment(), View.OnClickListener, Dialog.ILi
     }
 
 
-    private fun toResultSongFragment() {
-        findNavController().navigate(R.id.action_faceProceedOrRetakeFragment_to_resultSongsFragment)
+    private fun toResultSongFragment(bool: Boolean) {
+        val action = FaceProceedOrRetakeFragmentDirections.actionFaceProceedOrRetakeFragmentToResultSongsFragment(bool)
+        findNavController().navigate(action)
     }
 
     private fun detectFace() {

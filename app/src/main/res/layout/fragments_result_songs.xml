@@ -65,6 +65,7 @@
         >
     </androidx.recyclerview.widget.RecyclerView>
 
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>
@@ -75,6 +76,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         />
+
+    <include layout="@layout/no_song_found"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/noSongFound"
+        />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 
